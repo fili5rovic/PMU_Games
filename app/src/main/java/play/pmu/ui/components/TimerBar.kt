@@ -1,7 +1,7 @@
 package play.pmu.ui.components
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,14 +12,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import play.pmu.R
+import play.pmu.ui.theme.PmuSpacing
 import play.pmu.ui.theme.WrongRedLight
 
 /**
  * Preostalo vreme runde. Traka se animirano skracuje, a boja prelazi u crvenu
  * u zadnjih pet sekundi - vizualna povratna informacija bez dodatnog teksta.
+ *
+ * Prikazuje se samo BROJ, bez "s": traka koja se prazni vec govori da je rec o
+ * vremenu, pa je jedinica bila suvisna.
  */
 @Composable
 fun TimerBar(
@@ -38,10 +39,10 @@ fun TimerBar(
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(PmuSpacing.small),
     ) {
         Text(
-            text = stringResource(R.string.settings_seconds, secondsLeft),
+            text = secondsLeft.toString(),
             style = MaterialTheme.typography.headlineSmall,
             color = barColor,
         )

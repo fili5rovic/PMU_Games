@@ -4,7 +4,7 @@
     <!-- Pocetni ekran -->
     <string name="home_subtitle">Dva igraca, jedan telefon</string>
     <string name="home_party_title">Pokreni partiju</string>
-    <string name="home_party_desc">Slucajan niz mini igara. Niko ne zna koja je sledeca.</string>
+    <string name="home_party_desc">Telefon lezi na stolu izmedju vas. Igrac 1 sedi kod donje ivice, Igrac 2 kod gornje.</string>
     <string name="home_section_duels">Pojedinacna mini igra</string>
     <string name="home_section_others">Igre za celo drustvo</string>
     <string name="action_statistics">Statistika</string>
@@ -44,14 +44,9 @@
     <string name="outcome_false_start">Pogresan start protivnika</string>
     <string name="outcome_taps">%1$d tapkanja</string>
     <string name="outcome_pairs">%1$d pronadjenih parova</string>
-    <string name="outcome_nobody">Niko nije pogodio</string>
 
     <!-- Rezim partije -->
     <string name="party_title">Partija</string>
-    <string name="party_setup_hint">Polozite telefon na sto izmedju sebe. Igrac 1 sedi kod donje ivice, Igrac 2 kod gornje.</string>
-    <string name="party_rounds_info">%1$d rundi</string>
-    <string name="party_start">Pokreni partiju</string>
-    <string name="party_over">Partija je zavrsena</string>
     <string name="party_winner">%1$s pobedjuje!</string>
     <string name="party_draw">Nema pobednika, nereseno je</string>
     <string name="party_new">Nova partija</string>
@@ -68,7 +63,6 @@
     <string name="charades_skip">Preskoci</string>
     <string name="charades_tilt_hint">Nagni napred za pogodak, nagni nazad da preskocis</string>
     <string name="charades_manual_hint">Senzor pokreta nije pronadjen, koristi dugmad ispod</string>
-    <string name="charades_landscape_hint">Drzi telefon polozeno na celu</string>
 
     <!-- Kviz -->
     <string name="quiz_pick_category">Izaberi kategoriju</string>
@@ -84,10 +78,8 @@
 
     <!-- Iks-oks -->
     <string name="tictactoe_your_turn">Tvoj potez</string>
-    <string name="tictactoe_other_turn">Protivnik razmislja</string>
 
     <!-- Duel memorije -->
-    <string name="memory_pairs">Parovi: %1$d od %2$d</string>
 
     <!-- Racunski duel -->
     <string name="math_duel_locked">Iskljucen si iz ove runde</string>
@@ -116,13 +108,12 @@
     <!-- Podesavanja -->
     <string name="settings_title">Podesavanja</string>
     <string name="settings_appearance">Izgled</string>
-    <string name="settings_theme">Tema</string>
     <string name="settings_theme_system">Kao sistem</string>
     <string name="settings_theme_light">Svetla</string>
     <string name="settings_theme_dark">Tamna</string>
     <string name="settings_dynamic_color">Dinamicke boje</string>
     <string name="settings_dynamic_color_desc">Koristi boje sa pozadine telefona</string>
-    <string name="settings_gameplay">Igra</string>
+    <string name="settings_game_rules">Pravila igre</string>
     <string name="settings_party_rounds">Broj rundi u partiji</string>
     <string name="settings_round_duration">Trajanje runde pantomime</string>
     <string name="settings_seconds">%1$d s</string>
@@ -157,12 +148,8 @@
     <!-- Stani na vreme -->
     <string name="game_stop_timer_title">Stani na vreme</string>
     <string name="instruction_stop_timer">Zapamti ciljno vreme, pa pritisni STOP kada mislis da je proslo. Nema vidljivog brojaca.</string>
-    <string name="stop_timer_target">Stani posle %1$d s</string>
     <string name="stop_timer_stop">STOP</string>
-    <string name="stop_timer_press_when_ready">Pritisni STOP kada vreme prodje</string>
     <string name="stop_timer_stopped">Stao si, ceka se protivnik</string>
-    <string name="stop_timer_seconds">%1$s s</string>
-    <string name="stop_timer_error">odstupanje %1$s s</string>
     <string name="outcome_error_ms">%1$d ms od cilja</string>
 
     <!-- Binarno u decimalno -->
@@ -172,7 +159,6 @@
     <string name="binary_correct_value">Tacan odgovor: %1$d</string>
 
     <!-- Podesavanja igara -->
-    <string name="party_game_options">Podesavanja igara</string>
     <string name="settings_board_size">Tabla za iks-oks</string>
     <string name="settings_math_operations">Racunske operacije</string>
     <string name="board_size_3">3x3</string>

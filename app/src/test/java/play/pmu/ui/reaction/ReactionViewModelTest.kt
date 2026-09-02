@@ -14,6 +14,8 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import play.pmu.domain.model.Player
+import play.pmu.fake.FakeGameClock
+import kotlin.random.Random
 
 /**
  * Testovi duela refleksa.
@@ -29,11 +31,13 @@ class ReactionViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
     private lateinit var viewModel: ReactionViewModel
+    private lateinit var clock: FakeGameClock
 
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
-        viewModel = ReactionViewModel()
+        clock = FakeGameClock()
+        viewModel = ReactionViewModel(random = Random(1), clock = clock)
     }
 
     @After
@@ -61,6 +65,17 @@ class ReactionViewModelTest {
         val phase = viewModel.uiState.value.phase as ReactionPhase.Done
         assertEquals(Player.TWO, phase.winner)
         assertFalse(phase.isFalseStart)
+    }
+
+    @Test
+    fun `izmereno vreme je razlika po satu igre`() = runTest(dispatcher) {
+        advanceUntilIdle()
+        // Sat je pod kontrolom testa, pa nema cekanja ni priblizne provere.
+        clock.nowMillis += 142
+
+        viewModel.onTap(Player.ONE)
+
+        assertEquals(142, (viewModel.uiState.value.phase as ReactionPhase.Done).timeMs)
     }
 
     @Test

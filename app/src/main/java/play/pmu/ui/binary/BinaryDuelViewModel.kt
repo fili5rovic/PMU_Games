@@ -11,6 +11,7 @@ import play.pmu.domain.game.BinaryQuestion
 import play.pmu.domain.game.randomBinaryQuestion
 import play.pmu.domain.model.Player
 import javax.inject.Inject
+import kotlin.random.Random
 
 data class BinaryDuelUiState(
     val question: BinaryQuestion,
@@ -27,9 +28,11 @@ data class BinaryDuelUiState(
  * svoja destinacija sa svojim ViewModel-om, svaka runda dobija novo pitanje.
  */
 @HiltViewModel
-class BinaryDuelViewModel @Inject constructor() : ViewModel() {
+class BinaryDuelViewModel @Inject constructor(
+    random: Random,
+) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(BinaryDuelUiState(question = randomBinaryQuestion()))
+    private val _uiState = MutableStateFlow(BinaryDuelUiState(question = randomBinaryQuestion(random)))
     val uiState: StateFlow<BinaryDuelUiState> = _uiState.asStateFlow()
 
     /** [answerIndex] je mesto tapnutog odgovora u [BinaryQuestion.answers]. */

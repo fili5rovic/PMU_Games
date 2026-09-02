@@ -10,6 +10,7 @@ import play.pmu.domain.game.Mark
 import play.pmu.domain.model.BoardSizeOption
 import play.pmu.domain.model.Player
 import play.pmu.domain.model.Winner
+import kotlin.random.Random
 
 /**
  * Testovi iks-oksa na nivou ViewModel-a: velicina table iz podesavanja, red
@@ -23,7 +24,7 @@ class TicTacToeViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = TicTacToeViewModel()
+        viewModel = TicTacToeViewModel(Random(1))
     }
 
     @Test
@@ -41,7 +42,7 @@ class TicTacToeViewModelTest {
             BoardSizeOption.FOUR to 4,
             BoardSizeOption.FIVE to 5,
         ).forEach { (option, expected) ->
-            val model = TicTacToeViewModel()
+            val model = TicTacToeViewModel(Random.Default)
             model.startRound(option, Player.ONE)
             assertEquals(expected, model.uiState.value.board?.size)
         }
@@ -50,7 +51,7 @@ class TicTacToeViewModelTest {
     @Test
     fun `slucajna velicina table je jedna od ponudjenih`() {
         repeat(30) {
-            val model = TicTacToeViewModel()
+            val model = TicTacToeViewModel(Random.Default)
             model.startRound(BoardSizeOption.RANDOM, Player.ONE)
             val size = requireNotNull(model.uiState.value.board).size
             assertTrue("velicina $size", size in BoardSizeOption.FIXED_SIZES)
@@ -61,7 +62,7 @@ class TicTacToeViewModelTest {
     fun `slucajna velicina se izvlaci za svako pojavljivanje igre`() {
         // Svaka runda je svoj ViewModel, pa se velicine razlikuju kroz partiju.
         val sizes = (0 until 60).map {
-            TicTacToeViewModel()
+            TicTacToeViewModel(Random.Default)
                 .also { model -> model.startRound(BoardSizeOption.RANDOM, Player.ONE) }
                 .uiState.value.board!!.size
         }.toSet()

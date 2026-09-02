@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import kotlinx.coroutines.delay
-import play.pmu.R
 import play.pmu.ui.theme.PmuSpacing
 
 /**
@@ -131,19 +130,13 @@ private fun IntroPanel(
             label = "countdown",
             modifier = Modifier.padding(top = PmuSpacing.small),
         ) { value ->
-            if (value == null) {
-                Text(
-                    text = stringResource(R.string.game_get_ready),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            } else {
-                Text(
-                    text = value.toString(),
-                    style = MaterialTheme.typography.displayLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
+            // Dok se cita uputstvo nema nicega: broj koji "uskace" sam kaze da
+            // igra pocinje, pa je natpis bio suvisan.
+            Text(
+                text = value?.toString().orEmpty(),
+                style = MaterialTheme.typography.displayLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
         }
     }
 }

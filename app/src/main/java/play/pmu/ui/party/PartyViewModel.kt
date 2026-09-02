@@ -12,14 +12,13 @@ import play.pmu.data.local.MatchEntity
 import play.pmu.data.repository.MatchRepository
 import play.pmu.data.repository.RoundResultsRepository
 import play.pmu.data.repository.SettingsRepository
-import play.pmu.domain.model.BoardSizeOption
 import play.pmu.domain.model.GameSettings
-import play.pmu.domain.model.MathOperation
 import play.pmu.domain.model.RoundOutcome
 import play.pmu.domain.model.Winner
 import play.pmu.domain.party.PartyRound
 import play.pmu.domain.party.buildPartySequence
 import javax.inject.Inject
+import kotlin.random.Random
 
 data class PartyUiState(
     /** Slucajan raspored rundi; prazan dok se ne procitaju podesavanja. */
@@ -67,6 +66,7 @@ class PartyViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val matchRepository: MatchRepository,
     private val roundResultsRepository: RoundResultsRepository,
+    private val random: Random,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PartyUiState())
@@ -85,20 +85,12 @@ class PartyViewModel @Inject constructor(
                     state.copy(
                         gameSettings = settings.games,
                         games = state.games.ifEmpty {
-                            buildPartySequence(rounds = settings.partyRounds)
+                            buildPartySequence(rounds = settings.partyRounds, random = random)
                         },
                     )
                 }
             }
         }
-    }
-
-    fun setTicTacToeBoardSize(option: BoardSizeOption) = viewModelScope.launch {
-        settingsRepository.setTicTacToeBoardSize(option)
-    }
-
-    fun setMathOperations(operations: Set<MathOperation>) = viewModelScope.launch {
-        settingsRepository.setMathOperations(operations)
     }
 
     /**

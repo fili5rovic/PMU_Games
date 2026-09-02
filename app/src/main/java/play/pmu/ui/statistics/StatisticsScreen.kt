@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,6 +35,7 @@ import play.pmu.data.local.MiniGameStats
 import play.pmu.data.local.RoundResultEntity
 import play.pmu.data.repository.GameStats
 import play.pmu.domain.model.Winner
+import play.pmu.ui.PmuTestTags
 import play.pmu.ui.components.EmptyView
 import play.pmu.ui.components.PartyScore
 import play.pmu.ui.components.PmuTopAppBar
@@ -72,7 +73,9 @@ fun StatisticsScreen(
         if (uiState.isEmpty) {
             EmptyView(
                 message = stringResource(R.string.statistics_empty),
-                modifier = Modifier.padding(padding),
+                modifier = Modifier
+                    .padding(padding)
+                    .testTag(PmuTestTags.STATISTICS_SCREEN),
             )
             return@Scaffold
         }
@@ -83,7 +86,7 @@ fun StatisticsScreen(
         // pantomime lako dobiju isti id (oba pocinju od 1). Bez prefiksa
         // Compose tada baca "Key 1 was already used" i ekran pukne.
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().testTag(PmuTestTags.STATISTICS_SCREEN),
             contentPadding = PaddingValues(
                 top = padding.calculateTopPadding() + PmuSpacing.small,
                 bottom = padding.calculateBottomPadding() + PmuSpacing.medium,
@@ -95,7 +98,6 @@ fun StatisticsScreen(
                 item { SectionTitle(stringResource(R.string.party_history)) }
                 items(uiState.matches, key = { "match-${it.id}" }) { match ->
                     MatchRow(match)
-                    HorizontalDivider()
                 }
             }
 
@@ -117,7 +119,6 @@ fun StatisticsScreen(
                 item { SectionTitle(stringResource(R.string.statistics_recent_rounds)) }
                 items(uiState.rounds, key = { "round-${it.id}" }) { round ->
                     RoundRow(round)
-                    HorizontalDivider()
                 }
             }
 
@@ -134,7 +135,6 @@ fun StatisticsScreen(
                 item { SectionTitle(stringResource(R.string.statistics_history)) }
                 items(uiState.history, key = { "result-${it.id}" }) { result ->
                     HistoryRow(result)
-                    HorizontalDivider()
                 }
             }
         }

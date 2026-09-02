@@ -4,7 +4,7 @@
     <!-- Home -->
     <string name="home_subtitle">Two players, one phone</string>
     <string name="home_party_title">Start party</string>
-    <string name="home_party_desc">A random sequence of mini games. Nobody knows what comes next.</string>
+    <string name="home_party_desc">Phone flat on the table between you. Player 1 sits at the bottom edge, Player 2 at the top.</string>
     <string name="home_section_duels">Single mini game</string>
     <string name="home_section_others">Games for the whole room</string>
     <string name="action_statistics">Statistics</string>
@@ -44,14 +44,9 @@
     <string name="outcome_false_start">False start by the other player</string>
     <string name="outcome_taps">%1$d taps</string>
     <string name="outcome_pairs">%1$d pairs found</string>
-    <string name="outcome_nobody">Nobody got it right</string>
 
     <!-- Party mode -->
     <string name="party_title">Party</string>
-    <string name="party_setup_hint">Put the phone flat on the table between you. Player 1 sits at the bottom edge, Player 2 at the top.</string>
-    <string name="party_rounds_info">%1$d rounds</string>
-    <string name="party_start">Start the party</string>
-    <string name="party_over">Party over</string>
     <string name="party_winner">%1$s wins!</string>
     <string name="party_draw">Nobody wins, it is a draw</string>
     <string name="party_new">New party</string>
@@ -68,7 +63,6 @@
     <string name="charades_skip">Skip</string>
     <string name="charades_tilt_hint">Tilt forward for correct, tilt back to skip</string>
     <string name="charades_manual_hint">No motion sensor found, use the buttons below</string>
-    <string name="charades_landscape_hint">Hold the phone sideways on your forehead</string>
 
     <!-- Quiz -->
     <string name="quiz_pick_category">Pick a category</string>
@@ -84,10 +78,8 @@
 
     <!-- Tic-Tac-Toe -->
     <string name="tictactoe_your_turn">Your turn</string>
-    <string name="tictactoe_other_turn">Other player is thinking</string>
 
     <!-- Memory duel -->
-    <string name="memory_pairs">Pairs: %1$d of %2$d</string>
 
     <!-- Math duel -->
     <string name="math_duel_locked">Locked out of this round</string>
@@ -116,13 +108,12 @@
     <!-- Settings -->
     <string name="settings_title">Settings</string>
     <string name="settings_appearance">Appearance</string>
-    <string name="settings_theme">Theme</string>
     <string name="settings_theme_system">Follow system</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_dynamic_color">Dynamic colors</string>
     <string name="settings_dynamic_color_desc">Use colors from the device wallpaper</string>
-    <string name="settings_gameplay">Gameplay</string>
+    <string name="settings_game_rules">Game rules</string>
     <string name="settings_party_rounds">Rounds per party</string>
     <string name="settings_round_duration">Charades round length</string>
     <string name="settings_seconds">%1$d s</string>
@@ -157,12 +148,8 @@
     <!-- Stop the Timer -->
     <string name="game_stop_timer_title">Stop the Timer</string>
     <string name="instruction_stop_timer">Remember the target time, then press STOP when you think it has passed. No timer is shown.</string>
-    <string name="stop_timer_target">Stop after %1$d s</string>
     <string name="stop_timer_stop">STOP</string>
-    <string name="stop_timer_press_when_ready">Press STOP when the time is up</string>
     <string name="stop_timer_stopped">Stopped, waiting for the other player</string>
-    <string name="stop_timer_seconds">%1$s s</string>
-    <string name="stop_timer_error">off by %1$s s</string>
     <string name="outcome_error_ms">%1$d ms off the target</string>
 
     <!-- Binary to Decimal -->
@@ -172,7 +159,6 @@
     <string name="binary_correct_value">Correct answer: %1$d</string>
 
     <!-- Game options -->
-    <string name="party_game_options">Game options</string>
     <string name="settings_board_size">Tic-Tac-Toe board</string>
     <string name="settings_math_operations">Math operations</string>
     <string name="board_size_3">3x3</string>

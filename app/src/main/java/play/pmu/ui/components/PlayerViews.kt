@@ -2,10 +2,9 @@ package play.pmu.ui.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,39 +19,47 @@ import play.pmu.domain.model.Winner
 import play.pmu.ui.theme.accentColor
 
 /**
- * Oznaka igraca ("Igrac 1"), uvek u boji tog igraca. Zahvaljujuci
- * `Player.accentColor` nijedan ekran ne pamti koja je boja cija.
+ * Ime igraca i, kada je na potezu, kratka potvrda "Tvoj potez".
  *
- * [isActive] blago zatamnjuje oznaku igraca koji trenutno nije na potezu -
- * animirano, pa je promena poteza vidljiva i bez citanja teksta.
+ * Ime je krupno i u boji igraca dok je na potezu, a priguseno kada nije. Uz
+ * obojenu podlogu cele njegove polovine ekrana (vidi `Player.areaColor`) red
+ * poteza se vidi odmah, bez citanja - a ne preko male tackice u uglu.
  */
 @Composable
-fun PlayerBadge(
+fun PlayerAreaLabel(
     player: Player,
+    isActive: Boolean,
     modifier: Modifier = Modifier,
-    isActive: Boolean = true,
 ) {
-    val containerColor by animateColorAsState(
-        targetValue = if (isActive) player.accentColor else player.accentColor.copy(alpha = 0.35f),
-        label = "playerBadgeColor",
+    val activeColor = player.accentColor
+    val nameColor by animateColorAsState(
+        targetValue = if (isActive) activeColor else MaterialTheme.colorScheme.onSurfaceVariant,
+        label = "playerNameColor",
     )
-    Surface(
-        shape = MaterialTheme.shapes.small,
-        color = containerColor,
+
+    Column(
         modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
             text = stringResource(player.titleRes),
-            style = MaterialTheme.typography.labelLarge,
-            color = Color.White,
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            style = MaterialTheme.typography.headlineSmall,
+            color = nameColor,
         )
+        if (isActive) {
+            Text(
+                text = stringResource(R.string.tictactoe_your_turn),
+                style = MaterialTheme.typography.titleSmall,
+                color = activeColor,
+            )
+        }
     }
 }
 
 /**
- * Trenutni rezultat partije, u obliku "2 : 1". Svaki broj je u boji svog igraca,
- * pa se sa oba kraja telefona odmah vidi koji je broj ciji.
+ * Trenutni rezultat, u obliku "2 : 1". Svaki broj je u boji svog igraca, pa se
+ * sa oba kraja telefona odmah vidi koji je broj ciji.
  */
 @Composable
 fun PartyScore(
@@ -62,7 +69,7 @@ fun PartyScore(
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(PmuScoreSpacing),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -70,7 +77,11 @@ fun PartyScore(
             style = MaterialTheme.typography.displaySmall,
             color = Player.ONE.accentColor,
         )
-        Text(text = ":", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            text = ":",
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         Text(
             text = scoreTwo.toString(),
             style = MaterialTheme.typography.displaySmall,
@@ -95,3 +106,5 @@ fun winnerColor(winner: Winner): Color = when (winner) {
     Winner.PLAYER_TWO -> Player.TWO.accentColor
     Winner.DRAW -> MaterialTheme.colorScheme.onSurfaceVariant
 }
+
+private val PmuScoreSpacing = 12.dp

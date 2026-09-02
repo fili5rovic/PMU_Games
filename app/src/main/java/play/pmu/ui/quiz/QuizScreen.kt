@@ -177,6 +177,8 @@ private fun AnswerCard(
         answer == selectedAnswer -> WrongRedLight
         else -> MaterialTheme.colorScheme.surfaceVariant
     }
+    // Bela je namerna samo preko zelene/crvene kartice (tacno/netacno); sve
+    // ostalo uzima boju iz teme.
     val contentColor = when {
         !isAnswered -> MaterialTheme.colorScheme.onSurfaceVariant
         answer == correctAnswer || answer == selectedAnswer -> Color.White

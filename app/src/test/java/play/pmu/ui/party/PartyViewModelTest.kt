@@ -24,6 +24,7 @@ import play.pmu.domain.model.Winner
 import play.pmu.fake.FakeMatchDao
 import play.pmu.fake.FakeRoundResultDao
 import play.pmu.fake.FakePreferencesDataStore
+import kotlin.random.Random
 
 /**
  * Testovi toka partije: raspored igara, napredovanje po rundama, skor i upis u
@@ -65,6 +66,7 @@ class PartyViewModelTest {
             settingsRepository = settingsRepository,
             matchRepository = MatchRepository(matchDao),
             roundResultsRepository = RoundResultsRepository(roundDao),
+            random = Random(1),
         )
         dispatcher.scheduler.advanceUntilIdle()
         return viewModel
@@ -208,12 +210,13 @@ class PartyViewModelTest {
     }
 
     @Test
-    fun `podesavanja igara su dostupna rundama`() = runTest(dispatcher) {
-        val viewModel = startedParty(rounds = 3)
+    fun `partija cita pravila igara iz podesavanja`() = runTest(dispatcher) {
+        // Pravila se od sada menjaju u Podesavanjima; partija ih samo cita i
+        // prosledjuje rundama.
+        settingsRepository.setTicTacToeBoardSize(BoardSizeOption.FIVE)
+        settingsRepository.setMathOperations(setOf(MathOperation.PLUS))
 
-        viewModel.setTicTacToeBoardSize(BoardSizeOption.FIVE)
-        viewModel.setMathOperations(setOf(MathOperation.PLUS))
-        advanceUntilIdle()
+        val viewModel = startedParty(rounds = 3)
 
         val settings = viewModel.uiState.value.gameSettings
         assertEquals(BoardSizeOption.FIVE, settings.ticTacToeBoardSize)
@@ -221,14 +224,18 @@ class PartyViewModelTest {
     }
 
     @Test
-    fun `promena podesavanja ne premesa vec napravljen raspored`() = runTest(dispatcher) {
+    fun `promena pravila u toku partije ne premesa raspored`() = runTest(dispatcher) {
         val viewModel = startedParty(rounds = 5)
         val before = viewModel.uiState.value.games
 
-        viewModel.setTicTacToeBoardSize(BoardSizeOption.THREE)
-        advanceUntilIdle()
+        settingsRepository.setTicTacToeBoardSize(BoardSizeOption.THREE)
+        dispatcher.scheduler.advanceUntilIdle()
 
         assertEquals(before, viewModel.uiState.value.games)
+        assertEquals(
+            BoardSizeOption.THREE,
+            viewModel.uiState.value.gameSettings.ticTacToeBoardSize,
+        )
     }
 
     @Test

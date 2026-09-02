@@ -1,6 +1,5 @@
 package play.pmu.ui.reaction
 
-import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import play.pmu.domain.model.Player
+import play.pmu.domain.util.GameClock
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -51,7 +51,10 @@ data class ReactionUiState(
  * coroutine prestaje sama.
  */
 @HiltViewModel
-class ReactionViewModel @Inject constructor() : ViewModel() {
+class ReactionViewModel @Inject constructor(
+    private val random: Random,
+    private val clock: GameClock,
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReactionUiState())
     val uiState: StateFlow<ReactionUiState> = _uiState.asStateFlow()
@@ -69,10 +72,10 @@ class ReactionViewModel @Inject constructor() : ViewModel() {
     private fun startWaiting() {
         waitJob?.cancel()
         waitJob = viewModelScope.launch {
-            delay(Random.nextLong(MIN_WAIT_MILLIS, MAX_WAIT_MILLIS))
-            // SystemClock.elapsedRealtime je monoton, pa promena sistemskog
-            // vremena ne moze da pokvari merenje.
-            greenAtMillis = SystemClock.elapsedRealtime()
+            delay(random.nextLong(MIN_WAIT_MILLIS, MAX_WAIT_MILLIS))
+            // Sat je monoton, pa promena sistemskog vremena ne moze da pokvari
+            // merenje. Ide kroz GameClock da bi test mogao da zada vreme.
+            greenAtMillis = clock.elapsedRealtimeMillis()
             _uiState.update { it.copy(phase = ReactionPhase.Ready) }
         }
     }
@@ -99,7 +102,7 @@ class ReactionViewModel @Inject constructor() : ViewModel() {
             ReactionPhase.Ready -> finish(
                 winner = player,
                 isFalseStart = false,
-                timeMs = (SystemClock.elapsedRealtime() - greenAtMillis).toInt(),
+                timeMs = (clock.elapsedRealtimeMillis() - greenAtMillis).toInt(),
             )
 
             // Runda je vec resena - drugi tap se ignorise.

@@ -1,14 +1,16 @@
 package play.pmu.ui.settings
 
 import android.os.Build
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material3.FilterChip
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -19,14 +21,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import play.pmu.R
 import play.pmu.data.repository.AppSettings
+import play.pmu.domain.model.BoardSizeOption
+import play.pmu.domain.model.MathOperation
 import play.pmu.domain.model.ThemeMode
+import play.pmu.ui.PmuTestTags
+import play.pmu.ui.components.MultiChoiceChips
 import play.pmu.ui.components.PmuTopAppBar
+import play.pmu.ui.components.SingleChoiceChips
+import play.pmu.ui.theme.PmuSpacing
 
 @Composable
 fun SettingsScreen(
@@ -40,6 +49,8 @@ fun SettingsScreen(
         onThemeModeChange = viewModel::setThemeMode,
         onDynamicColorChange = viewModel::setDynamicColor,
         onPartyRoundsChange = viewModel::setPartyRounds,
+        onBoardSizeChange = viewModel::setTicTacToeBoardSize,
+        onMathOperationsChange = viewModel::setMathOperations,
         onRoundDurationChange = viewModel::setRoundDuration,
         onQuestionCountChange = viewModel::setQuestionCount,
         onManualControlsChange = viewModel::setManualControls,
@@ -47,12 +58,25 @@ fun SettingsScreen(
     )
 }
 
+/**
+ * Podesavanja: izgled i PRAVILA IGRE.
+ *
+ * Sva pravila koja igrac moze da menja su na ovom jednom ekranu, grupisana po
+ * igri. Ranije su neka pravila bila ovde, a neka na ekranu pripreme partije, pa
+ * se nije znalo gde se sta menja. Sada "Pokreni partiju" odmah pocinje igru, a
+ * pravila se menjaju samo ovde - i to retko.
+ *
+ * Ekran je jedan, obican skrolujuci Column sa naslovima sekcija; ugnjezdena
+ * navigacija po podesavanjima bila bi preterana za ovoliko opcija.
+ */
 @Composable
 private fun SettingsContent(
     settings: AppSettings,
     onThemeModeChange: (ThemeMode) -> Unit,
     onDynamicColorChange: (Boolean) -> Unit,
     onPartyRoundsChange: (Int) -> Unit,
+    onBoardSizeChange: (BoardSizeOption) -> Unit,
+    onMathOperationsChange: (Set<MathOperation>) -> Unit,
     onRoundDurationChange: (Int) -> Unit,
     onQuestionCountChange: (Int) -> Unit,
     onManualControlsChange: (Boolean) -> Unit,
@@ -70,8 +94,10 @@ private fun SettingsContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = PmuSpacing.medium)
+                .testTag(PmuTestTags.SETTINGS_SCREEN),
+            verticalArrangement = Arrangement.spacedBy(PmuSpacing.small),
         ) {
             SectionTitle(stringResource(R.string.settings_appearance))
 
@@ -84,6 +110,7 @@ private fun SettingsContent(
                         RadioButton(
                             selected = settings.themeMode == mode,
                             onClick = { onThemeModeChange(mode) },
+                            modifier = Modifier.testTag("theme_" + mode.name),
                         )
                         Text(stringResource(mode.titleRes))
                     }
@@ -100,59 +127,120 @@ private fun SettingsContent(
                 )
             }
 
-            HorizontalDivider(Modifier.padding(vertical = 8.dp))
-            SectionTitle(stringResource(R.string.settings_gameplay))
-
-            Text(
-                text = stringResource(R.string.settings_party_rounds),
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            ChipRow(
-                options = PARTY_ROUNDS,
-                selected = settings.partyRounds,
-                label = { it.toString() },
-                onSelect = onPartyRoundsChange,
+            HorizontalDivider(Modifier.padding(vertical = PmuSpacing.small))
+            SectionTitle(
+                text = stringResource(R.string.settings_game_rules),
+                modifier = Modifier.testTag(PmuTestTags.GAME_RULES),
             )
 
-            Text(
-                text = stringResource(R.string.settings_round_duration),
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            ChipRow(
-                options = ROUND_DURATIONS,
-                selected = settings.roundDurationSeconds,
-                label = { stringResource(R.string.settings_seconds, it) },
-                onSelect = onRoundDurationChange,
-            )
+            GameRule(
+                gameRes = R.string.party_title,
+                optionRes = R.string.settings_party_rounds,
+            ) {
+                SingleChoiceChips(
+                    options = PARTY_ROUNDS,
+                    selected = settings.partyRounds,
+                    label = { it.toString() },
+                    onSelect = onPartyRoundsChange,
+                )
+            }
 
-            Text(
-                text = stringResource(R.string.settings_question_count),
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            ChipRow(
-                options = QUESTION_COUNTS,
-                selected = settings.questionCount,
-                label = { it.toString() },
-                onSelect = onQuestionCountChange,
-            )
+            GameRule(
+                gameRes = R.string.game_tictactoe_title,
+                optionRes = R.string.settings_board_size,
+            ) {
+                SingleChoiceChips(
+                    options = BoardSizeOption.entries,
+                    selected = settings.games.ticTacToeBoardSize,
+                    label = { stringResource(it.titleRes) },
+                    onSelect = onBoardSizeChange,
+                )
+            }
 
-            SwitchRow(
-                title = stringResource(R.string.settings_manual_controls),
-                subtitle = stringResource(R.string.settings_manual_controls_desc),
-                checked = settings.manualCharadesControls,
-                onCheckedChange = onManualControlsChange,
-            )
+            GameRule(
+                gameRes = R.string.game_math_duel_title,
+                optionRes = R.string.settings_math_operations,
+            ) {
+                MultiChoiceChips(
+                    options = MathOperation.entries,
+                    selected = settings.games.mathOperations,
+                    // Znak operacije je i oznaka na cipu - matematika se ne prevodi.
+                    label = { it.symbol },
+                    onSelectionChange = onMathOperationsChange,
+                )
+            }
+
+            GameRule(
+                gameRes = R.string.game_charades_title,
+                optionRes = R.string.settings_round_duration,
+            ) {
+                SingleChoiceChips(
+                    options = ROUND_DURATIONS,
+                    selected = settings.roundDurationSeconds,
+                    label = { stringResource(R.string.settings_seconds, it) },
+                    onSelect = onRoundDurationChange,
+                )
+                SwitchRow(
+                    title = stringResource(R.string.settings_manual_controls),
+                    subtitle = stringResource(R.string.settings_manual_controls_desc),
+                    checked = settings.manualCharadesControls,
+                    onCheckedChange = onManualControlsChange,
+                )
+            }
+
+            GameRule(
+                gameRes = R.string.game_quiz_title,
+                optionRes = R.string.settings_question_count,
+            ) {
+                SingleChoiceChips(
+                    options = QUESTION_COUNTS,
+                    selected = settings.questionCount,
+                    label = { it.toString() },
+                    onSelect = onQuestionCountChange,
+                )
+            }
         }
     }
 }
 
+/**
+ * Pravilo jedne igre: naziv igre, naziv opcije i kontrola.
+ *
+ * Igre koje nemaju sta da podese se ovde uopste ne pojavljuju - nema praznih
+ * sekcija samo da bi svaka igra imala svoju.
+ */
 @Composable
-private fun SectionTitle(text: String) {
+private fun GameRule(
+    @StringRes gameRes: Int,
+    @StringRes optionRes: Int,
+    content: @Composable () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = PmuSpacing.small),
+        verticalArrangement = Arrangement.spacedBy(PmuSpacing.small),
+    ) {
+        Text(
+            text = stringResource(gameRes),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Text(
+            text = stringResource(optionRes),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        content()
+    }
+}
+
+@Composable
+private fun SectionTitle(text: String, modifier: Modifier = Modifier) {
     Text(
         text = text,
         style = MaterialTheme.typography.titleSmall,
         color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(top = 8.dp),
+        modifier = modifier.padding(top = PmuSpacing.small),
     )
 }
 
@@ -166,7 +254,7 @@ private fun SwitchRow(
     Row(
         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(PmuSpacing.medium),
     ) {
         Column(Modifier.weight(1f)) {
             Text(text = title, style = MaterialTheme.typography.bodyLarge)
@@ -177,24 +265,6 @@ private fun SwitchRow(
             )
         }
         Switch(checked = checked, onCheckedChange = onCheckedChange)
-    }
-}
-
-@Composable
-private fun ChipRow(
-    options: List<Int>,
-    selected: Int,
-    label: @Composable (Int) -> String,
-    onSelect: (Int) -> Unit,
-) {
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        options.forEach { option ->
-            FilterChip(
-                selected = option == selected,
-                onClick = { onSelect(option) },
-                label = { Text(label(option)) },
-            )
-        }
     }
 }
 

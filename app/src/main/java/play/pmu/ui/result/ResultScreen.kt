@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,9 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,9 +28,11 @@ import play.pmu.domain.model.GameType
 import play.pmu.ui.components.ErrorView
 import play.pmu.ui.components.LoadingView
 import play.pmu.ui.components.PmuTopAppBar
+import play.pmu.ui.components.ResultActions
 import play.pmu.ui.components.ScoreBadge
 import play.pmu.ui.components.scoreText
 import play.pmu.ui.theme.CorrectGreenLight
+import play.pmu.ui.theme.PmuSpacing
 import play.pmu.ui.theme.WrongRedLight
 
 @Composable
@@ -132,17 +131,13 @@ private fun ResultContent(
         }
 
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
-            ) {
-                OutlinedButton(onClick = onHome) {
-                    Text(stringResource(R.string.result_home))
-                }
-                Button(onClick = onPlayAgain) {
-                    Text(stringResource(R.string.result_play_again))
-                }
-            }
+            ResultActions(
+                primaryLabel = stringResource(R.string.result_play_again),
+                onPrimary = onPlayAgain,
+                homeLabel = stringResource(R.string.result_home),
+                onHome = onHome,
+                modifier = Modifier.padding(top = PmuSpacing.medium),
+            )
         }
     }
 }

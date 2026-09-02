@@ -16,6 +16,7 @@ import org.junit.Before
 import org.junit.Test
 import play.pmu.domain.model.Player
 import play.pmu.domain.model.Winner
+import kotlin.random.Random
 
 /**
  * Testovi logike duela memorije.
@@ -32,7 +33,7 @@ class MemoryViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
-        viewModel = MemoryViewModel()
+        viewModel = MemoryViewModel(Random(1))
         // Pocetnog igraca u pravoj igri postavlja raspored partije.
         viewModel.startRound(Player.ONE)
     }
@@ -54,14 +55,14 @@ class MemoryViewModelTest {
 
     @Test
     fun `runda pocinje zadatim igracem`() {
-        val model = MemoryViewModel()
+        val model = MemoryViewModel(Random(2))
         model.startRound(Player.TWO)
         assertEquals(Player.TWO, model.uiState.value.currentPlayer)
     }
 
     @Test
     fun `poen dobija igrac koji je zaista poceo`() = runTest(dispatcher) {
-        val model = MemoryViewModel()
+        val model = MemoryViewModel(Random(3))
         model.startRound(Player.TWO)
 
         val pair = model.uiState.value.cards

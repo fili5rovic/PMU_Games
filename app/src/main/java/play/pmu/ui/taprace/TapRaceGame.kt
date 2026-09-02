@@ -6,7 +6,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -16,22 +15,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import play.pmu.R
 import play.pmu.domain.model.Player
 import play.pmu.domain.model.RoundOutcome
-import play.pmu.ui.components.TimerBar
+import play.pmu.ui.PmuTestTags
 import play.pmu.ui.components.TwoPlayerLayout
 import play.pmu.ui.theme.PmuSpacing
-import play.pmu.ui.theme.panelColor
+import play.pmu.ui.theme.accentColor
+import play.pmu.ui.theme.areaColor
 
 /**
  * Trka tapkanja. Svaka polovina ekrana je jedno veliko dugme - najveca moguca
  * meta, jer se u ovoj igri tapka brzo i bez gledanja.
+ *
+ * Igraci tapkaju ISTOVREMENO, pa nema "aktivnog igraca": obe polovine su stalno
+ * obojene bojom svog igraca, sto je samo oznaka identiteta.
+ *
+ * Na ekranu su samo dva broja - broj tapkanja (krupno) i preostale sekunde
+ * (sitno, bez jedinice). Sve ostalo bi u ovoj igri bilo smetnja.
  */
 @Composable
 fun TapRaceGame(
@@ -72,7 +77,8 @@ private fun tapHalfModifier(player: Player, onTap: (Player) -> Unit): Modifier {
     val interactionSource = remember { MutableInteractionSource() }
     return Modifier
         .fillMaxSize()
-        .background(player.panelColor)
+        .background(player.areaColor())
+        .testTag(PmuTestTags.playerArea(player.name))
         .clickable(
             interactionSource = interactionSource,
             indication = null,
@@ -83,28 +89,20 @@ private fun tapHalfModifier(player: Player, onTap: (Player) -> Unit): Modifier {
 private fun TapRaceHalf(player: Player, uiState: TapRaceUiState) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(PmuSpacing.medium),
+        verticalArrangement = Arrangement.spacedBy(PmuSpacing.small),
         modifier = Modifier.padding(PmuSpacing.large),
     ) {
         Text(
             text = uiState.tapsOf(player).toString(),
             style = MaterialTheme.typography.displayLarge,
-            color = Color.White,
+            color = player.accentColor,
         )
-        TimerBar(
-            secondsLeft = uiState.secondsLeft,
-            totalSeconds = uiState.totalSeconds,
-            modifier = Modifier.fillMaxWidth(TIMER_WIDTH_FRACTION),
+        Text(
+            text = uiState.secondsLeft.toString(),
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        if (!uiState.isRunning) {
-            Text(
-                text = stringResource(player.titleRes),
-                style = MaterialTheme.typography.titleMedium,
-                color = Color.White,
-            )
-        }
     }
 }
 
 private const val WINNER_DELAY_MILLIS = 600L
-private const val TIMER_WIDTH_FRACTION = 0.7f

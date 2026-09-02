@@ -1,7 +1,9 @@
 package play.pmu.ui.memory
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -29,10 +32,12 @@ import kotlinx.coroutines.delay
 import play.pmu.R
 import play.pmu.domain.model.Player
 import play.pmu.domain.model.RoundOutcome
-import play.pmu.ui.components.PlayerBadge
+import play.pmu.ui.PmuTestTags
+import play.pmu.ui.components.PlayerAreaLabel
 import play.pmu.ui.components.SharedBoardLayout
 import play.pmu.ui.theme.PmuSpacing
 import play.pmu.ui.theme.accentColor
+import play.pmu.ui.theme.areaColor
 
 /**
  * Duel memorije. Kartice su zajednicke i leze u sredini (kao na stolu), a skor i
@@ -63,9 +68,14 @@ fun MemoryGame(
         }
     }
 
+    val isOneActive = uiState.winner == null && uiState.currentPlayer == Player.ONE
+    val isTwoActive = uiState.winner == null && uiState.currentPlayer == Player.TWO
+
     SharedBoardLayout(
-        topPanel = { ScorePanel(Player.TWO, uiState) },
-        bottomPanel = { ScorePanel(Player.ONE, uiState) },
+        topPanel = { ScorePanel(Player.TWO, uiState, isTwoActive) },
+        bottomPanel = { ScorePanel(Player.ONE, uiState, isOneActive) },
+        topPanelModifier = playerAreaModifier(Player.TWO, isTwoActive),
+        bottomPanelModifier = playerAreaModifier(Player.ONE, isOneActive),
         centerContent = {
             CardGrid(
                 cards = uiState.cards,
@@ -76,30 +86,33 @@ fun MemoryGame(
     )
 }
 
-/** Skor jednog igraca i oznaka da je na redu. */
+/** Podloga polovine igraca koji je na potezu - isti postupak kao u iks-oksu. */
 @Composable
-private fun ScorePanel(player: Player, uiState: MemoryUiState) {
-    val isMyTurn = uiState.winner == null && uiState.currentPlayer == player
+private fun playerAreaModifier(player: Player, isActive: Boolean): Modifier {
+    val background by animateColorAsState(
+        targetValue = player.areaColor(isActive),
+        animationSpec = tween(durationMillis = TURN_FADE_MILLIS),
+        label = "playerArea",
+    )
+    return Modifier
+        .fillMaxSize()
+        .background(background)
+        .testTag(PmuTestTags.playerArea(player.name))
+}
 
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(PmuSpacing.medium),
-        horizontalArrangement = Arrangement.spacedBy(PmuSpacing.medium, Alignment.CenterHorizontally),
-        verticalAlignment = Alignment.CenterVertically,
+/** Ime igraca, oznaka da je na redu i njegov broj parova. */
+@Composable
+private fun ScorePanel(player: Player, uiState: MemoryUiState, isActive: Boolean) {
+    Column(
+        modifier = Modifier.padding(PmuSpacing.medium),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(PmuSpacing.small),
     ) {
-        PlayerBadge(player = player, isActive = isMyTurn)
+        PlayerAreaLabel(player = player, isActive = isActive)
         Text(
             text = uiState.scoreOf(player).toString(),
             style = MaterialTheme.typography.displaySmall,
             color = player.accentColor,
-        )
-        Text(
-            text = stringResource(
-                R.string.memory_pairs,
-                uiState.foundPairs,
-                uiState.totalPairs,
-            ),
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -119,16 +132,20 @@ private fun CardGrid(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(PmuSpacing.small),
     ) {
-        cards.chunked(GRID_COLUMNS).forEach { row ->
+        cards.chunked(GRID_COLUMNS).forEachIndexed { rowIndex, row ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(PmuSpacing.small),
             ) {
-                row.forEach { card ->
+                row.forEachIndexed { columnIndex, card ->
                     MemoryCardItem(
                         card = card,
                         onClick = { onCardClick(card.id) },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag(
+                                PmuTestTags.memoryCard(rowIndex * GRID_COLUMNS + columnIndex)
+                            ),
                     )
                 }
             }
@@ -188,3 +205,4 @@ private const val GRID_COLUMNS = 4
 private const val FLIP_DURATION_MILLIS = 350
 private const val CAMERA_DISTANCE = 12f
 private const val WINNER_DELAY_MILLIS = 900L
+private const val TURN_FADE_MILLIS = 260

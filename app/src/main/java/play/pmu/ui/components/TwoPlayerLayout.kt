@@ -5,12 +5,10 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.unit.dp
 
 /**
  * Osnovni raspored svih igara za dva igraca.
@@ -43,7 +41,6 @@ fun TwoPlayerLayout(
             contentAlignment = Alignment.Center,
             content = topContent,
         )
-        HorizontalDivider(thickness = DIVIDER_THICKNESS)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -60,24 +57,43 @@ fun TwoPlayerLayout(
  *
  * Tabla se ne moze rotirati jer je oba igraca gledaju istovremeno - kao karte na
  * stolu. Zato se rotira samo ono sto pripada pojedinom igracu: [topPanel] i
- * [bottomPanel] (skor, cij je potez). Tabla je [centerContent].
+ * [bottomPanel]. Tabla je [centerContent] i zadrzava svoju velicinu, a panelima
+ * ostaje sav prostor iznad i ispod (`weight(1f)`).
+ *
+ * Zbog toga su paneli dovoljno VELIKE povrsine da se mogu obojiti bojom igraca
+ * koji je na potezu - sto je jedini nacin da se red poteza vidi u delicu sekunde.
  */
 @Composable
 fun SharedBoardLayout(
-    topPanel: @Composable () -> Unit,
-    bottomPanel: @Composable () -> Unit,
+    topPanel: @Composable BoxScope.() -> Unit,
+    bottomPanel: @Composable BoxScope.() -> Unit,
     centerContent: @Composable BoxScope.() -> Unit,
     modifier: Modifier = Modifier,
+    topPanelModifier: Modifier = Modifier,
+    bottomPanelModifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
-        Box(modifier = Modifier.fillMaxWidth().rotate(180f)) { topPanel() }
         Box(
-            modifier = Modifier.fillMaxWidth().weight(1f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .rotate(180f)
+                .then(topPanelModifier),
+            contentAlignment = Alignment.Center,
+            content = topPanel,
+        )
+        Box(
+            modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,
             content = centerContent,
         )
-        Box(modifier = Modifier.fillMaxWidth()) { bottomPanel() }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .then(bottomPanelModifier),
+            contentAlignment = Alignment.Center,
+            content = bottomPanel,
+        )
     }
 }
-
-private val DIVIDER_THICKNESS = 2.dp

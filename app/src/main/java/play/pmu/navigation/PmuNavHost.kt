@@ -17,7 +17,6 @@ import play.pmu.ui.charades.CharadesScreen
 import play.pmu.ui.home.HomeScreen
 import play.pmu.ui.party.PartyResultScreen
 import play.pmu.ui.party.PartyRoundScreen
-import play.pmu.ui.party.PartyStartScreen
 import play.pmu.ui.party.PartyViewModel
 import play.pmu.ui.quiz.QuizCategoriesScreen
 import play.pmu.ui.quiz.QuizScreen
@@ -51,30 +50,9 @@ fun PmuNavHost(navController: NavHostController = rememberNavController()) {
         // Ugnjezdeni graf: PartyViewModel se vezuje za graf, pa jedna instanca
         // vodi celu partiju, a svaka runda je i dalje svoja destinacija sa
         // svojim ViewModel-om mini igre.
-        navigation<PartyGraph>(startDestination = PartyStartRoute) {
-
-            composable<PartyStartRoute> { entry ->
-                val viewModel = entry.partyViewModel(navController)
-                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-                PartyStartScreen(
-                    uiState = uiState,
-                    onBoardSizeChange = viewModel::setTicTacToeBoardSize,
-                    onMathOperationsChange = viewModel::setMathOperations,
-                    // Nastavlja se od runde koja je na redu. Za novu partiju to je
-                    // runda 0, a ako su se igraci vratili "nazad" iz partije,
-                    // nastavlja se tamo gde su stali - odigrana runda se nikada ne
-                    // otvara ponovo.
-                    onStart = {
-                        if (uiState.isFinished) {
-                            navController.navigate(PartyResultRoute)
-                        } else {
-                            navController.navigate(PartyRoundRoute(round = uiState.roundIndex))
-                        }
-                    },
-                    onNavigateBack = navController::popBackStack,
-                )
-            }
+        // Partija POCINJE ODMAH: prva destinacija je vec prva runda. Pravila se
+        // podesavaju u Podesavanjima, pa "Pokreni partiju" nema sta da pita.
+        navigation<PartyGraph>(startDestination = PartyRoundRoute(round = 0)) {
 
             composable<PartyRoundRoute> { entry ->
                 val round = entry.toRoute<PartyRoundRoute>().round

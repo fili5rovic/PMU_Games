@@ -19,3 +19,6 @@ object PmuSpacing {
  * mete namerno vece od Material minimuma (48 dp).
  */
 val GameTouchTargetSize = 72.dp
+
+/** Visina dugmadi na ekranima rezultata, da svuda budu iste. */
+val ActionButtonHeight = 56.dp

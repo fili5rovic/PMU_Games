@@ -105,7 +105,11 @@ fun CharadesScreen(
     if (!uiState.isRoundStarted) {
         GameIntro(
             titleRes = R.string.game_charades_title,
-            instructionRes = R.string.charades_landscape_hint,
+            instructionRes = if (uiState.showManualControls) {
+                R.string.charades_manual_hint
+            } else {
+                R.string.charades_tilt_hint
+            },
             onStart = viewModel::startRound,
             // Telefon drzi jedan igrac na celu, pa uputstvo nije podeljeno na dva dela.
             forBothPlayers = false,
@@ -185,18 +189,8 @@ private fun CharadesContent(
                     }
                 }
 
-                Text(
-                    text = stringResource(
-                        if (uiState.showManualControls) {
-                            R.string.charades_manual_hint
-                        } else {
-                            R.string.charades_tilt_hint
-                        }
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                )
+                // Uputstvo se NE ponavlja u toku runde - procitano je pre nje, a
+                // igrac u ovoj igri gleda samo pojam.
 
                 // Rezervne kontrole: bez njih se igra ne bi mogla demonstrirati na emulatoru.
                 if (uiState.showManualControls) {
@@ -251,6 +245,9 @@ private fun CharadesContent(
                             }
                         ),
                         style = MaterialTheme.typography.displayLarge,
+                        // Namerno bela: preko zelene/crvene potvrde pokreta, koje
+                        // su znacenje a ne stil. Obe su tamne, pa je citljivo u
+                        // obe teme.
                         color = Color.White,
                     )
                 }

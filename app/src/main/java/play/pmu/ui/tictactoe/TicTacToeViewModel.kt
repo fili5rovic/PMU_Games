@@ -12,6 +12,7 @@ import play.pmu.domain.model.BoardSizeOption
 import play.pmu.domain.model.Player
 import play.pmu.domain.model.Winner
 import javax.inject.Inject
+import kotlin.random.Random
 
 data class TicTacToeUiState(
     /** null dok runda ne dobije velicinu table i pocetnog igraca. */
@@ -35,7 +36,9 @@ data class TicTacToeUiState(
  * pravoj tabli posegli preko stola.
  */
 @HiltViewModel
-class TicTacToeViewModel @Inject constructor() : ViewModel() {
+class TicTacToeViewModel @Inject constructor(
+    private val random: Random,
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TicTacToeUiState())
     val uiState: StateFlow<TicTacToeUiState> = _uiState.asStateFlow()
@@ -54,7 +57,7 @@ class TicTacToeViewModel @Inject constructor() : ViewModel() {
     fun startRound(boardSizeOption: BoardSizeOption, startingPlayer: Player) {
         if (_uiState.value.board != null) return
         _uiState.value = TicTacToeUiState(
-            board = TicTacToeBoard(size = boardSizeOption.resolve()),
+            board = TicTacToeBoard(size = boardSizeOption.resolve(random)),
             currentPlayer = startingPlayer,
         )
     }

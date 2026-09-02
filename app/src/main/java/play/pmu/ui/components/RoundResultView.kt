@@ -9,11 +9,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import play.pmu.R
 import play.pmu.domain.model.RoundOutcome
 import play.pmu.domain.model.Winner
+import play.pmu.ui.PmuTestTags
 import play.pmu.ui.theme.PmuSpacing
 
 /**
@@ -22,6 +24,9 @@ import play.pmu.ui.theme.PmuSpacing
  * Koriste ga i partija i pojedinacna igra, pa nijedna mini igra ne mora sama da
  * crta svoj rezultat - igra samo prijavi [RoundOutcome] i tu joj se posao
  * zavrsava.
+ *
+ * Pozadina je [WinnerReveal]: boja pobednika prelazi preko ekrana sa njegove
+ * strane, pa je pobednik jasan i pre citanja teksta.
  *
  * [panelExtras] je ono sto pozivalac dodaje ispod ishoda (trenutni rezultat
  * partije ili dugmad). Prikazuje se na obe polovine, pa dugme moze da pritisne
@@ -46,7 +51,7 @@ fun RoundResultView(
                     stringResource(R.string.round_winner, winnerName(outcome.winner))
                 },
                 style = MaterialTheme.typography.headlineSmall,
-                color = winnerColor(outcome.winner),
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
             )
 
@@ -60,7 +65,7 @@ fun RoundResultView(
                     } else {
                         stringResource(detailRes)
                     },
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                 )
@@ -70,9 +75,13 @@ fun RoundResultView(
         }
     }
 
-    TwoPlayerLayout(
-        topContent = { panel() },
-        bottomContent = { panel() },
-        modifier = modifier,
-    )
+    WinnerReveal(
+        winner = outcome.winner,
+        modifier = modifier.testTag(PmuTestTags.ROUND_RESULT),
+    ) {
+        TwoPlayerLayout(
+            topContent = { panel() },
+            bottomContent = { panel() },
+        )
+    }
 }

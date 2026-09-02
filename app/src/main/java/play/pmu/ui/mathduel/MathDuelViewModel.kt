@@ -12,6 +12,7 @@ import play.pmu.domain.game.randomMathQuestion
 import play.pmu.domain.model.MathOperation
 import play.pmu.domain.model.Player
 import javax.inject.Inject
+import kotlin.random.Random
 
 data class MathDuelUiState(
     /** null dok runda ne dobije podesavanja (vidi [MathDuelViewModel.startRound]). */
@@ -31,14 +32,18 @@ data class MathDuelUiState(
  * Pravila duela su u [AnswerDuel], zajednicka sa igrom binarno-u-decimalno.
  */
 @HiltViewModel
-class MathDuelViewModel @Inject constructor() : ViewModel() {
+class MathDuelViewModel @Inject constructor(
+    private val random: Random,
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MathDuelUiState())
     val uiState: StateFlow<MathDuelUiState> = _uiState.asStateFlow()
 
     fun startRound(operations: Set<MathOperation>) {
         if (_uiState.value.question != null) return
-        _uiState.update { it.copy(question = randomMathQuestion(operations = operations)) }
+        _uiState.update {
+            it.copy(question = randomMathQuestion(operations = operations, random = random))
+        }
     }
 
     /** [answerIndex] je mesto tapnutog odgovora u [MathQuestion.answers]. */

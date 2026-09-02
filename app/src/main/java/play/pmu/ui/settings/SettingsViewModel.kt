@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import play.pmu.data.repository.AppSettings
 import play.pmu.data.repository.SettingsRepository
+import play.pmu.domain.model.BoardSizeOption
+import play.pmu.domain.model.MathOperation
 import play.pmu.domain.model.ThemeMode
 import javax.inject.Inject
 
@@ -37,6 +39,14 @@ class SettingsViewModel @Inject constructor(
 
     fun setPartyRounds(rounds: Int) = viewModelScope.launch {
         settingsRepository.setPartyRounds(rounds)
+    }
+
+    fun setTicTacToeBoardSize(option: BoardSizeOption) = viewModelScope.launch {
+        settingsRepository.setTicTacToeBoardSize(option)
+    }
+
+    fun setMathOperations(operations: Set<MathOperation>) = viewModelScope.launch {
+        settingsRepository.setMathOperations(operations)
     }
 
     fun setRoundDuration(seconds: Int) = viewModelScope.launch {

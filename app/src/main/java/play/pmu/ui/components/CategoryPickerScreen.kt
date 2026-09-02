@@ -13,7 +13,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import play.pmu.ui.PmuTestTags
 
 /**
  * Izbor kategorije, zajednicki za pantomimu i kviz.
@@ -52,7 +54,9 @@ fun CategoryPickerScreen(
             itemsIndexed(labels) { index, label ->
                 Card(
                     onClick = { onSelect(index) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(PmuTestTags.category(index)),
                 ) {
                     Text(
                         text = label,

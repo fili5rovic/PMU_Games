@@ -1,6 +1,5 @@
 package play.pmu.ui.stoptimer
 
-import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +11,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import play.pmu.domain.game.StopTheTimerResult
 import play.pmu.domain.model.Player
+import play.pmu.domain.util.GameClock
 import javax.inject.Inject
+import kotlin.random.Random
 
 /** Faze runde. Cilj se vidi samo u prvoj, a brojac se ne vidi nikada. */
 enum class StopTheTimerPhase { SHOWING_TARGET, RUNNING, FINISHED }
@@ -48,10 +49,13 @@ data class StopTheTimerUiState(
  * runde ne moze da pokvari merenje.
  */
 @HiltViewModel
-class StopTheTimerViewModel @Inject constructor() : ViewModel() {
+class StopTheTimerViewModel @Inject constructor(
+    random: Random,
+    private val clock: GameClock,
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
-        StopTheTimerUiState(targetMillis = StopTheTimerResult.randomTargetMillis())
+        StopTheTimerUiState(targetMillis = StopTheTimerResult.randomTargetMillis(random))
     )
     val uiState: StateFlow<StopTheTimerUiState> = _uiState.asStateFlow()
 
@@ -61,7 +65,7 @@ class StopTheTimerViewModel @Inject constructor() : ViewModel() {
     init {
         viewModelScope.launch {
             delay(TARGET_PREVIEW_MILLIS)
-            startedAtMillis = SystemClock.elapsedRealtime()
+            startedAtMillis = clock.elapsedRealtimeMillis()
             _uiState.update { it.copy(phase = StopTheTimerPhase.RUNNING) }
 
             // Sigurnosna granica: ako neko uopste ne pritisne STOP, runda se
@@ -89,7 +93,7 @@ class StopTheTimerViewModel @Inject constructor() : ViewModel() {
         if (updated.stoppedOneMillis != null && updated.stoppedTwoMillis != null) finishRound()
     }
 
-    private fun elapsedMillis(): Int = (SystemClock.elapsedRealtime() - startedAtMillis).toInt()
+    private fun elapsedMillis(): Int = (clock.elapsedRealtimeMillis() - startedAtMillis).toInt()
 
     /**
      * Sklapa ishod runde. Igracu koji nije pritisnuo STOP racuna se vreme u

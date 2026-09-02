@@ -22,7 +22,8 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // Sopstveni runner pravi HiltTestApplication, bez koje @HiltAndroidTest ne radi.
+        testInstrumentationRunner = "play.pmu.HiltTestRunner"
     }
 
     buildTypes {
@@ -97,6 +98,12 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    // Hilt u testu: baza u memoriji, podesavanja u privremenom fajlu, zadati
+    // Random i sat pod kontrolom testa (vidi androidTest/di/TestModules.kt).
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.compiler)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }

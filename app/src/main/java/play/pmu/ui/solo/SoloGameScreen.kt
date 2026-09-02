@@ -1,10 +1,5 @@
 package play.pmu.ui.solo
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
@@ -13,9 +8,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import play.pmu.R
 import play.pmu.domain.model.Winner
 import play.pmu.ui.components.PartyScore
+import play.pmu.ui.components.ResultActions
 import play.pmu.ui.components.RoundResultView
 import play.pmu.ui.party.MiniGameRound
-import play.pmu.ui.theme.PmuSpacing
 
 /**
  * Jedna mini igra van partije.
@@ -63,13 +58,11 @@ fun SoloGameScreen(
         PartyScore(scoreOne = newWinsOne, scoreTwo = newWinsTwo)
         // Dugmad su na obe polovine ekrana, pa novu rundu moze da pokrene bilo
         // koji od dva igraca.
-        Row(horizontalArrangement = Arrangement.spacedBy(PmuSpacing.small)) {
-            OutlinedButton(onClick = onNavigateBack) {
-                Text(stringResource(R.string.result_home))
-            }
-            Button(onClick = { onPlayAgain(newWinsOne, newWinsTwo) }) {
-                Text(stringResource(R.string.solo_play_again))
-            }
-        }
+        ResultActions(
+            primaryLabel = stringResource(R.string.solo_play_again),
+            onPrimary = { onPlayAgain(newWinsOne, newWinsTwo) },
+            homeLabel = stringResource(R.string.result_home),
+            onHome = onNavigateBack,
+        )
     }
 }

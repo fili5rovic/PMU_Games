@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -20,6 +21,7 @@ import kotlinx.coroutines.delay
 import play.pmu.R
 import play.pmu.domain.model.Player
 import play.pmu.domain.model.RoundOutcome
+import play.pmu.ui.PmuTestTags
 import play.pmu.ui.components.TwoPlayerLayout
 import play.pmu.ui.theme.CorrectGreen
 import play.pmu.ui.theme.GoGreen
@@ -91,6 +93,7 @@ private fun reactionHalfModifier(
     return Modifier
         .fillMaxSize()
         .background(background)
+        .testTag(PmuTestTags.reactionHalf(player.name))
         .clickable { onTap(player) }
 }
 
@@ -110,6 +113,9 @@ private fun ReactionHalf(player: Player, phase: ReactionPhase) {
         } else {
             MaterialTheme.typography.headlineSmall
         },
+        // Namerno bela, a ne boja iz teme: podloga je crvena ili zelena (pravilo
+        // igre, ne stil), i obe su dovoljno tamne da beli tekst na njima ostane
+        // citljiv i u svetloj i u tamnoj temi.
         color = Color.White,
         textAlign = TextAlign.Center,
     )

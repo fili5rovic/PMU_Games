@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import play.pmu.domain.model.Player
 import play.pmu.domain.model.Winner
 import javax.inject.Inject
+import kotlin.random.Random
 
 /**
  * Jedna kartica. Immutable je, pa se "otvaranje" radi pravljenjem kopije
@@ -51,7 +52,9 @@ data class MemoryUiState(
  * igracu koji je trenutno na redu.
  */
 @HiltViewModel
-class MemoryViewModel @Inject constructor() : ViewModel() {
+class MemoryViewModel @Inject constructor(
+    private val random: Random,
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MemoryUiState())
     val uiState: StateFlow<MemoryUiState> = _uiState.asStateFlow()
@@ -65,7 +68,7 @@ class MemoryViewModel @Inject constructor() : ViewModel() {
     init {
         val cards = SYMBOLS
             .flatMap { symbol -> listOf(symbol, symbol) } // svaki simbol dva puta
-            .shuffled()
+            .shuffled(random)
             .mapIndexed { index, symbol -> MemoryCard(id = index, symbol = symbol) }
         _uiState.value = MemoryUiState(cards = cards)
     }

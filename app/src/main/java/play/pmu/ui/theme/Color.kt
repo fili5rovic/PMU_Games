@@ -11,8 +11,11 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 /**
- * Boje za povratnu informaciju u igrama (pogodak / promasaj). Nisu deo Material
- * color scheme-a jer njihovo znacenje ne zavisi od teme - zeleno je uvek "tacno".
+ * Boje za povratnu informaciju u igrama (pogodak / promasaj, cekaj / kreni).
+ *
+ * NISU deo Material color scheme-a jer njihovo znacenje ne zavisi od teme -
+ * zeleno je uvek "tacno". Sve su namerno tamne, pa beli tekst preko njih ostaje
+ * citljiv i u svetloj i u tamnoj temi.
  */
 val CorrectGreen = Color(0xFF2E7D32)
 val CorrectGreenLight = Color(0xFF66BB6A)
@@ -22,15 +25,16 @@ val WaitingRed = Color(0xFFB71C1C)
 val GoGreen = Color(0xFF1B5E20)
 
 /**
- * Boje igraca. Iz istog razloga kao i boje povratne informacije stoje van
- * color scheme-a: igrac 1 je uvek plav, a igrac 2 uvek narandzast, i u svetloj i
- * u tamnoj temi. Da su uzete iz teme (ili iz dinamickih boja telefona), dva
- * igraca bi mogla da dobiju slicne boje i izgube se na podeljenom ekranu.
+ * Boje identiteta igraca: igrac 1 je uvek plav, igrac 2 uvek narandzast.
  *
- * `Container` varijante su podloge polovina ekrana, a osnovne boje su akcenti
- * (okvir, tekst, dugmad).
+ * Stoje van color scheme-a iz istog razloga kao boje povratne informacije - da
+ * dva igraca ne bi slucajno dobila slicne boje (npr. iz dinamickih boja
+ * telefona) i izgubila se na podeljenom ekranu.
+ *
+ * Svaka ima svetlu i tamnu varijantu: tamna tema trazi svetliji ton da bi tekst
+ * u boji igraca ostao citljiv. Koja se koristi bira `Player.accentColor`.
  */
 val PlayerOneColor = Color(0xFF1565C0)
-val PlayerOneContainer = Color(0xFF0D47A1)
-val PlayerTwoColor = Color(0xFFEF6C00)
-val PlayerTwoContainer = Color(0xFFBF360C)
+val PlayerOneColorDark = Color(0xFF82B9F5)
+val PlayerTwoColor = Color(0xFFE65100)
+val PlayerTwoColorDark = Color(0xFFFFB067)

@@ -15,12 +15,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import play.pmu.R
 import play.pmu.domain.model.GameType
 import play.pmu.domain.model.MiniGame
+import play.pmu.ui.PmuTestTags
 import play.pmu.ui.components.GameCard
 import play.pmu.ui.components.PmuTopAppBar
 import play.pmu.ui.theme.PmuSpacing
@@ -45,13 +47,19 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             PmuTopAppBar(title = stringResource(R.string.app_name)) {
-                IconButton(onClick = onStatisticsClick) {
+                IconButton(
+                    onClick = onStatisticsClick,
+                    modifier = Modifier.testTag(PmuTestTags.STATISTICS),
+                ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_statistics),
                         contentDescription = stringResource(R.string.action_statistics),
                     )
                 }
-                IconButton(onClick = onSettingsClick) {
+                IconButton(
+                    onClick = onSettingsClick,
+                    modifier = Modifier.testTag(PmuTestTags.SETTINGS),
+                ) {
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = stringResource(R.string.action_settings),
@@ -61,7 +69,7 @@ fun HomeScreen(
         },
     ) { padding ->
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().testTag(PmuTestTags.HOME_LIST),
             contentPadding = PaddingValues(
                 start = PmuSpacing.medium,
                 end = PmuSpacing.medium,
@@ -84,6 +92,7 @@ fun HomeScreen(
                     iconRes = R.drawable.ic_party,
                     onClick = onPartyClick,
                     isPrimary = true,
+                    modifier = Modifier.testTag(PmuTestTags.START_PARTY),
                 )
             }
 
@@ -94,6 +103,7 @@ fun HomeScreen(
                     description = stringResource(miniGame.instructionRes),
                     iconRes = miniGame.iconRes,
                     onClick = { onMiniGameClick(miniGame) },
+                    modifier = Modifier.testTag(PmuTestTags.miniGame(miniGame.name)),
                 )
             }
 
@@ -104,6 +114,7 @@ fun HomeScreen(
                     description = stringResource(gameType.descriptionRes),
                     iconRes = gameType.iconRes,
                     onClick = { onGameClick(gameType) },
+                    modifier = Modifier.testTag(PmuTestTags.gameType(gameType.name)),
                 )
             }
         }

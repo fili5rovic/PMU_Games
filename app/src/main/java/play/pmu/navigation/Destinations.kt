@@ -27,9 +27,6 @@ object HomeRoute
 @Serializable
 object PartyGraph
 
-@Serializable
-object PartyStartRoute
-
 /**
  * Jedna runda partije. Svaka runda je SVOJA destinacija, pa dobija svoj
  * ViewModelStore: ViewModel mini igre se napravi na pocetku runde i ocisti kada
