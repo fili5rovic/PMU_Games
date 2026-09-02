@@ -34,11 +34,10 @@ class GameResultsRepository @Inject constructor(
     fun observePlayCount(gameType: GameType): Flow<Int> = dao.observePlayCount(gameType)
 
     /**
-     * "Najbolji" rezultat zavisi od igre: kod brzine reakcije i memorije trazimo
-     * najmanji broj, a kod pantomime i kviza najveci.
+     * Rekord je najveci skor: i u pantomimi (pogodjeni pojmovi) i u kvizu
+     * (tacni odgovori) veci broj je bolji.
      */
-    fun observeBestScore(gameType: GameType): Flow<Int?> =
-        if (gameType.lowerIsBetter) dao.observeMinScore(gameType) else dao.observeMaxScore(gameType)
+    fun observeBestScore(gameType: GameType): Flow<Int?> = dao.observeMaxScore(gameType)
 
     suspend fun clearHistory() = dao.deleteAll()
 

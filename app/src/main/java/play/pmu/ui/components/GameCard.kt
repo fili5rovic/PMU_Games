@@ -1,5 +1,6 @@
 package play.pmu.ui.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,50 +21,84 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import play.pmu.R
-import play.pmu.domain.model.GameType
+import play.pmu.ui.theme.PmuSpacing
 
 /**
  * Kartica jedne igre na pocetnom ekranu.
  *
- * Komponenta je "stateless": ne zna nista o navigaciji, samo prijavljuje klik
- * kroz [onClick] (state hoisting). Zato se moze koristiti bilo gde.
+ * Komponenta je "stateless": ne zna nista o navigaciji ni o tome koja je igra u
+ * pitanju - dobija gotov tekst i ikonicu, a klik prijavljuje kroz [onClick]
+ * (state hoisting). Zato je ista kartica dobra i za mini igre ([MiniGame]) i za
+ * pantomimu/kviz ([GameType]).
+ *
+ * [isPrimary] izdvaja glavnu akciju aplikacije (pokretanje partije) jacom bojom
+ * i vecim naslovom, bez pisanja druge komponente.
  */
 @Composable
 fun GameCard(
-    gameType: GameType,
+    title: String,
+    description: String,
+    @DrawableRes iconRes: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isPrimary: Boolean = false,
 ) {
     Card(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isPrimary) 6.dp else 2.dp),
+        colors = if (isPrimary) {
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+        } else {
+            CardDefaults.cardColors()
+        },
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(PmuSpacing.medium),
+            horizontalArrangement = Arrangement.spacedBy(PmuSpacing.medium),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Surface(
                 shape = CircleShape,
-                color = MaterialTheme.colorScheme.primaryContainer,
+                color = if (isPrimary) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.primaryContainer
+                },
             ) {
                 Icon(
-                    painter = painterResource(gameType.iconRes),
+                    painter = painterResource(iconRes),
                     contentDescription = stringResource(R.string.cd_game_icon),
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.padding(12.dp).size(28.dp),
+                    tint = if (isPrimary) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                    },
+                    modifier = Modifier
+                        .padding(if (isPrimary) PmuSpacing.medium else 12.dp)
+                        .size(if (isPrimary) 32.dp else 28.dp),
                 )
             }
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    text = stringResource(gameType.titleRes),
-                    style = MaterialTheme.typography.titleMedium,
+                    text = title,
+                    style = if (isPrimary) {
+                        MaterialTheme.typography.headlineSmall
+                    } else {
+                        MaterialTheme.typography.titleMedium
+                    },
                 )
                 Text(
-                    text = stringResource(gameType.descriptionRes),
+                    text = description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = if (isPrimary) {
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
                 )
             }
         }

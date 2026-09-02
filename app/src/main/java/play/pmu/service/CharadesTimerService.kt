@@ -61,6 +61,14 @@ class CharadesTimerService : Service() {
             return START_NOT_STICKY
         }
 
+        // Runda koja vec tece se NE restartuje. Bez ove provere bi ponovni
+        // start (npr. posle promene konfiguracije, kada se ekran ponovo
+        // sastavi) vratio odbrojavanje na pocetak.
+        if (countdownJob?.isActive == true) {
+            startForegroundWithNotification(roundTimer.secondsLeft.value)
+            return START_NOT_STICKY
+        }
+
         startForegroundWithNotification(durationSeconds)
         startCountdown(durationSeconds)
         return START_NOT_STICKY

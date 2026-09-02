@@ -16,10 +16,16 @@ import javax.inject.Singleton
 data class AppSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val dynamicColor: Boolean = true,
+    val partyRounds: Int = DEFAULT_PARTY_ROUNDS,
     val roundDurationSeconds: Int = 60,
     val questionCount: Int = 10,
     val manualCharadesControls: Boolean = false,
-)
+) {
+    companion object {
+        /** Sedam rundi je dovoljno da se svih pet mini igara pojavi, a partija ne oduzi. */
+        const val DEFAULT_PARTY_ROUNDS = 7
+    }
+}
 
 /**
  * Podesavanja se cuvaju u DataStore Preferences - lagana perzistencija za
@@ -38,6 +44,7 @@ class SettingsRepository @Inject constructor(
             themeMode = ThemeMode.entries.find { it.name == prefs[KeyThemeMode] }
                 ?: ThemeMode.SYSTEM,
             dynamicColor = prefs[KeyDynamicColor] ?: true,
+            partyRounds = prefs[KeyPartyRounds] ?: AppSettings.DEFAULT_PARTY_ROUNDS,
             roundDurationSeconds = prefs[KeyRoundDuration] ?: 60,
             questionCount = prefs[KeyQuestionCount] ?: 10,
             manualCharadesControls = prefs[KeyManualControls] ?: false,
@@ -47,6 +54,8 @@ class SettingsRepository @Inject constructor(
     suspend fun setThemeMode(mode: ThemeMode) = edit { it[KeyThemeMode] = mode.name }
 
     suspend fun setDynamicColor(enabled: Boolean) = edit { it[KeyDynamicColor] = enabled }
+
+    suspend fun setPartyRounds(rounds: Int) = edit { it[KeyPartyRounds] = rounds }
 
     suspend fun setRoundDuration(seconds: Int) = edit { it[KeyRoundDuration] = seconds }
 
@@ -62,6 +71,7 @@ class SettingsRepository @Inject constructor(
     private companion object {
         val KeyThemeMode = stringPreferencesKey("theme_mode")
         val KeyDynamicColor = booleanPreferencesKey("dynamic_color")
+        val KeyPartyRounds = intPreferencesKey("party_rounds")
         val KeyRoundDuration = intPreferencesKey("round_duration")
         val KeyQuestionCount = intPreferencesKey("question_count")
         val KeyManualControls = booleanPreferencesKey("manual_controls")

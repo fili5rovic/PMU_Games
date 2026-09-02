@@ -10,32 +10,29 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import play.pmu.data.repository.GameResultsRepository
-import play.pmu.domain.model.GameType
-import play.pmu.fake.FakeGameResultDao
+import play.pmu.domain.model.Player
+import play.pmu.domain.model.Winner
 
 /**
- * Testovi logike igre Memorija.
+ * Testovi logike duela memorije.
  *
- * viewModelScope radi na Dispatchers.Main, koji u unit testu ne postoji - zato
- * se preko Dispatchers.setMain podmece test dispatcher. `advanceUntilIdle`
- * zatim preskace `delay` pozive, pa test ne mora stvarno da ceka.
+ * `advanceUntilIdle` preskace `delay` posle otvaranja dve kartice, pa test ne
+ * mora stvarno da ceka da se kartice zatvore.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class MemoryViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
-    private lateinit var dao: FakeGameResultDao
     private lateinit var viewModel: MemoryViewModel
 
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher)
-        dao = FakeGameResultDao()
-        viewModel = MemoryViewModel(GameResultsRepository(dao))
+        viewModel = MemoryViewModel()
     }
 
     @After
@@ -44,16 +41,17 @@ class MemoryViewModelTest {
     }
 
     @Test
-    fun `nova igra deli sesnaest karata u osam parova`() {
-        val cards = viewModel.uiState.value.cards
-        assertEquals(16, cards.size)
-        assertEquals(8, viewModel.uiState.value.totalPairs)
+    fun `nova igra deli dvanaest karata u sest parova`() {
+        val state = viewModel.uiState.value
+        assertEquals(12, state.cards.size)
+        assertEquals(6, state.totalPairs)
         // Svaki simbol se pojavljuje tacno dva puta.
-        assertTrue(cards.groupBy { it.symbol }.values.all { it.size == 2 })
+        assertTrue(state.cards.groupBy { it.symbol }.values.all { it.size == 2 })
+        assertEquals(Player.ONE, state.currentPlayer)
     }
 
     @Test
-    fun `dve iste karte ostaju otvorene i broje se kao par`() = runTest(dispatcher) {
+    fun `par donosi poen igracu na potezu i pravo na novi potez`() = runTest(dispatcher) {
         val (first, second) = viewModel.uiState.value.firstMatchingPair()
 
         viewModel.onCardClick(first)
@@ -61,14 +59,16 @@ class MemoryViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
-        assertEquals(1, state.matchedPairs)
-        assertEquals(1, state.moves)
+        assertEquals(1, state.scoreOne)
+        assertEquals(0, state.scoreTwo)
+        // Par znaci da igrac ostaje na potezu.
+        assertEquals(Player.ONE, state.currentPlayer)
         assertTrue(state.cards.single { it.id == first }.isMatched)
         assertTrue(state.cards.single { it.id == second }.isMatched)
     }
 
     @Test
-    fun `dve razlicite karte se zatvaraju i ne broje se kao par`() = runTest(dispatcher) {
+    fun `promasaj zatvara kartice i predaje potez protivniku`() = runTest(dispatcher) {
         val (first, second) = viewModel.uiState.value.firstMismatchingPair()
 
         viewModel.onCardClick(first)
@@ -76,10 +76,29 @@ class MemoryViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
-        assertEquals(0, state.matchedPairs)
-        assertEquals(1, state.moves)
+        assertEquals(0, state.scoreOne)
+        assertEquals(0, state.scoreTwo)
+        assertEquals(Player.TWO, state.currentPlayer)
         assertFalse(state.cards.single { it.id == first }.isRevealed)
         assertFalse(state.cards.single { it.id == second }.isRevealed)
+    }
+
+    @Test
+    fun `poen se upisuje igracu koji je bio na potezu`() = runTest(dispatcher) {
+        // Prvi igrac promasi, pa potez preuzima drugi.
+        val (missOne, missTwo) = viewModel.uiState.value.firstMismatchingPair()
+        viewModel.onCardClick(missOne)
+        viewModel.onCardClick(missTwo)
+        advanceUntilIdle()
+
+        val (first, second) = viewModel.uiState.value.firstMatchingPair()
+        viewModel.onCardClick(first)
+        viewModel.onCardClick(second)
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertEquals(0, state.scoreOne)
+        assertEquals(1, state.scoreTwo)
     }
 
     @Test
@@ -91,13 +110,30 @@ class MemoryViewModelTest {
         advanceUntilIdle()
 
         // Drugi klik ne sme da se protumaci kao otvaranje druge karte.
-        assertEquals(0, viewModel.uiState.value.moves)
         assertEquals(1, viewModel.uiState.value.cards.count { it.isRevealed })
+        assertNull(viewModel.uiState.value.winner)
     }
 
     @Test
-    fun `kada se nadju svi parovi partija se upisuje u bazu`() = runTest(dispatcher) {
-        repeat(8) {
+    fun `treca kartica se ne otvara dok se par proverava`() = runTest(dispatcher) {
+        val (first, second) = viewModel.uiState.value.firstMismatchingPair()
+        viewModel.onCardClick(first)
+        viewModel.onCardClick(second)
+
+        // Jos se ceka zatvaranje: klik na trecu karticu se odbija.
+        val third = viewModel.uiState.value.cards
+            .first { it.id != first && it.id != second }
+            .id
+        viewModel.onCardClick(third)
+
+        assertFalse(viewModel.uiState.value.cards.single { it.id == third }.isRevealed)
+        advanceUntilIdle()
+    }
+
+    @Test
+    fun `kada se nadju svi parovi pobedjuje igrac sa vise parova`() = runTest(dispatcher) {
+        // Prvi igrac nalazi sve parove, jer par donosi pravo na novi potez.
+        repeat(6) {
             val (first, second) = viewModel.uiState.value.firstMatchingPair()
             viewModel.onCardClick(first)
             viewModel.onCardClick(second)
@@ -105,16 +141,28 @@ class MemoryViewModelTest {
         }
 
         val state = viewModel.uiState.value
-        assertTrue(state.isFinished)
-        assertEquals(1, dao.saved.size)
-        val saved = dao.saved.single()
-        assertEquals(GameType.MEMORY, saved.gameType)
-        assertEquals(8, saved.total)
-        assertEquals(8, saved.score) // osam poteza, bez ijedne greske
-        assertEquals(state.finishedResultId, saved.id)
+        assertEquals(6, state.foundPairs)
+        assertEquals(6, state.scoreOne)
+        assertEquals(Winner.PLAYER_ONE, state.winner)
     }
 
-    /** Prvi par jos neotvorenih karata sa istim simbolom. */
+    @Test
+    fun `posle zavrsene igre klikovi se ignorisu`() = runTest(dispatcher) {
+        repeat(6) {
+            val (first, second) = viewModel.uiState.value.firstMatchingPair()
+            viewModel.onCardClick(first)
+            viewModel.onCardClick(second)
+            advanceUntilIdle()
+        }
+
+        val before = viewModel.uiState.value
+        viewModel.onCardClick(before.cards.first().id)
+        advanceUntilIdle()
+
+        assertEquals(before, viewModel.uiState.value)
+    }
+
+    /** Prvi par jos neuparenih karata sa istim simbolom. */
     private fun MemoryUiState.firstMatchingPair(): Pair<Int, Int> {
         val pair = cards.filterNot { it.isMatched }
             .groupBy { it.symbol }
@@ -123,7 +171,7 @@ class MemoryViewModelTest {
         return pair[0].id to pair[1].id
     }
 
-    /** Dve neotvorene karte sa razlicitim simbolima. */
+    /** Dve neuparene karte sa razlicitim simbolima. */
     private fun MemoryUiState.firstMismatchingPair(): Pair<Int, Int> {
         val first = cards.first { !it.isMatched }
         val second = cards.first { !it.isMatched && it.symbol != first.symbol }

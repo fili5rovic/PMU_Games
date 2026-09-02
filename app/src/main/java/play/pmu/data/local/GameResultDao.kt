@@ -29,13 +29,9 @@ interface GameResultDao {
     @Query("SELECT COUNT(*) FROM game_results WHERE gameType = :gameType")
     fun observePlayCount(gameType: GameType): Flow<Int>
 
-    /** Najbolji rezultat kad je veci broj bolji (pantomima, kviz). */
+    /** Rekord igre - u pantomimi i kvizu je to najveci skor. */
     @Query("SELECT MAX(score) FROM game_results WHERE gameType = :gameType")
     fun observeMaxScore(gameType: GameType): Flow<Int?>
-
-    /** Najbolji rezultat kad je manji broj bolji (brzina reakcije, memorija). */
-    @Query("SELECT MIN(score) FROM game_results WHERE gameType = :gameType")
-    fun observeMinScore(gameType: GameType): Flow<Int?>
 
     @Query("DELETE FROM game_results")
     suspend fun deleteAll()

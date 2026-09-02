@@ -11,118 +11,111 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import play.pmu.data.local.GameResultEntity
-import play.pmu.data.repository.GameResultsRepository
-import play.pmu.domain.model.GameType
+import play.pmu.domain.model.Player
 import javax.inject.Inject
 import kotlin.random.Random
 
 /**
- * Faze jedne runde. Sealed interface je ovde bolji od bool-ova jer su faze
- * medjusobno isključive - kompajler u `when` proverava da nijedna nije zaboravljena.
+ * Faze jedne runde duela refleksa. Sealed interface je bolji od nekoliko
+ * boolean polja jer su faze medjusobno isklucive - kompajler u `when` proverava
+ * da nijedna nije zaboravljena.
  */
 sealed interface ReactionPhase {
-    /** Pocetno stanje i stanje izmedju rundi: ceka se tap. */
-    data object Idle : ReactionPhase
 
-    /** Ekran je crven, ceka se slucajno vreme do zelenog. */
+    /** Oba dela ekrana su crvena, ceka se slucajno vreme do zelenog. */
     data object Waiting : ReactionPhase
 
-    /** Ekran je zelen - meri se vreme do tapa. */
+    /** Ekran je zelen - prvi tap pobedjuje. */
     data object Ready : ReactionPhase
 
-    /** Tapnuto pre zelenog, runda se ponavlja. */
-    data object TooSoon : ReactionPhase
-
-    /** Svih pet rundi je odigrano, partija je upisana u bazu. */
-    data class Finished(val resultId: Long) : ReactionPhase
+    /**
+     * Runda je odigrana. [isFalseStart] znaci da je protivnik tapnuo pre
+     * zelenog, pa je [winner] dobio rundu bez tapkanja; tada je [timeMs] null.
+     */
+    data class Done(
+        val winner: Player,
+        val isFalseStart: Boolean,
+        val timeMs: Int?,
+    ) : ReactionPhase
 }
 
 data class ReactionUiState(
-    val phase: ReactionPhase = ReactionPhase.Idle,
-    val completedRounds: Int = 0,
-    val lastTimeMs: Int? = null,
-    val times: List<Int> = emptyList(),
-) {
-    val totalRounds: Int get() = TOTAL_ROUNDS
+    val phase: ReactionPhase = ReactionPhase.Waiting,
+)
 
-    companion object {
-        const val TOTAL_ROUNDS = 5
-    }
-}
-
+/**
+ * Duel refleksa za dva igraca na podeljenom ekranu.
+ *
+ * Cekanje do zelenog je `delay` u [viewModelScope], a ne blokiranje niti: UI za
+ * to vreme normalno reaguje, a kada se ekran zatvori scope se otkazuje i
+ * coroutine prestaje sama.
+ */
 @HiltViewModel
-class ReactionViewModel @Inject constructor(
-    private val resultsRepository: GameResultsRepository,
-) : ViewModel() {
+class ReactionViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReactionUiState())
     val uiState: StateFlow<ReactionUiState> = _uiState.asStateFlow()
 
-    /** Coroutine koja ceka do zelenog; cuvamo je da bi mogla da se prekine na rani tap. */
+    /** Coroutine koja ceka do zelenog; pamti se da bi mogla da se prekine na rani tap. */
     private var waitJob: Job? = null
 
     /** Trenutak kada je ekran postao zelen, po monotonom satu. */
     private var greenAtMillis = 0L
 
-    /** Jedini ulaz iz UI-a: sve zavisi od trenutne faze. */
-    fun onTap() {
-        when (_uiState.value.phase) {
-            ReactionPhase.Idle, ReactionPhase.TooSoon -> startWaiting()
-            ReactionPhase.Waiting -> registerTooSoon()
-            ReactionPhase.Ready -> registerReaction()
-            is ReactionPhase.Finished -> Unit // ekran rezultata preuzima dalje
-        }
+    init {
+        startWaiting()
     }
 
     private fun startWaiting() {
-        _uiState.update { it.copy(phase = ReactionPhase.Waiting) }
         waitJob?.cancel()
         waitJob = viewModelScope.launch {
             delay(Random.nextLong(MIN_WAIT_MILLIS, MAX_WAIT_MILLIS))
-            // SystemClock.elapsedRealtime je monoton, pa promena sistemskog vremena ne kvari merenje
+            // SystemClock.elapsedRealtime je monoton, pa promena sistemskog
+            // vremena ne moze da pokvari merenje.
             greenAtMillis = SystemClock.elapsedRealtime()
             _uiState.update { it.copy(phase = ReactionPhase.Ready) }
         }
     }
 
-    private fun registerTooSoon() {
-        waitJob?.cancel()
-        _uiState.update { it.copy(phase = ReactionPhase.TooSoon) }
-    }
-
-    private fun registerReaction() {
-        val elapsed = (SystemClock.elapsedRealtime() - greenAtMillis).toInt()
-        val times = _uiState.value.times + elapsed
-        _uiState.update {
-            it.copy(
-                phase = ReactionPhase.Idle,
-                completedRounds = times.size,
-                lastTimeMs = elapsed,
-                times = times,
+    /**
+     * Jedini ulaz iz UI-a. Sta ce se desiti zavisi isklucivo od trenutne faze:
+     * tap pre zelenog je pogresan start i rundu dobija protivnik, a tap na
+     * zelenom pobedjuje.
+     *
+     * ZASTO NE MOZE DA SE UPISU DVA POBEDNIKA: Compose poziva `onClick` na glavnoj
+     * niti, pa se dva "istovremena" tapa i dalje izvrsavaju jedan za drugim.
+     * Prvi postavlja fazu na [ReactionPhase.Done], a drugi tada ulazi u granu
+     * koja ne radi nista. Nema, dakle, prozora u kome bi oba tapa videla
+     * [ReactionPhase.Ready].
+     */
+    fun onTap(player: Player) {
+        when (val phase = _uiState.value.phase) {
+            ReactionPhase.Waiting -> finish(
+                winner = player.opponent,
+                isFalseStart = true,
+                timeMs = null,
             )
+
+            ReactionPhase.Ready -> finish(
+                winner = player,
+                isFalseStart = false,
+                timeMs = (SystemClock.elapsedRealtime() - greenAtMillis).toInt(),
+            )
+
+            // Runda je vec resena - drugi tap se ignorise.
+            is ReactionPhase.Done -> Unit
         }
-        if (times.size >= ReactionUiState.TOTAL_ROUNDS) saveResult(times)
     }
 
-    private fun saveResult(times: List<Int>) {
-        viewModelScope.launch {
-            val average = times.average().toInt()
-            val id = resultsRepository.save(
-                GameResultEntity(
-                    gameType = GameType.REACTION,
-                    score = average,
-                    total = times.size,
-                    durationSeconds = 0,
-                    playedAt = System.currentTimeMillis(),
-                )
-            )
-            _uiState.update { it.copy(phase = ReactionPhase.Finished(id)) }
+    private fun finish(winner: Player, isFalseStart: Boolean, timeMs: Int?) {
+        waitJob?.cancel()
+        _uiState.update {
+            it.copy(phase = ReactionPhase.Done(winner, isFalseStart, timeMs))
         }
     }
 
     private companion object {
-        const val MIN_WAIT_MILLIS = 1_000L
-        const val MAX_WAIT_MILLIS = 4_000L
+        const val MIN_WAIT_MILLIS = 1_500L
+        const val MAX_WAIT_MILLIS = 5_000L
     }
 }

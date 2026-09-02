@@ -24,10 +24,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PMU_Play">
+        <!--
+          Podrazumevana orijentacija cele aplikacije je portret: meniji i sve igre
+          na podeljenom ekranu rade samo tako. Jedini izuzetak je pantomima, koja
+          za sebe trazi landscape kroz LockScreenOrientation i po izlasku vraca
+          portret. Zahvaljujuci ovome orijentacija se nigde drugde ne dira.
+        -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.PMU_Play"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

@@ -2,22 +2,65 @@
     <string name="app_name">PMU Games</string>
 
     <!-- Home -->
-    <string name="home_subtitle">Pick a game</string>
+    <string name="home_subtitle">Two players, one phone</string>
+    <string name="home_party_title">Start party</string>
+    <string name="home_party_desc">A random sequence of mini games. Nobody knows what comes next.</string>
+    <string name="home_section_duels">Single mini game</string>
+    <string name="home_section_others">Games for the whole room</string>
     <string name="action_statistics">Statistics</string>
     <string name="action_settings">Settings</string>
     <string name="action_back">Back</string>
     <string name="action_play">Play</string>
     <string name="action_retry">Try again</string>
 
+    <!-- Players -->
+    <string name="player_one">Player 1</string>
+    <string name="player_two">Player 2</string>
+
     <!-- Game names and descriptions -->
     <string name="game_charades_title">Charades</string>
     <string name="game_charades_desc">Hold the phone on your forehead and guess the word from the clues your friends give you.</string>
     <string name="game_quiz_title">Trivia Quiz</string>
     <string name="game_quiz_desc">Ten multiple choice questions from the category you pick.</string>
-    <string name="game_reaction_title">Reaction Time</string>
-    <string name="game_reaction_desc">Tap the moment the screen turns green. Five rounds, lower average is better.</string>
-    <string name="game_memory_title">Memory Match</string>
-    <string name="game_memory_desc">Flip the cards and find all eight pairs in as few moves as you can.</string>
+    <string name="game_reaction_title">Reaction Duel</string>
+    <string name="game_tictactoe_title">Tic-Tac-Toe</string>
+    <string name="game_memory_title">Memory Duel</string>
+    <string name="game_tap_race_title">Tap Race</string>
+    <string name="game_math_duel_title">Math Duel</string>
+
+    <!-- Mini game instructions, shown to both players before the round -->
+    <string name="instruction_reaction">Wait for green, then tap your half first. Tap too early and the round is lost.</string>
+    <string name="instruction_tictactoe">Take turns on the shared board. Three in a row wins.</string>
+    <string name="instruction_memory">Take turns flipping two cards. A pair scores a point and you play again.</string>
+    <string name="instruction_tap_race">Tap your own half as many times as you can before the time runs out.</string>
+    <string name="instruction_math_duel">Solve it first. A wrong answer locks you out of this round.</string>
+
+    <!-- Shared game flow -->
+    <string name="game_get_ready">Get ready</string>
+    <string name="round_of">Round %1$d of %2$d</string>
+    <string name="round_winner">%1$s wins the round</string>
+    <string name="round_draw">Round drawn</string>
+    <string name="outcome_time_ms">%1$d ms</string>
+    <string name="outcome_false_start">False start by the other player</string>
+    <string name="outcome_taps">%1$d taps</string>
+    <string name="outcome_pairs">%1$d pairs found</string>
+    <string name="outcome_nobody">Nobody got it right</string>
+
+    <!-- Party mode -->
+    <string name="party_title">Party</string>
+    <string name="party_setup_hint">Put the phone flat on the table between you. Player 1 sits at the bottom edge, Player 2 at the top.</string>
+    <string name="party_rounds_info">%1$d rounds</string>
+    <string name="party_start">Start the party</string>
+    <string name="party_over">Party over</string>
+    <string name="party_winner">%1$s wins!</string>
+    <string name="party_draw">Nobody wins, it is a draw</string>
+    <string name="party_new">New party</string>
+    <string name="party_score">%1$d : %2$d</string>
+    <string name="party_history">Recent parties</string>
+    <string name="party_history_rounds">%1$d rounds</string>
+
+    <!-- Solo mini game -->
+    <string name="solo_play_again">Another round</string>
 
     <!-- Charades -->
     <string name="charades_pick_category">Pick a category</string>
@@ -25,8 +68,7 @@
     <string name="charades_skip">Skip</string>
     <string name="charades_tilt_hint">Tilt forward for correct, tilt back to skip</string>
     <string name="charades_manual_hint">No motion sensor found, use the buttons below</string>
-    <string name="charades_get_ready">Get ready</string>
-    <string name="charades_starts_in">%1$d</string>
+    <string name="charades_landscape_hint">Hold the phone sideways on your forehead</string>
 
     <!-- Quiz -->
     <string name="quiz_pick_category">Pick a category</string>
@@ -36,19 +78,21 @@
     <string name="quiz_error_generic">Could not load questions.</string>
     <string name="quiz_source_cache">Saved questions</string>
 
-    <!-- Reaction -->
-    <string name="reaction_tap_to_start">Tap to start</string>
+    <!-- Reaction duel -->
     <string name="reaction_wait">Wait for green</string>
     <string name="reaction_tap_now">TAP</string>
-    <string name="reaction_too_soon">Too soon, round restarted</string>
-    <string name="reaction_round">Round %1$d of %2$d</string>
-    <string name="reaction_last">Last: %1$d ms</string>
 
-    <!-- Memory -->
-    <string name="memory_moves">Moves: %1$d</string>
+    <!-- Tic-Tac-Toe -->
+    <string name="tictactoe_your_turn">Your turn</string>
+    <string name="tictactoe_other_turn">Other player is thinking</string>
+
+    <!-- Memory duel -->
     <string name="memory_pairs">Pairs: %1$d of %2$d</string>
 
-    <!-- Result -->
+    <!-- Math duel -->
+    <string name="math_duel_locked">Locked out of this round</string>
+
+    <!-- Result (charades and quiz) -->
     <string name="result_title">Round over</string>
     <string name="result_new_best">New personal best</string>
     <string name="result_guessed">Guessed</string>
@@ -60,12 +104,10 @@
     <!-- Score formatting, differs per game -->
     <string name="score_words">%1$d of %2$d words</string>
     <string name="score_answers">%1$d of %2$d correct</string>
-    <string name="score_reaction">%1$d ms average</string>
-    <string name="score_memory">%1$d moves</string>
 
     <!-- Statistics -->
     <string name="statistics_title">Statistics</string>
-    <string name="statistics_empty">No games played yet. Play a round and it will show up here.</string>
+    <string name="statistics_empty">Nothing played yet. Finish a party or a round and it will show up here.</string>
     <string name="statistics_played">Played</string>
     <string name="statistics_best">Best</string>
     <string name="statistics_history">Recent games</string>
@@ -81,6 +123,7 @@
     <string name="settings_dynamic_color">Dynamic colors</string>
     <string name="settings_dynamic_color_desc">Use colors from the device wallpaper</string>
     <string name="settings_gameplay">Gameplay</string>
+    <string name="settings_party_rounds">Rounds per party</string>
     <string name="settings_round_duration">Charades round length</string>
     <string name="settings_seconds">%1$d s</string>
     <string name="settings_question_count">Questions per quiz</string>

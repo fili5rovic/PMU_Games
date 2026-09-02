@@ -38,9 +38,6 @@ class FakeGameResultDao : GameResultDao {
     override fun observeMaxScore(gameType: GameType): Flow<Int?> =
         results.map { list -> list.filter { it.gameType == gameType }.maxOfOrNull { it.score } }
 
-    override fun observeMinScore(gameType: GameType): Flow<Int?> =
-        results.map { list -> list.filter { it.gameType == gameType }.minOfOrNull { it.score } }
-
     override suspend fun deleteAll() {
         results.value = emptyList()
     }

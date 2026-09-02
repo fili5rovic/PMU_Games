@@ -35,6 +35,10 @@ class SettingsViewModel @Inject constructor(
         settingsRepository.setDynamicColor(enabled)
     }
 
+    fun setPartyRounds(rounds: Int) = viewModelScope.launch {
+        settingsRepository.setPartyRounds(rounds)
+    }
+
     fun setRoundDuration(seconds: Int) = viewModelScope.launch {
         settingsRepository.setRoundDuration(seconds)
     }

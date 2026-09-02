@@ -5,33 +5,19 @@ import androidx.annotation.StringRes
 import play.pmu.R
 
 /**
- * Sve igre u aplikaciji. Enum nosi i svoje resurse (naziv, opis, ikonicu), pa
- * Home ekran moze da se iscrta obicnim prolaskom kroz [GameType.entries] -
- * nema odvojene liste koja bi mogla da se raziđe sa enum-om.
+ * Igre koje se ne igraju jedan na jedan na podeljenom ekranu, pa ne mogu da
+ * budu deo partije: pantomima je igra za celo drustvo (i jedina koja radi u
+ * landscape orijentaciji), a kviz je niz pitanja sa mreze.
  *
- * [lowerIsBetter] postoji jer se skor ne tumaci isto u svim igrama: u Brzini
- * reakcije (milisekunde) i u Memoriji (broj poteza) manji broj je bolji, a u
- * Pantomimi i Kvizu veci. Statistika na osnovu ovog polja zna da li najbolji
- * rezultat trazi kao MIN ili kao MAX.
+ * Za razliku od [MiniGame], ove igre daju SKOR (broj pogodjenih pojmova ili
+ * tacnih odgovora), a ne pobednika, pa se njihove partije cuvaju u tabeli
+ * game_results i prikazuju na ekranu statistike.
  */
 enum class GameType(
     @StringRes val titleRes: Int,
     @StringRes val descriptionRes: Int,
     @DrawableRes val iconRes: Int,
-    val lowerIsBetter: Boolean = false,
 ) {
     CHARADES(R.string.game_charades_title, R.string.game_charades_desc, R.drawable.ic_charades),
     QUIZ(R.string.game_quiz_title, R.string.game_quiz_desc, R.drawable.ic_quiz),
-    REACTION(
-        titleRes = R.string.game_reaction_title,
-        descriptionRes = R.string.game_reaction_desc,
-        iconRes = R.drawable.ic_reaction,
-        lowerIsBetter = true,
-    ),
-    MEMORY(
-        titleRes = R.string.game_memory_title,
-        descriptionRes = R.string.game_memory_desc,
-        iconRes = R.drawable.ic_memory,
-        lowerIsBetter = true,
-    ),
 }

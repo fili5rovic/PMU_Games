@@ -1,6 +1,5 @@
 package play.pmu.ui.memory
 
-import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,9 +9,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import play.pmu.data.local.GameResultEntity
-import play.pmu.data.repository.GameResultsRepository
-import play.pmu.domain.model.GameType
+import play.pmu.domain.model.Player
+import play.pmu.domain.model.Winner
 import javax.inject.Inject
 
 /**
@@ -28,117 +26,125 @@ data class MemoryCard(
 
 data class MemoryUiState(
     val cards: List<MemoryCard> = emptyList(),
-    val moves: Int = 0,
-    val matchedPairs: Int = 0,
-    val finishedResultId: Long? = null,
+    val currentPlayer: Player = Player.ONE,
+    val scoreOne: Int = 0,
+    val scoreTwo: Int = 0,
+    /** null dok se svi parovi ne nadju. */
+    val winner: Winner? = null,
 ) {
     val totalPairs: Int get() = cards.size / 2
-    val isFinished: Boolean get() = cards.isNotEmpty() && matchedPairs == totalPairs
+    val foundPairs: Int get() = scoreOne + scoreTwo
+
+    fun scoreOf(player: Player): Int =
+        if (player == Player.ONE) scoreOne else scoreTwo
 }
 
+/**
+ * Duel memorije: ista tabla, naizmenicni potezi.
+ *
+ * Pravila: igrac otvara dve kartice. Ako su par, dobija poen i IGRA PONOVO; ako
+ * nisu, kartice se zatvaraju i red prelazi na protivnika. Kada se nadju svi
+ * parovi, pobedjuje igrac sa vise parova (moguce je i nereseno).
+ *
+ * Kao i u iks-oksu, tabla je zajednicka pa aplikacija ne vidi ciji je prst
+ * tapnuo karticu; ko je na redu pise na oba kraja ekrana, a poen uvek pripada
+ * igracu koji je trenutno na redu.
+ */
 @HiltViewModel
-class MemoryViewModel @Inject constructor(
-    private val resultsRepository: GameResultsRepository,
-) : ViewModel() {
+class MemoryViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(MemoryUiState())
     val uiState: StateFlow<MemoryUiState> = _uiState.asStateFlow()
 
     /** Sprecava da se treca kartica otvori dok se neuparene dve jos vracaju. */
     private var isCheckingPair = false
-    private var startedAtMillis = 0L
 
     init {
-        startNewGame()
-    }
-
-    fun startNewGame() {
         val cards = SYMBOLS
             .flatMap { symbol -> listOf(symbol, symbol) } // svaki simbol dva puta
             .shuffled()
             .mapIndexed { index, symbol -> MemoryCard(id = index, symbol = symbol) }
-
-        isCheckingPair = false
-        startedAtMillis = SystemClock.elapsedRealtime()
         _uiState.value = MemoryUiState(cards = cards)
     }
 
     fun onCardClick(cardId: Int) {
         val state = _uiState.value
+        if (state.winner != null || isCheckingPair) return
+
         val card = state.cards.find { it.id == cardId } ?: return
-        if (isCheckingPair || card.isRevealed || card.isMatched) return
+        if (card.isRevealed || card.isMatched) return
 
         val cards = state.cards.map { if (it.id == cardId) it.copy(isRevealed = true) else it }
-        val revealed = cards.filter { it.isRevealed && !it.isMatched }
-
         _uiState.update { it.copy(cards = cards) }
 
+        val revealed = cards.filter { it.isRevealed && !it.isMatched }
         if (revealed.size == 2) evaluatePair(revealed[0], revealed[1])
     }
 
     private fun evaluatePair(first: MemoryCard, second: MemoryCard) {
         val isMatch = first.symbol == second.symbol
+        // Zastava se postavlja odmah, a spusta na kraju coroutine - tako treci
+        // klik ne moze da se ubaci izmedju.
         isCheckingPair = true
 
         viewModelScope.launch {
-            if (isMatch) {
-                // Kratka pauza samo da igrac vidi drugi simbol pre nego sto par ostane otvoren.
-                delay(MATCH_DELAY_MILLIS)
-                _uiState.update { state ->
+            delay(if (isMatch) MATCH_DELAY_MILLIS else MISMATCH_DELAY_MILLIS)
+
+            _uiState.update { state ->
+                val scoringPlayer = state.currentPlayer
+                if (isMatch) {
                     state.copy(
-                        cards = state.cards.map {
-                            if (it.id == first.id || it.id == second.id) {
-                                it.copy(isMatched = true)
+                        cards = state.cards.map { card ->
+                            if (card.id == first.id || card.id == second.id) {
+                                card.copy(isMatched = true)
                             } else {
-                                it
+                                card
                             }
                         },
-                        moves = state.moves + 1,
-                        matchedPairs = state.matchedPairs + 1,
+                        scoreOne = state.scoreOne + if (scoringPlayer == Player.ONE) 1 else 0,
+                        scoreTwo = state.scoreTwo + if (scoringPlayer == Player.TWO) 1 else 0,
+                        // Par znaci pravo na novi potez, pa igrac ostaje isti.
                     )
-                }
-                if (_uiState.value.isFinished) saveResult()
-            } else {
-                delay(MISMATCH_DELAY_MILLIS)
-                _uiState.update { state ->
+                } else {
                     state.copy(
-                        cards = state.cards.map {
-                            if (it.id == first.id || it.id == second.id) {
-                                it.copy(isRevealed = false)
+                        cards = state.cards.map { card ->
+                            if (card.id == first.id || card.id == second.id) {
+                                card.copy(isRevealed = false)
                             } else {
-                                it
+                                card
                             }
                         },
-                        moves = state.moves + 1,
+                        currentPlayer = state.currentPlayer.opponent,
                     )
                 }
             }
+
+            // Kraj partije se racuna posle upisa poena, iz novog stanja.
+            _uiState.update { state ->
+                if (state.foundPairs == state.totalPairs) {
+                    state.copy(winner = winnerFor(state.scoreOne, state.scoreTwo))
+                } else {
+                    state
+                }
+            }
+
             isCheckingPair = false
         }
     }
 
-    private fun saveResult() {
-        viewModelScope.launch {
-            val state = _uiState.value
-            val elapsedSeconds =
-                ((SystemClock.elapsedRealtime() - startedAtMillis) / 1000).toInt()
-            val id = resultsRepository.save(
-                GameResultEntity(
-                    gameType = GameType.MEMORY,
-                    score = state.moves,
-                    total = state.totalPairs,
-                    durationSeconds = elapsedSeconds,
-                    playedAt = System.currentTimeMillis(),
-                )
-            )
-            _uiState.update { it.copy(finishedResultId = id) }
-        }
+    private fun winnerFor(scoreOne: Int, scoreTwo: Int): Winner = when {
+        scoreOne > scoreTwo -> Winner.PLAYER_ONE
+        scoreTwo > scoreOne -> Winner.PLAYER_TWO
+        else -> Winner.DRAW
     }
 
     private companion object {
-        /** Osam parova daje mrezu 4x4. Emoji se ne prevode, pa nisu u resursima. */
-        val SYMBOLS = listOf("🍎", "🚀", "🐬", "⚽", "🎵", "🌵", "🔑", "⭐")
-        const val MATCH_DELAY_MILLIS = 300L
-        const val MISMATCH_DELAY_MILLIS = 800L
+        /**
+         * Sest parova daje mrezu 4x3, sto je dovoljno kratko da runda stane u
+         * partiju. Emoji se ne prevode, pa nisu u resursima.
+         */
+        val SYMBOLS = listOf("🍎", "🚀", "🐬", "⚽", "🎵", "🌵")
+        const val MATCH_DELAY_MILLIS = 400L
+        const val MISMATCH_DELAY_MILLIS = 900L
     }
 }

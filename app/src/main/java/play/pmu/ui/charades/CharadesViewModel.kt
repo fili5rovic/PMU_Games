@@ -35,6 +35,8 @@ data class CharadesUiState(
     val feedback: CharadesFeedback = CharadesFeedback.NONE,
     /** true kada treba prikazati dugmad Pogodak/Preskoci umesto (ili uz) senzor. */
     val showManualControls: Boolean = false,
+    /** false dok se prikazuje uputstvo; tada se pokreti i odbrojavanje ignorisu. */
+    val isRoundStarted: Boolean = false,
     val isRoundOver: Boolean = false,
     val finishedResultId: Long? = null,
 ) {
@@ -82,10 +84,24 @@ class CharadesViewModel @Inject constructor(
                         !tiltDetector.isAvailable,
                 )
             }
-
-            observeTimer()
-            observeGestures()
         }
+    }
+
+    /**
+     * Poziva ekran kada se uputstvo i odbrojavanje zavrse.
+     *
+     * Runda NE pocinje u `init` iz dva razloga. Prvi je senzor: dok igrac
+     * podize telefon do cela, akcelerometar bi lako prijavio pokret koji bi se
+     * racunao kao pogodak. Drugi je odbrojavanje: [RoundTimer] je @Singleton i
+     * moze da nosi `isFinished = true` iz prethodne runde, pa se ovde prvo
+     * resetuje - inace bi nova runda mogla da se zavrsi u trenutku otvaranja.
+     */
+    fun startRound() {
+        if (_uiState.value.isRoundStarted) return
+        roundTimer.reset(roundDurationSeconds)
+        _uiState.update { it.copy(isRoundStarted = true) }
+        observeTimer()
+        observeGestures()
     }
 
     /**
@@ -123,8 +139,9 @@ class CharadesViewModel @Inject constructor(
     }
 
     fun registerCorrect() {
-        val word = _uiState.value.currentWord
-        if (word.isEmpty() || _uiState.value.isRoundOver) return
+        val state = _uiState.value
+        val word = state.currentWord
+        if (word.isEmpty() || state.isRoundOver || !state.isRoundStarted) return
         _uiState.update {
             it.copy(correctWords = it.correctWords + word, feedback = CharadesFeedback.CORRECT)
         }
@@ -132,8 +149,9 @@ class CharadesViewModel @Inject constructor(
     }
 
     fun registerSkip() {
-        val word = _uiState.value.currentWord
-        if (word.isEmpty() || _uiState.value.isRoundOver) return
+        val state = _uiState.value
+        val word = state.currentWord
+        if (word.isEmpty() || state.isRoundOver || !state.isRoundStarted) return
         _uiState.update {
             it.copy(skippedWords = it.skippedWords + word, feedback = CharadesFeedback.SKIPPED)
         }

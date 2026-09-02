@@ -39,6 +39,7 @@ fun SettingsScreen(
         settings = settings,
         onThemeModeChange = viewModel::setThemeMode,
         onDynamicColorChange = viewModel::setDynamicColor,
+        onPartyRoundsChange = viewModel::setPartyRounds,
         onRoundDurationChange = viewModel::setRoundDuration,
         onQuestionCountChange = viewModel::setQuestionCount,
         onManualControlsChange = viewModel::setManualControls,
@@ -51,6 +52,7 @@ private fun SettingsContent(
     settings: AppSettings,
     onThemeModeChange: (ThemeMode) -> Unit,
     onDynamicColorChange: (Boolean) -> Unit,
+    onPartyRoundsChange: (Int) -> Unit,
     onRoundDurationChange: (Int) -> Unit,
     onQuestionCountChange: (Int) -> Unit,
     onManualControlsChange: (Boolean) -> Unit,
@@ -100,6 +102,17 @@ private fun SettingsContent(
 
             HorizontalDivider(Modifier.padding(vertical = 8.dp))
             SectionTitle(stringResource(R.string.settings_gameplay))
+
+            Text(
+                text = stringResource(R.string.settings_party_rounds),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            ChipRow(
+                options = PARTY_ROUNDS,
+                selected = settings.partyRounds,
+                label = { it.toString() },
+                onSelect = onPartyRoundsChange,
+            )
 
             Text(
                 text = stringResource(R.string.settings_round_duration),
@@ -185,5 +198,6 @@ private fun ChipRow(
     }
 }
 
+private val PARTY_ROUNDS = listOf(5, 7, 9)
 private val ROUND_DURATIONS = listOf(30, 60, 90)
 private val QUESTION_COUNTS = listOf(5, 10, 15)

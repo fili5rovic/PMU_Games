@@ -2,6 +2,7 @@ package play.pmu.navigation
 
 import kotlinx.serialization.Serializable
 import play.pmu.domain.model.GameType
+import play.pmu.domain.model.MiniGame
 
 /**
  * Destinacije u aplikaciji.
@@ -17,6 +18,44 @@ import play.pmu.domain.model.GameType
 @Serializable
 object HomeRoute
 
+/**
+ * Ugnjezdeni graf partije. Postoji da bi PartyViewModel mogao da se veze za
+ * NJEGA, a ne za pojedinacnu rundu: tako jedna instanca (skor, raspored igara)
+ * zivi kroz celu partiju, dok runde dolaze i prolaze.
+ */
+@Serializable
+object PartyGraph
+
+@Serializable
+object PartyStartRoute
+
+/**
+ * Jedna runda partije. Svaka runda je SVOJA destinacija, pa dobija svoj
+ * ViewModelStore: ViewModel mini igre se napravi na pocetku runde i ocisti kada
+ * runda izadje sa steka. Time nema ni zaostalih coroutine-a ni prenosa stanja
+ * iz prethodne runde.
+ */
+@Serializable
+data class PartyRoundRoute(val round: Int)
+
+@Serializable
+object PartyResultRoute
+
+/**
+ * Jedna mini igra izabrana sa pocetnog ekrana, van partije.
+ *
+ * [game] je ime [MiniGame] konstante, a [winsOne]/[winsTwo] su broj pobeda u
+ * nizu odigranih rundi. Broj runde ([attempt]) je tu da svaka nova runda bude
+ * nova destinacija.
+ */
+@Serializable
+data class SoloGameRoute(
+    val game: String,
+    val attempt: Int = 1,
+    val winsOne: Int = 0,
+    val winsTwo: Int = 0,
+)
+
 @Serializable
 object CharadesCategoriesRoute
 
@@ -30,12 +69,6 @@ object QuizCategoriesRoute
 data class QuizGameRoute(val categoryApiId: Int)
 
 @Serializable
-object ReactionGameRoute
-
-@Serializable
-object MemoryGameRoute
-
-@Serializable
 data class ResultRoute(val resultId: Long)
 
 @Serializable
@@ -45,15 +78,13 @@ object StatisticsRoute
 object SettingsRoute
 
 /**
- * Pocetna destinacija za jednu igru. Igre sa kategorijama vode na izbor
- * kategorije, ostale direktno u igru.
- *
- * Funkcija je na jednom mestu jer je koriste i pocetni ekran i ekran rezultata
- * (dugme "Igraj ponovo").
+ * Pocetna destinacija za igru sa kategorijama. Funkcija je na jednom mestu jer
+ * je koriste i pocetni ekran i ekran rezultata (dugme "Igraj ponovo").
  */
 fun GameType.startRoute(): Any = when (this) {
     GameType.CHARADES -> CharadesCategoriesRoute
     GameType.QUIZ -> QuizCategoriesRoute
-    GameType.REACTION -> ReactionGameRoute
-    GameType.MEMORY -> MemoryGameRoute
 }
+
+/** Kroz navigaciju ide samo ime enum konstante, ne cela vrednost. */
+fun MiniGame.soloRoute(): SoloGameRoute = SoloGameRoute(game = name)

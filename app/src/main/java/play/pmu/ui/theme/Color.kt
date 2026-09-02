@@ -20,3 +20,17 @@ val WrongRed = Color(0xFFC62828)
 val WrongRedLight = Color(0xFFEF5350)
 val WaitingRed = Color(0xFFB71C1C)
 val GoGreen = Color(0xFF1B5E20)
+
+/**
+ * Boje igraca. Iz istog razloga kao i boje povratne informacije stoje van
+ * color scheme-a: igrac 1 je uvek plav, a igrac 2 uvek narandzast, i u svetloj i
+ * u tamnoj temi. Da su uzete iz teme (ili iz dinamickih boja telefona), dva
+ * igraca bi mogla da dobiju slicne boje i izgube se na podeljenom ekranu.
+ *
+ * `Container` varijante su podloge polovina ekrana, a osnovne boje su akcenti
+ * (okvir, tekst, dugmad).
+ */
+val PlayerOneColor = Color(0xFF1565C0)
+val PlayerOneContainer = Color(0xFF0D47A1)
+val PlayerTwoColor = Color(0xFFEF6C00)
+val PlayerTwoContainer = Color(0xFFBF360C)

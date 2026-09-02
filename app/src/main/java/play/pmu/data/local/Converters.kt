@@ -3,6 +3,7 @@ package play.pmu.data.local
 import androidx.room.TypeConverter
 import play.pmu.domain.model.GameType
 import play.pmu.domain.model.TriviaCategory
+import play.pmu.domain.model.Winner
 
 /**
  * Room ume da cuva samo primitivne tipove, pa mu ovde objasnjavamo kako da
@@ -26,6 +27,12 @@ class Converters {
 
     @TypeConverter
     fun toGameType(value: String): GameType = GameType.valueOf(value)
+
+    @TypeConverter
+    fun fromWinner(value: Winner): String = value.name
+
+    @TypeConverter
+    fun toWinner(value: String): Winner = Winner.valueOf(value)
 
     @TypeConverter
     fun fromTriviaCategory(value: TriviaCategory): String = value.name
