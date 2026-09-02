@@ -1,0 +1,76 @@
+<resources>
+    <!-- Srpska verzija pojmova za pantomimu -->
+    <string-array name="words_animals">
+        <item>Slon</item><item>Pingvin</item><item>Zirafa</item><item>Hobotnica</item>
+        <item>Kengur</item><item>Jez</item><item>Delfin</item><item>Krokodil</item>
+        <item>Veverica</item><item>Leptir</item><item>Nosorog</item><item>Sova</item>
+        <item>Kamila</item><item>Paun</item><item>Slepi mis</item><item>Puz</item>
+    </string-array>
+
+    <string-array name="words_movies">
+        <item>Titanik</item><item>Kralj lavova</item><item>Park iz doba jure</item><item>Matriks</item>
+        <item>Zaledjeno kraljevstvo</item><item>Ratovi zvezda</item><item>Sam u kuci</item><item>Kum</item>
+        <item>Potraga za Nemom</item><item>Hari Poter</item><item>Prica o igrackama</item><item>Avatar</item>
+        <item>Srek</item><item>Roki</item><item>Ajkula</item><item>Nebeska kuca</item>
+    </string-array>
+
+    <string-array name="words_sports">
+        <item>Kosarka</item><item>Vaterpolo</item><item>Tenis</item><item>Odbojka</item>
+        <item>Skijanje</item><item>Boks</item><item>Rukomet</item><item>Plivanje</item>
+        <item>Biciklizam</item><item>Sah</item><item>Streljastvo</item><item>Gimnastika</item>
+        <item>Veslanje</item><item>Karate</item><item>Maraton</item><item>Snoubording</item>
+    </string-array>
+
+    <string-array name="words_professions">
+        <item>Vatrogasac</item><item>Zubar</item><item>Pilot</item><item>Pekar</item>
+        <item>Ucitelj</item><item>Programer</item><item>Postar</item><item>Frizer</item>
+        <item>Poljoprivrednik</item><item>Sudija</item><item>Konobar</item><item>Fotograf</item>
+        <item>Automehanicar</item><item>Medicinska sestra</item><item>Astronaut</item><item>Spasilac</item>
+    </string-array>
+
+    <string-array name="words_food">
+        <item>Pica</item><item>Lubenica</item><item>Kokice</item><item>Spageti</item>
+        <item>Palacinka</item><item>Avokado</item><item>Sladoled</item><item>Sendvic</item>
+        <item>Krofna</item><item>Ananas</item><item>Supa</item><item>Sir</item>
+        <item>Cokolada</item><item>Salata</item><item>Pljeskavica</item><item>Med</item>
+    </string-array>
+
+    <!--
+      Rezervna pitanja (bez interneta i bez cache-a).
+      Format: pitanje | tacan odgovor | netacan | netacan | netacan
+    -->
+    <string-array name="fallback_questions_general">
+        <item>Koji je glavni grad Australije?|Kanbera|Sidnej|Melburn|Prt</item>
+        <item>Koliko boja ima duga?|Sedam|Pet|Sest|Devet</item>
+        <item>Koja planeta je najbliza Suncu?|Merkur|Venera|Mars|Zemlja</item>
+        <item>Koji je najveci ocean na Zemlji?|Tihi|Atlantski|Indijski|Arkticki</item>
+    </string-array>
+
+    <string-array name="fallback_questions_film">
+        <item>Ko je reziser filma Ajkula?|Stiven Spilberg|Martin Skorseze|Ridli Skot|Dzejms Kameron</item>
+        <item>U kom filmu se izgovara replika Ja sam tvoj otac?|Imperija vraca udarac|Nova nada|Vitezovi vracaju udarac|Odmetnik</item>
+        <item>U kom animiranom filmu je glavni lik riba klovn?|Potraga za Nemom|Prica o ajkuli|Moana|Luka</item>
+        <item>Koji film je prvi osvojio Oskara za najbolji animirani film?|Srek|Cudovista iz plakara|Ledeno doba|Avanture male Cihiro</item>
+    </string-array>
+
+    <string-array name="fallback_questions_science">
+        <item>Koji je hemijski simbol za zlato?|Au|Ag|Go|Gd</item>
+        <item>Koliko kostiju ima odrasli covek?|206|180|230|256</item>
+        <item>Koji gas biljke uzimaju iz vazduha?|Ugljen dioksid|Kiseonik|Azot|Vodonik</item>
+        <item>Koja je najtvrdja prirodna materija?|Dijamant|Kvarc|Celik|Granit</item>
+    </string-array>
+
+    <string-array name="fallback_questions_sports">
+        <item>Koliko igraca jedne ekipe je na terenu u kosarci?|Pet|Sest|Sedam|Cetiri</item>
+        <item>Koliko cesto se odrzavaju Letnje olimpijske igre?|Svake cetiri godine|Svake dve godine|Svake tri godine|Svakih pet godina</item>
+        <item>U kom sportu se izvodi zakucavanje?|Kosarka|Odbojka|Rukomet|Tenis</item>
+        <item>Koliko kilometara ima maraton, zaokruzeno?|42|40|45|38</item>
+    </string-array>
+
+    <string-array name="fallback_questions_history">
+        <item>Koje godine je zavrsen Drugi svetski rat?|1945|1939|1918|1950</item>
+        <item>Ko je prvi hodao po Mesecu?|Nil Armstrong|Baz Oldrin|Jurij Gagarin|Majkl Kolins</item>
+        <item>Koja civilizacija je izgradila piramide u Gizi?|Egipatska|Rimska|Grcka|Persijska</item>
+        <item>Koji zid je delio evropski grad do 1989. godine?|Berlinski zid|Hadrijanov zid|Kineski zid|Zid placa</item>
+    </string-array>
+</resources>

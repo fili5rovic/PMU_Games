@@ -1,0 +1,81 @@
+<resources>
+    <!--
+      Pojmovi za pantomimu. Drzimo ih u resursima (a ne u Kotlin kodu) da bi
+      sadrzaj igre bio lokalizovan zajedno sa ostatkom UI-a: values-sr/arrays.xml
+      nosi srpsku verziju istih nizova.
+    -->
+    <string-array name="words_animals">
+        <item>Elephant</item><item>Penguin</item><item>Giraffe</item><item>Octopus</item>
+        <item>Kangaroo</item><item>Hedgehog</item><item>Dolphin</item><item>Crocodile</item>
+        <item>Squirrel</item><item>Butterfly</item><item>Rhinoceros</item><item>Owl</item>
+        <item>Camel</item><item>Peacock</item><item>Bat</item><item>Snail</item>
+    </string-array>
+
+    <string-array name="words_movies">
+        <item>Titanic</item><item>The Lion King</item><item>Jurassic Park</item><item>The Matrix</item>
+        <item>Frozen</item><item>Star Wars</item><item>Home Alone</item><item>The Godfather</item>
+        <item>Finding Nemo</item><item>Harry Potter</item><item>Toy Story</item><item>Avatar</item>
+        <item>Shrek</item><item>Rocky</item><item>Jaws</item><item>Up</item>
+    </string-array>
+
+    <string-array name="words_sports">
+        <item>Basketball</item><item>Water polo</item><item>Tennis</item><item>Volleyball</item>
+        <item>Skiing</item><item>Boxing</item><item>Handball</item><item>Swimming</item>
+        <item>Cycling</item><item>Chess</item><item>Archery</item><item>Gymnastics</item>
+        <item>Rowing</item><item>Karate</item><item>Marathon</item><item>Snowboarding</item>
+    </string-array>
+
+    <string-array name="words_professions">
+        <item>Firefighter</item><item>Dentist</item><item>Pilot</item><item>Baker</item>
+        <item>Teacher</item><item>Programmer</item><item>Postman</item><item>Barber</item>
+        <item>Farmer</item><item>Judge</item><item>Waiter</item><item>Photographer</item>
+        <item>Mechanic</item><item>Nurse</item><item>Astronaut</item><item>Lifeguard</item>
+    </string-array>
+
+    <string-array name="words_food">
+        <item>Pizza</item><item>Watermelon</item><item>Popcorn</item><item>Spaghetti</item>
+        <item>Pancake</item><item>Avocado</item><item>Ice cream</item><item>Sandwich</item>
+        <item>Doughnut</item><item>Pineapple</item><item>Soup</item><item>Cheese</item>
+        <item>Chocolate</item><item>Salad</item><item>Burger</item><item>Honey</item>
+    </string-array>
+
+    <!--
+      Rezervna pitanja za kviz: koriste se samo ako ni REST poziv ni Room cache
+      ne daju pitanja (npr. prvo pokretanje bez interneta).
+      Format jednog reda: pitanje | tacan odgovor | netacan | netacan | netacan
+    -->
+    <string-array name="fallback_questions_general">
+        <item>What is the capital city of Australia?|Canberra|Sydney|Melbourne|Perth</item>
+        <item>How many colours are there in a rainbow?|Seven|Five|Six|Nine</item>
+        <item>Which planet is closest to the Sun?|Mercury|Venus|Mars|Earth</item>
+        <item>What is the largest ocean on Earth?|Pacific|Atlantic|Indian|Arctic</item>
+    </string-array>
+
+    <string-array name="fallback_questions_film">
+        <item>Who directed the film Jaws?|Steven Spielberg|Martin Scorsese|Ridley Scott|James Cameron</item>
+        <item>In which film does a character say I am your father?|The Empire Strikes Back|A New Hope|Return of the Jedi|Rogue One</item>
+        <item>Which animated film features a clownfish?|Finding Nemo|Shark Tale|Moana|Luca</item>
+        <item>Which film won the first Academy Award for Best Animated Feature?|Shrek|Monsters Inc|Ice Age|Spirited Away</item>
+    </string-array>
+
+    <string-array name="fallback_questions_science">
+        <item>What is the chemical symbol for gold?|Au|Ag|Go|Gd</item>
+        <item>How many bones are there in an adult human body?|206|180|230|256</item>
+        <item>What gas do plants absorb from the air?|Carbon dioxide|Oxygen|Nitrogen|Hydrogen</item>
+        <item>What is the hardest natural substance?|Diamond|Quartz|Steel|Granite</item>
+    </string-array>
+
+    <string-array name="fallback_questions_sports">
+        <item>How many players are on a basketball court per team?|Five|Six|Seven|Four</item>
+        <item>How often are the Summer Olympic Games held?|Every four years|Every two years|Every three years|Every five years</item>
+        <item>In which sport would you perform a slam dunk?|Basketball|Volleyball|Handball|Tennis</item>
+        <item>How long is a marathon, rounded to the nearest kilometre?|42|40|45|38</item>
+    </string-array>
+
+    <string-array name="fallback_questions_history">
+        <item>In which year did the Second World War end?|1945|1939|1918|1950</item>
+        <item>Who was the first person to walk on the Moon?|Neil Armstrong|Buzz Aldrin|Yuri Gagarin|Michael Collins</item>
+        <item>Which ancient civilisation built the pyramids at Giza?|Egyptian|Roman|Greek|Persian</item>
+        <item>Which wall divided a European city until 1989?|Berlin Wall|Hadrians Wall|Great Wall|Western Wall</item>
+    </string-array>
+</resources>

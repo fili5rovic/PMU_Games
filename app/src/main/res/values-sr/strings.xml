@@ -1,0 +1,113 @@
+<resources>
+    <string name="app_name">PMU Games</string>
+
+    <!-- Pocetni ekran -->
+    <string name="home_subtitle">Izaberi igru</string>
+    <string name="action_statistics">Statistika</string>
+    <string name="action_settings">Podesavanja</string>
+    <string name="action_back">Nazad</string>
+    <string name="action_play">Igraj</string>
+    <string name="action_retry">Probaj ponovo</string>
+
+    <!-- Nazivi i opisi igara -->
+    <string name="game_charades_title">Pantomima</string>
+    <string name="game_charades_desc">Drzi telefon na celu i pogodi pojam na osnovu opisa koje ti daju prijatelji.</string>
+    <string name="game_quiz_title">Kviz znanja</string>
+    <string name="game_quiz_desc">Deset pitanja sa cetiri ponudjena odgovora iz kategorije koju izaberes.</string>
+    <string name="game_reaction_title">Brzina reakcije</string>
+    <string name="game_reaction_desc">Tapni u trenutku kada ekran postane zelen. Pet rundi, manje prosecno vreme je bolje.</string>
+    <string name="game_memory_title">Memorija</string>
+    <string name="game_memory_desc">Otvaraj kartice i pronadji svih osam parova u sto manje poteza.</string>
+
+    <!-- Pantomima -->
+    <string name="charades_pick_category">Izaberi kategoriju</string>
+    <string name="charades_correct">Pogodak</string>
+    <string name="charades_skip">Preskoci</string>
+    <string name="charades_tilt_hint">Nagni napred za pogodak, nagni nazad da preskocis</string>
+    <string name="charades_manual_hint">Senzor pokreta nije pronadjen, koristi dugmad ispod</string>
+    <string name="charades_get_ready">Spremi se</string>
+    <string name="charades_starts_in">%1$d</string>
+
+    <!-- Kviz -->
+    <string name="quiz_pick_category">Izaberi kategoriju</string>
+    <string name="quiz_progress">Pitanje %1$d od %2$d</string>
+    <string name="quiz_loading">Ucitavanje pitanja</string>
+    <string name="quiz_error_offline">Nema konekcije. Igra se sa sacuvanim pitanjima.</string>
+    <string name="quiz_error_generic">Ucitavanje pitanja nije uspelo.</string>
+    <string name="quiz_source_cache">Sacuvana pitanja</string>
+
+    <!-- Reakcija -->
+    <string name="reaction_tap_to_start">Tapni da pocnes</string>
+    <string name="reaction_wait">Cekaj zeleno</string>
+    <string name="reaction_tap_now">TAPNI</string>
+    <string name="reaction_too_soon">Prerano, runda se ponavlja</string>
+    <string name="reaction_round">Runda %1$d od %2$d</string>
+    <string name="reaction_last">Poslednje: %1$d ms</string>
+
+    <!-- Memorija -->
+    <string name="memory_moves">Poteza: %1$d</string>
+    <string name="memory_pairs">Parova: %1$d od %2$d</string>
+
+    <!-- Rezultat -->
+    <string name="result_title">Runda je zavrsena</string>
+    <string name="result_new_best">Novi licni rekord</string>
+    <string name="result_guessed">Pogodjeno</string>
+    <string name="result_skipped">Preskoceno</string>
+    <string name="result_play_again">Igraj ponovo</string>
+    <string name="result_home">Pocetna</string>
+    <string name="result_missing">Rezultat nije pronadjen.</string>
+
+    <!-- Prikaz skora, razlikuje se po igri -->
+    <string name="score_words">%1$d od %2$d pojmova</string>
+    <string name="score_answers">%1$d od %2$d tacnih</string>
+    <string name="score_reaction">%1$d ms prosecno</string>
+    <string name="score_memory">%1$d poteza</string>
+
+    <!-- Statistika -->
+    <string name="statistics_title">Statistika</string>
+    <string name="statistics_empty">Nema odigranih partija. Odigraj rundu i pojavice se ovde.</string>
+    <string name="statistics_played">Odigrano</string>
+    <string name="statistics_best">Najbolje</string>
+    <string name="statistics_history">Poslednje partije</string>
+    <string name="statistics_clear">Obrisi istoriju</string>
+
+    <!-- Podesavanja -->
+    <string name="settings_title">Podesavanja</string>
+    <string name="settings_appearance">Izgled</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_system">Kao sistem</string>
+    <string name="settings_theme_light">Svetla</string>
+    <string name="settings_theme_dark">Tamna</string>
+    <string name="settings_dynamic_color">Dinamicke boje</string>
+    <string name="settings_dynamic_color_desc">Koristi boje sa pozadine telefona</string>
+    <string name="settings_gameplay">Igra</string>
+    <string name="settings_round_duration">Trajanje runde pantomime</string>
+    <string name="settings_seconds">%1$d s</string>
+    <string name="settings_question_count">Pitanja po kvizu</string>
+    <string name="settings_manual_controls">Rucne kontrole za pantomimu</string>
+    <string name="settings_manual_controls_desc">Uvek prikazi dugmad Pogodak i Preskoci, korisno na emulatoru</string>
+
+    <!-- Notifikacija foreground servisa -->
+    <string name="notification_channel_name">Aktivna runda</string>
+    <string name="notification_channel_desc">Prikazuje preostalo vreme runde pantomime</string>
+    <string name="notification_round_title">Runda pantomime</string>
+    <string name="notification_round_text">Ostalo %1$d s</string>
+
+    <!-- Opisi sadrzaja -->
+    <string name="cd_game_icon">Ikonica igre</string>
+    <string name="cd_card_hidden">Zatvorena kartica</string>
+
+    <!-- Kategorije za pantomimu -->
+    <string name="category_animals">Zivotinje</string>
+    <string name="category_movies">Filmovi</string>
+    <string name="category_sports">Sport</string>
+    <string name="category_professions">Profesije</string>
+    <string name="category_food">Hrana</string>
+
+    <!-- Kategorije za kviz -->
+    <string name="trivia_general">Opste znanje</string>
+    <string name="trivia_film">Film</string>
+    <string name="trivia_science">Nauka i priroda</string>
+    <string name="trivia_sports">Sport</string>
+    <string name="trivia_history">Istorija</string>
+</resources>

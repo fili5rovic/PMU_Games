@@ -1,0 +1,113 @@
+<resources>
+    <string name="app_name">PMU Games</string>
+
+    <!-- Home -->
+    <string name="home_subtitle">Pick a game</string>
+    <string name="action_statistics">Statistics</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_back">Back</string>
+    <string name="action_play">Play</string>
+    <string name="action_retry">Try again</string>
+
+    <!-- Game names and descriptions -->
+    <string name="game_charades_title">Charades</string>
+    <string name="game_charades_desc">Hold the phone on your forehead and guess the word from the clues your friends give you.</string>
+    <string name="game_quiz_title">Trivia Quiz</string>
+    <string name="game_quiz_desc">Ten multiple choice questions from the category you pick.</string>
+    <string name="game_reaction_title">Reaction Time</string>
+    <string name="game_reaction_desc">Tap the moment the screen turns green. Five rounds, lower average is better.</string>
+    <string name="game_memory_title">Memory Match</string>
+    <string name="game_memory_desc">Flip the cards and find all eight pairs in as few moves as you can.</string>
+
+    <!-- Charades -->
+    <string name="charades_pick_category">Pick a category</string>
+    <string name="charades_correct">Correct</string>
+    <string name="charades_skip">Skip</string>
+    <string name="charades_tilt_hint">Tilt forward for correct, tilt back to skip</string>
+    <string name="charades_manual_hint">No motion sensor found, use the buttons below</string>
+    <string name="charades_get_ready">Get ready</string>
+    <string name="charades_starts_in">%1$d</string>
+
+    <!-- Quiz -->
+    <string name="quiz_pick_category">Pick a category</string>
+    <string name="quiz_progress">Question %1$d of %2$d</string>
+    <string name="quiz_loading">Loading questions</string>
+    <string name="quiz_error_offline">No connection. Playing with saved questions.</string>
+    <string name="quiz_error_generic">Could not load questions.</string>
+    <string name="quiz_source_cache">Saved questions</string>
+
+    <!-- Reaction -->
+    <string name="reaction_tap_to_start">Tap to start</string>
+    <string name="reaction_wait">Wait for green</string>
+    <string name="reaction_tap_now">TAP</string>
+    <string name="reaction_too_soon">Too soon, round restarted</string>
+    <string name="reaction_round">Round %1$d of %2$d</string>
+    <string name="reaction_last">Last: %1$d ms</string>
+
+    <!-- Memory -->
+    <string name="memory_moves">Moves: %1$d</string>
+    <string name="memory_pairs">Pairs: %1$d of %2$d</string>
+
+    <!-- Result -->
+    <string name="result_title">Round over</string>
+    <string name="result_new_best">New personal best</string>
+    <string name="result_guessed">Guessed</string>
+    <string name="result_skipped">Skipped</string>
+    <string name="result_play_again">Play again</string>
+    <string name="result_home">Home</string>
+    <string name="result_missing">Result not found.</string>
+
+    <!-- Score formatting, differs per game -->
+    <string name="score_words">%1$d of %2$d words</string>
+    <string name="score_answers">%1$d of %2$d correct</string>
+    <string name="score_reaction">%1$d ms average</string>
+    <string name="score_memory">%1$d moves</string>
+
+    <!-- Statistics -->
+    <string name="statistics_title">Statistics</string>
+    <string name="statistics_empty">No games played yet. Play a round and it will show up here.</string>
+    <string name="statistics_played">Played</string>
+    <string name="statistics_best">Best</string>
+    <string name="statistics_history">Recent games</string>
+    <string name="statistics_clear">Clear history</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_system">Follow system</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_dynamic_color">Dynamic colors</string>
+    <string name="settings_dynamic_color_desc">Use colors from the device wallpaper</string>
+    <string name="settings_gameplay">Gameplay</string>
+    <string name="settings_round_duration">Charades round length</string>
+    <string name="settings_seconds">%1$d s</string>
+    <string name="settings_question_count">Questions per quiz</string>
+    <string name="settings_manual_controls">Manual charades controls</string>
+    <string name="settings_manual_controls_desc">Always show the Correct and Skip buttons, useful on an emulator</string>
+
+    <!-- Foreground service notification -->
+    <string name="notification_channel_name">Active round</string>
+    <string name="notification_channel_desc">Shows the remaining time of a charades round</string>
+    <string name="notification_round_title">Charades round</string>
+    <string name="notification_round_text">%1$d s left</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_game_icon">Game icon</string>
+    <string name="cd_card_hidden">Hidden card</string>
+
+    <!-- Charades categories -->
+    <string name="category_animals">Animals</string>
+    <string name="category_movies">Movies</string>
+    <string name="category_sports">Sports</string>
+    <string name="category_professions">Professions</string>
+    <string name="category_food">Food</string>
+
+    <!-- Trivia categories -->
+    <string name="trivia_general">General knowledge</string>
+    <string name="trivia_film">Film</string>
+    <string name="trivia_science">Science and nature</string>
+    <string name="trivia_sports">Sports</string>
+    <string name="trivia_history">History</string>
+</resources>
