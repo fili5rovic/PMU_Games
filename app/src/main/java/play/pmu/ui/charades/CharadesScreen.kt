@@ -42,8 +42,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import play.pmu.R
 import play.pmu.service.CharadesTimerService
+import play.pmu.domain.model.GameType
 import play.pmu.ui.components.GameIntro
-import play.pmu.ui.components.GameOrientation
 import play.pmu.ui.components.LoadingView
 import play.pmu.ui.components.LockScreenOrientation
 import play.pmu.ui.components.PmuTopAppBar
@@ -63,10 +63,10 @@ fun CharadesScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    // Jedina igra koja se ne igra na podeljenom ekranu: telefon se drzi
-    // polozeno na celu, pa runda ide isklucivo u landscape-u. Po izlasku sa
+    // Orijentacija se cita iz metapodataka igre (GameType.orientation), pa je
+    // pravilo "pantomima je landscape" zapisano na jednom mestu. Po izlasku sa
     // ekrana LockScreenOrientation sam vraca portret.
-    LockScreenOrientation(GameOrientation.LANDSCAPE)
+    LockScreenOrientation(GameType.CHARADES.orientation)
 
     // Notifikacija foreground servisa se od Androida 13 prikazuje samo sa dozvolom.
     // Ako je korisnik odbije, runda i dalje radi - samo nema notifikacije.

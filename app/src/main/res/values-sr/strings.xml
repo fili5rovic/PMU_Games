@@ -30,7 +30,7 @@
 
     <!-- Uputstva za mini igre, prikazuju se oba igraca pre runde -->
     <string name="instruction_reaction">Cekaj zeleno, pa prvi tapni svoju polovinu. Ako tapnes prerano, runda je izgubljena.</string>
-    <string name="instruction_tictactoe">Igrajte naizmenicno na zajednickoj tabli. Tri u nizu pobedjuju.</string>
+    <string name="instruction_tictactoe">Igrajte naizmenicno na zajednickoj tabli. Pobedjuje ceo niz - vrsta, kolona ili dijagonala.</string>
     <string name="instruction_memory">Naizmenicno otvarajte po dve kartice. Par vredi poen i pravo na novi potez.</string>
     <string name="instruction_tap_race">Tapkaj svoju polovinu sto vise puta pre nego sto vreme istekne.</string>
     <string name="instruction_math_duel">Resi prvi. Pogresan odgovor te iskljucuje iz ove runde.</string>
@@ -153,4 +153,34 @@
     <string name="trivia_science">Nauka i priroda</string>
     <string name="trivia_sports">Sport</string>
     <string name="trivia_history">Istorija</string>
+
+    <!-- Stani na vreme -->
+    <string name="game_stop_timer_title">Stani na vreme</string>
+    <string name="instruction_stop_timer">Zapamti ciljno vreme, pa pritisni STOP kada mislis da je proslo. Nema vidljivog brojaca.</string>
+    <string name="stop_timer_target">Stani posle %1$d s</string>
+    <string name="stop_timer_stop">STOP</string>
+    <string name="stop_timer_press_when_ready">Pritisni STOP kada vreme prodje</string>
+    <string name="stop_timer_stopped">Stao si, ceka se protivnik</string>
+    <string name="stop_timer_seconds">%1$s s</string>
+    <string name="stop_timer_error">odstupanje %1$s s</string>
+    <string name="outcome_error_ms">%1$d ms od cilja</string>
+
+    <!-- Binarno u decimalno -->
+    <string name="game_binary_title">Binarno u decimalno</string>
+    <string name="instruction_binary">Pretvori binarni broj i prvi tapni tacnu decimalnu vrednost. Pogresan tap te iskljucuje.</string>
+    <string name="binary_prompt">%1$s₂</string>
+    <string name="binary_correct_value">Tacan odgovor: %1$d</string>
+
+    <!-- Podesavanja igara -->
+    <string name="party_game_options">Podesavanja igara</string>
+    <string name="settings_board_size">Tabla za iks-oks</string>
+    <string name="settings_math_operations">Racunske operacije</string>
+    <string name="board_size_3">3x3</string>
+    <string name="board_size_4">4x4</string>
+    <string name="board_size_5">5x5</string>
+    <string name="board_size_random">Slucajno</string>
+
+    <!-- Statistika -->
+    <string name="statistics_mini_games">Mini igre</string>
+    <string name="statistics_recent_rounds">Poslednje runde</string>
 </resources>

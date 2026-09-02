@@ -4,16 +4,21 @@ package play.pmu.domain.game
 enum class Mark { X, O }
 
 /**
- * Pravila iks-oksa, bez ijedne Android ili Compose zavisnosti - zato se testiraju
- * obicnim JUnit testom (vidi TicTacToeBoardTest). ViewModel samo drzi trenutnu
- * tablu i naizmenicno menja igraca.
+ * Pravila iks-oksa za tablu PROIZVOLJNE velicine, bez ijedne Android ili Compose
+ * zavisnosti - zato se testiraju obicnim JUnit testom (vidi TicTacToeBoardTest).
+ *
+ * Za pobedu treba niz duzine [size]: tri u nizu na 3x3, cetiri na 4x4, pet na
+ * 5x5. Zato su pobednicke linije uvek sve vrste, sve kolone i dve dijagonale -
+ * jedna funkcija ([winningLines]) pokriva sve velicine, bez tri odvojene
+ * implementacije.
  *
  * Tabla je immutable: [place] ne menja postojeci objekat nego vraca novu tablu.
  * Tako Compose pouzdano vidi da se state promenio, i nemoguce je slucajno
  * pokvariti staro stanje.
  */
 data class TicTacToeBoard(
-    val cells: List<Mark?> = List(SIZE * SIZE) { null },
+    val size: Int = DEFAULT_SIZE,
+    val cells: List<Mark?> = List(size * size) { null },
 ) {
 
     /**
@@ -28,16 +33,16 @@ data class TicTacToeBoard(
     }
 
     /**
-     * Tri polja koja su dala pobedu, ili null ako pobednika nema. UI ovu liniju
+     * Polja koja su dala pobedu, ili null ako pobednika nema. UI ovu liniju
      * oboji na tabli, pa je odmah jasno cime je partija dobijena.
      */
     val winningLine: List<Int>?
-        get() = WINNING_LINES.firstOrNull { line ->
+        get() = winningLines(size).firstOrNull { line ->
             val first = cells[line.first()]
             first != null && line.all { cells[it] == first }
         }
 
-    /** Znak koji je napravio tri u nizu, ili null ako ga nema. */
+    /** Znak koji je napravio niz, ili null ako ga nema. */
     val winner: Mark? get() = winningLine?.let { cells[it.first()] }
 
     val isFull: Boolean get() = cells.none { it == null }
@@ -46,13 +51,23 @@ data class TicTacToeBoard(
     val isDraw: Boolean get() = isFull && winner == null
 
     companion object {
-        const val SIZE = 3
+        const val DEFAULT_SIZE = 3
 
-        /** Tri vrste, tri kolone, dve dijagonale - kao indeksi u [cells]. */
-        val WINNING_LINES: List<List<Int>> = listOf(
-            listOf(0, 1, 2), listOf(3, 4, 5), listOf(6, 7, 8),
-            listOf(0, 3, 6), listOf(1, 4, 7), listOf(2, 5, 8),
-            listOf(0, 4, 8), listOf(2, 4, 6),
-        )
+        /**
+         * Sve vrste, sve kolone i dve dijagonale, kao indeksi u [cells].
+         *
+         * Posto je potreban niz duzine [size], drugih linija te duzine na tabli
+         * nema - zato je ova lista potpuna za svaku velicinu.
+         */
+        fun winningLines(size: Int): List<List<Int>> = buildList {
+            for (row in 0 until size) {
+                add((0 until size).map { column -> row * size + column })
+            }
+            for (column in 0 until size) {
+                add((0 until size).map { row -> row * size + column })
+            }
+            add((0 until size).map { i -> i * size + i })
+            add((0 until size).map { i -> i * size + (size - 1 - i) })
+        }
     }
 }

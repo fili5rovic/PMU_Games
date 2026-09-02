@@ -31,9 +31,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import play.pmu.R
 import play.pmu.data.local.GameResultEntity
 import play.pmu.data.local.MatchEntity
+import play.pmu.data.local.MiniGameStats
+import play.pmu.data.local.RoundResultEntity
 import play.pmu.data.repository.GameStats
 import play.pmu.domain.model.Winner
 import play.pmu.ui.components.EmptyView
+import play.pmu.ui.components.PartyScore
 import play.pmu.ui.components.PmuTopAppBar
 import play.pmu.ui.components.scoreText
 import play.pmu.ui.components.winnerColor
@@ -74,6 +77,11 @@ fun StatisticsScreen(
             return@Scaffold
         }
 
+        // JEDAN LazyColumn prikazuje vise razlicitih tabela, pa kljucevi moraju da
+        // budu jedinstveni u celoj listi - a ne samo unutar svoje sekcije.
+        // Svaka tabela ima svoj autoincrement, tako da partija i rezultat
+        // pantomime lako dobiju isti id (oba pocinju od 1). Bez prefiksa
+        // Compose tada baca "Key 1 was already used" i ekran pukne.
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
@@ -85,8 +93,30 @@ fun StatisticsScreen(
             // Istorija partija je glavni deo aplikacije, pa stoji prva.
             if (uiState.matches.isNotEmpty()) {
                 item { SectionTitle(stringResource(R.string.party_history)) }
-                items(uiState.matches, key = { it.id }) { match ->
+                items(uiState.matches, key = { "match-${it.id}" }) { match ->
                     MatchRow(match)
+                    HorizontalDivider()
+                }
+            }
+
+            if (uiState.miniGames.isNotEmpty()) {
+                item { SectionTitle(stringResource(R.string.statistics_mini_games)) }
+                item {
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = PmuSpacing.medium),
+                        horizontalArrangement = Arrangement.spacedBy(PmuSpacing.small),
+                    ) {
+                        items(uiState.miniGames, key = { it.game.name }) { stats ->
+                            MiniGameStatsCard(stats)
+                        }
+                    }
+                }
+            }
+
+            if (uiState.rounds.isNotEmpty()) {
+                item { SectionTitle(stringResource(R.string.statistics_recent_rounds)) }
+                items(uiState.rounds, key = { "round-${it.id}" }) { round ->
+                    RoundRow(round)
                     HorizontalDivider()
                 }
             }
@@ -102,7 +132,7 @@ fun StatisticsScreen(
                     }
                 }
                 item { SectionTitle(stringResource(R.string.statistics_history)) }
-                items(uiState.history, key = { it.id }) { result ->
+                items(uiState.history, key = { "result-${it.id}" }) { result ->
                     HistoryRow(result)
                     HorizontalDivider()
                 }
@@ -151,6 +181,66 @@ private fun MatchRow(match: MatchEntity) {
         Text(
             text = stringResource(R.string.party_score, match.scoreOne, match.scoreTwo),
             style = MaterialTheme.typography.titleMedium,
+        )
+    }
+}
+
+/**
+ * Sazetak jedne mini igre: koliko je rundi odigrano i kako su podeljene pobede.
+ *
+ * Prikazuje sve sto je u bazi, pa nova mini igra ovde osvane sama - nema
+ * `when` po tipu igre koji bi morao da se dopunjava.
+ */
+@Composable
+private fun MiniGameStatsCard(stats: MiniGameStats) {
+    Card(modifier = Modifier.width(160.dp)) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = stringResource(stats.game.titleRes),
+                style = MaterialTheme.typography.titleSmall,
+            )
+            Text(
+                text = "${stringResource(R.string.statistics_played)}: ${stats.played}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            PartyScore(scoreOne = stats.winsOne, scoreTwo = stats.winsTwo)
+        }
+    }
+}
+
+/** Jedna odigrana runda mini igre: naziv igre, pobednik i vreme. */
+@Composable
+private fun RoundRow(round: RoundResultEntity) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = PmuSpacing.medium, vertical = PmuSpacing.small),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column {
+            Text(
+                text = stringResource(round.game.titleRes),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = formatDateTime(round.playedAt),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Text(
+            text = if (round.winner == Winner.DRAW) {
+                stringResource(R.string.round_draw)
+            } else {
+                winnerName(round.winner)
+            },
+            style = MaterialTheme.typography.bodyLarge,
+            color = winnerColor(round.winner),
         )
     }
 }

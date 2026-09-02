@@ -7,13 +7,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import play.pmu.R
-import play.pmu.domain.model.MiniGame
-import play.pmu.domain.model.RoundOutcome
 import play.pmu.domain.model.Winner
 import play.pmu.ui.components.PartyScore
 import play.pmu.ui.components.RoundResultView
@@ -21,12 +18,11 @@ import play.pmu.ui.party.MiniGameRound
 import play.pmu.ui.theme.PmuSpacing
 
 /**
- * Jedna mini igra, izabrana sa pocetnog ekrana i van partije.
+ * Jedna mini igra van partije.
  *
- * Isti [MiniGameRound] kao u partiji, pa se tok (uputstvo, odbrojavanje, igra)
- * ne pise dva puta. Razlika je samo u tome sta se radi sa ishodom: partija ga
- * ubraja u ukupan skor, a ovde se broje pobede u nizu rundi i one se NE upisuju
- * u bazu - pojedinacne runde su vezbanje, a istorija se vodi za partije.
+ * Koristi isti [MiniGameRound] kao partija, pa se tok (uputstvo, odbrojavanje,
+ * igra) ne pise dva puta. Razlika je samo u tome sta se radi sa ishodom: partija
+ * ga ubraja u ukupan skor, a ovde se broje pobede u nizu rundi.
  *
  * Broj pobeda putuje kroz navigacione argumente ([winsOne], [winsTwo]), jer
  * svaka nova runda ide na novu destinaciju - tako svaka runda dobija cist
@@ -34,23 +30,21 @@ import play.pmu.ui.theme.PmuSpacing
  */
 @Composable
 fun SoloGameScreen(
-    game: MiniGame,
     attempt: Int,
     winsOne: Int,
     winsTwo: Int,
     onPlayAgain: (winsOne: Int, winsTwo: Int) -> Unit,
     onNavigateBack: () -> Unit,
+    viewModel: SoloGameViewModel = hiltViewModel(),
 ) {
-    // Ishod runde je kratkotrajan i vezan za ovaj prikaz, pa je `remember`
-    // dovoljan: orijentacija je zakljucana na portret, tako da promene
-    // konfiguracije koja bi ga obrisala nema.
-    var outcome by remember { mutableStateOf<RoundOutcome?>(null) }
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val outcome = uiState.outcome
 
-    val current = outcome
-    if (current == null) {
+    if (outcome == null) {
         MiniGameRound(
-            game = game,
-            onFinished = { outcome = it },
+            round = viewModel.round,
+            gameSettings = uiState.gameSettings,
+            onFinished = viewModel::onRoundFinished,
             // U prvoj rundi jos nema sta da se prikaze, posle nje stoji
             // trenutni rezultat niza rundi.
             roundLabel = if (attempt > 1) {
@@ -62,10 +56,10 @@ fun SoloGameScreen(
         return
     }
 
-    val newWinsOne = winsOne + if (current.winner == Winner.PLAYER_ONE) 1 else 0
-    val newWinsTwo = winsTwo + if (current.winner == Winner.PLAYER_TWO) 1 else 0
+    val newWinsOne = winsOne + if (outcome.winner == Winner.PLAYER_ONE) 1 else 0
+    val newWinsTwo = winsTwo + if (outcome.winner == Winner.PLAYER_TWO) 1 else 0
 
-    RoundResultView(outcome = current) {
+    RoundResultView(outcome = outcome) {
         PartyScore(scoreOne = newWinsOne, scoreTwo = newWinsTwo)
         // Dugmad su na obe polovine ekrana, pa novu rundu moze da pokrene bilo
         // koji od dva igraca.

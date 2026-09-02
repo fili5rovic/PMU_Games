@@ -4,9 +4,7 @@ import android.content.pm.ActivityInfo
 import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-
-/** Orijentacija koju jedan ekran zahteva. */
-enum class GameOrientation { PORTRAIT, LANDSCAPE }
+import play.pmu.domain.model.GameOrientation
 
 /**
  * Zakljucava orijentaciju ekrana dok je ovaj composable u kompoziciji.

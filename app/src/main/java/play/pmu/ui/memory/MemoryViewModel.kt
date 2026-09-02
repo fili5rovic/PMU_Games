@@ -59,12 +59,25 @@ class MemoryViewModel @Inject constructor() : ViewModel() {
     /** Sprecava da se treca kartica otvori dok se neuparene dve jos vracaju. */
     private var isCheckingPair = false
 
+    /** Runda se postavlja tacno jednom - vidi [startRound]. */
+    private var isConfigured = false
+
     init {
         val cards = SYMBOLS
             .flatMap { symbol -> listOf(symbol, symbol) } // svaki simbol dva puta
             .shuffled()
             .mapIndexed { index, symbol -> MemoryCard(id = index, symbol = symbol) }
         _uiState.value = MemoryUiState(cards = cards)
+    }
+
+    /**
+     * Postavlja igraca koji pocinje. Odredjuje ga raspored partije (prvo
+     * pojavljivanje slucajno, svako sledece obrnuto), pa ga ova klasa samo prima.
+     */
+    fun startRound(startingPlayer: Player) {
+        if (isConfigured) return
+        isConfigured = true
+        _uiState.update { it.copy(currentPlayer = startingPlayer) }
     }
 
     fun onCardClick(cardId: Int) {

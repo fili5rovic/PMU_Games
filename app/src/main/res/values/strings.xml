@@ -30,7 +30,7 @@
 
     <!-- Mini game instructions, shown to both players before the round -->
     <string name="instruction_reaction">Wait for green, then tap your half first. Tap too early and the round is lost.</string>
-    <string name="instruction_tictactoe">Take turns on the shared board. Three in a row wins.</string>
+    <string name="instruction_tictactoe">Take turns on the shared board. Fill a whole row, column or diagonal to win.</string>
     <string name="instruction_memory">Take turns flipping two cards. A pair scores a point and you play again.</string>
     <string name="instruction_tap_race">Tap your own half as many times as you can before the time runs out.</string>
     <string name="instruction_math_duel">Solve it first. A wrong answer locks you out of this round.</string>
@@ -153,4 +153,34 @@
     <string name="trivia_science">Science and nature</string>
     <string name="trivia_sports">Sports</string>
     <string name="trivia_history">History</string>
+
+    <!-- Stop the Timer -->
+    <string name="game_stop_timer_title">Stop the Timer</string>
+    <string name="instruction_stop_timer">Remember the target time, then press STOP when you think it has passed. No timer is shown.</string>
+    <string name="stop_timer_target">Stop after %1$d s</string>
+    <string name="stop_timer_stop">STOP</string>
+    <string name="stop_timer_press_when_ready">Press STOP when the time is up</string>
+    <string name="stop_timer_stopped">Stopped, waiting for the other player</string>
+    <string name="stop_timer_seconds">%1$s s</string>
+    <string name="stop_timer_error">off by %1$s s</string>
+    <string name="outcome_error_ms">%1$d ms off the target</string>
+
+    <!-- Binary to Decimal -->
+    <string name="game_binary_title">Binary to Decimal</string>
+    <string name="instruction_binary">Convert the binary number and tap the right decimal value first. A wrong tap locks you out.</string>
+    <string name="binary_prompt">%1$s₂</string>
+    <string name="binary_correct_value">Correct answer: %1$d</string>
+
+    <!-- Game options -->
+    <string name="party_game_options">Game options</string>
+    <string name="settings_board_size">Tic-Tac-Toe board</string>
+    <string name="settings_math_operations">Math operations</string>
+    <string name="board_size_3">3x3</string>
+    <string name="board_size_4">4x4</string>
+    <string name="board_size_5">5x5</string>
+    <string name="board_size_random">Random</string>
+
+    <!-- Statistics -->
+    <string name="statistics_mini_games">Mini games</string>
+    <string name="statistics_recent_rounds">Recent rounds</string>
 </resources>

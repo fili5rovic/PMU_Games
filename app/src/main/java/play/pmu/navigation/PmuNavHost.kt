@@ -12,7 +12,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import play.pmu.domain.model.MiniGame
 import play.pmu.ui.charades.CharadesCategoriesScreen
 import play.pmu.ui.charades.CharadesScreen
 import play.pmu.ui.home.HomeScreen
@@ -60,6 +59,8 @@ fun PmuNavHost(navController: NavHostController = rememberNavController()) {
 
                 PartyStartScreen(
                     uiState = uiState,
+                    onBoardSizeChange = viewModel::setTicTacToeBoardSize,
+                    onMathOperationsChange = viewModel::setMathOperations,
                     // Nastavlja se od runde koja je na redu. Za novu partiju to je
                     // runda 0, a ako su se igraci vratili "nazad" iz partije,
                     // nastavlja se tamo gde su stali - odigrana runda se nikada ne
@@ -129,7 +130,6 @@ fun PmuNavHost(navController: NavHostController = rememberNavController()) {
             val route = entry.toRoute<SoloGameRoute>()
 
             SoloGameScreen(
-                game = MiniGame.valueOf(route.game),
                 attempt = route.attempt,
                 winsOne = route.winsOne,
                 winsTwo = route.winsTwo,
@@ -139,6 +139,8 @@ fun PmuNavHost(navController: NavHostController = rememberNavController()) {
                             attempt = route.attempt + 1,
                             winsOne = winsOne,
                             winsTwo = winsTwo,
+                            // Sledeca runda pocinje obrnutim redom.
+                            startsWithPlayerOne = !route.startsWithPlayerOne,
                         )
                     ) {
                         popUpTo<SoloGameRoute> { inclusive = true }

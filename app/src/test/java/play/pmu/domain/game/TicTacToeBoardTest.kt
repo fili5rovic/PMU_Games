@@ -9,22 +9,23 @@ import org.junit.Test
 /**
  * Testovi pravila iks-oksa. Moguci su bez emulatora jer [TicTacToeBoard] ne
  * zavisi ni od jedne Android klase.
+ *
+ * Provera se radi za sve tri velicine table, jer je pobednicki niz uvek dug
+ * koliko i strana table (tri na 3x3, cetiri na 4x4, pet na 5x5).
  */
 class TicTacToeBoardTest {
 
-    /** Odigra niz poteza naizmenicno, pocevsi od [first]. */
-    private fun boardOf(vararg moves: Int, first: Mark = Mark.X): TicTacToeBoard {
-        var board = TicTacToeBoard()
-        moves.forEachIndexed { index, cell ->
-            val mark = if (index % 2 == 0) first else if (first == Mark.X) Mark.O else Mark.X
-            board = requireNotNull(board.place(cell, mark))
-        }
-        return board
-    }
+    /** Upisuje znak direktno u polja, da test ne mora da glumi naizmenicne poteze. */
+    private fun boardWith(size: Int, marks: Map<Int, Mark>): TicTacToeBoard =
+        TicTacToeBoard(size = size, cells = List(size * size) { marks[it] })
+
+    private fun lineOf(size: Int, indices: List<Int>, mark: Mark = Mark.X) =
+        boardWith(size, indices.associateWith { mark })
 
     @Test
     fun `nova tabla je prazna i bez pobednika`() {
         val board = TicTacToeBoard()
+        assertEquals(3, board.size)
         assertEquals(9, board.cells.size)
         assertTrue(board.cells.all { it == null })
         assertNull(board.winner)
@@ -32,46 +33,130 @@ class TicTacToeBoardTest {
     }
 
     @Test
-    fun `tri u vrsti daju pobedu`() {
-        // X: 0,1,2   O: 3,4
-        val board = boardOf(0, 3, 1, 4, 2)
+    fun `tabla trazene velicine ima odgovarajuci broj polja`() {
+        assertEquals(16, TicTacToeBoard(size = 4).cells.size)
+        assertEquals(25, TicTacToeBoard(size = 5).cells.size)
+    }
+
+    // --- 3x3 ---
+
+    @Test
+    fun `tri u vrsti pobedjuje na tabli 3x3`() {
+        val board = lineOf(3, listOf(0, 1, 2))
         assertEquals(Mark.X, board.winner)
         assertEquals(listOf(0, 1, 2), board.winningLine)
     }
 
     @Test
-    fun `tri u koloni daju pobedu`() {
-        // O: 1,4,7   X: 0,2
-        val board = boardOf(1, 0, 4, 2, 7, first = Mark.O)
+    fun `tri u koloni pobedjuje na tabli 3x3`() {
+        val board = lineOf(3, listOf(1, 4, 7), Mark.O)
         assertEquals(Mark.O, board.winner)
         assertEquals(listOf(1, 4, 7), board.winningLine)
     }
 
     @Test
-    fun `tri u dijagonali daju pobedu`() {
-        // X: 0,4,8   O: 1,2
-        val board = boardOf(0, 1, 4, 2, 8)
-        assertEquals(Mark.X, board.winner)
-        assertEquals(listOf(0, 4, 8), board.winningLine)
+    fun `tri u dijagonali pobedjuje na tabli 3x3`() {
+        assertEquals(Mark.X, lineOf(3, listOf(0, 4, 8)).winner)
+        assertEquals(Mark.X, lineOf(3, listOf(2, 4, 6)).winner)
     }
 
     @Test
-    fun `tri u drugoj dijagonali daju pobedu`() {
-        // X: 2,4,6   O: 0,1
-        val board = boardOf(2, 0, 4, 1, 6)
+    fun `dva u nizu ne pobedjuju na tabli 3x3`() {
+        assertNull(lineOf(3, listOf(0, 1)).winner)
+    }
+
+    // --- 4x4 ---
+
+    @Test
+    fun `cetiri u vrsti pobedjuju na tabli 4x4`() {
+        val board = lineOf(4, listOf(4, 5, 6, 7))
         assertEquals(Mark.X, board.winner)
-        assertEquals(listOf(2, 4, 6), board.winningLine)
+        assertEquals(listOf(4, 5, 6, 7), board.winningLine)
     }
 
     @Test
-    fun `puna tabla bez tri u nizu je nereseno`() {
+    fun `cetiri u koloni pobedjuju na tabli 4x4`() {
+        assertEquals(Mark.O, lineOf(4, listOf(2, 6, 10, 14), Mark.O).winner)
+    }
+
+    @Test
+    fun `cetiri u dijagonali pobedjuju na tabli 4x4`() {
+        assertEquals(Mark.X, lineOf(4, listOf(0, 5, 10, 15)).winner)
+        assertEquals(Mark.X, lineOf(4, listOf(3, 6, 9, 12)).winner)
+    }
+
+    @Test
+    fun `tri u nizu ne pobedjuju na tabli 4x4`() {
+        // Na vecoj tabli tri u nizu nisu dovoljna - trazi se cetiri.
+        assertNull(lineOf(4, listOf(0, 1, 2)).winner)
+    }
+
+    // --- 5x5 ---
+
+    @Test
+    fun `pet u vrsti pobedjuje na tabli 5x5`() {
+        val board = lineOf(5, listOf(10, 11, 12, 13, 14))
+        assertEquals(Mark.X, board.winner)
+        assertEquals(listOf(10, 11, 12, 13, 14), board.winningLine)
+    }
+
+    @Test
+    fun `pet u koloni pobedjuje na tabli 5x5`() {
+        assertEquals(Mark.O, lineOf(5, listOf(3, 8, 13, 18, 23), Mark.O).winner)
+    }
+
+    @Test
+    fun `pet u dijagonali pobedjuje na tabli 5x5`() {
+        assertEquals(Mark.X, lineOf(5, listOf(0, 6, 12, 18, 24)).winner)
+        assertEquals(Mark.X, lineOf(5, listOf(4, 8, 12, 16, 20)).winner)
+    }
+
+    @Test
+    fun `cetiri u nizu ne pobedjuju na tabli 5x5`() {
+        assertNull(lineOf(5, listOf(0, 1, 2, 3)).winner)
+    }
+
+    @Test
+    fun `broj pobednickih linija je vrste plus kolone plus dve dijagonale`() {
+        listOf(3, 4, 5).forEach { size ->
+            assertEquals(2 * size + 2, TicTacToeBoard.winningLines(size).size)
+            // Svaka linija je duga koliko i strana table.
+            assertTrue(TicTacToeBoard.winningLines(size).all { it.size == size })
+        }
+    }
+
+    // --- nereseno i potezi ---
+
+    @Test
+    fun `puna tabla bez niza je nereseno`() {
         // X O X
         // X O O
         // O X X
-        val board = boardOf(0, 1, 2, 4, 3, 5, 7, 6, 8)
+        val board = boardWith(
+            3,
+            mapOf(
+                0 to Mark.X, 1 to Mark.O, 2 to Mark.X,
+                3 to Mark.X, 4 to Mark.O, 5 to Mark.O,
+                6 to Mark.O, 7 to Mark.X, 8 to Mark.X,
+            ),
+        )
         assertNull(board.winner)
         assertTrue(board.isFull)
         assertTrue(board.isDraw)
+    }
+
+    @Test
+    fun `puna tabla sa nizom nije nereseno`() {
+        val board = boardWith(
+            3,
+            mapOf(
+                0 to Mark.X, 1 to Mark.X, 2 to Mark.X,
+                3 to Mark.O, 4 to Mark.O, 5 to Mark.X,
+                6 to Mark.X, 7 to Mark.O, 8 to Mark.O,
+            ),
+        )
+        assertEquals(Mark.X, board.winner)
+        assertFalse(board.isDraw)
     }
 
     @Test
@@ -82,9 +167,11 @@ class TicTacToeBoardTest {
 
     @Test
     fun `polje van table se odbija`() {
-        val board = TicTacToeBoard()
+        val board = TicTacToeBoard(size = 4)
         assertNull(board.place(-1, Mark.X))
-        assertNull(board.place(9, Mark.X))
+        assertNull(board.place(16, Mark.X))
+        // Poslednje polje jos jeste na tabli.
+        assertTrue(board.place(15, Mark.X) != null)
     }
 
     @Test
@@ -93,12 +180,5 @@ class TicTacToeBoardTest {
         original.place(0, Mark.X)
         // Tabla je immutable: place vraca novu, a stara ostaje prazna.
         assertTrue(original.cells.all { it == null })
-    }
-
-    @Test
-    fun `nepuna tabla bez pobednika nije nereseno`() {
-        val board = boardOf(0, 1)
-        assertNull(board.winner)
-        assertFalse(board.isDraw)
     }
 }

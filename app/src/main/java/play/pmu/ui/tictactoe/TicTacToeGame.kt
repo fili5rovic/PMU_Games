@@ -25,12 +25,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.delay
 import play.pmu.R
 import play.pmu.domain.game.Mark
 import play.pmu.domain.game.TicTacToeBoard
+import play.pmu.domain.model.BoardSizeOption
 import play.pmu.domain.model.Player
 import play.pmu.domain.model.RoundOutcome
 import play.pmu.ui.components.PlayerBadge
@@ -46,10 +49,16 @@ import play.pmu.ui.theme.accentColor
  */
 @Composable
 fun TicTacToeGame(
+    boardSizeOption: BoardSizeOption,
+    startingPlayer: Player,
     onFinished: (RoundOutcome) -> Unit,
     viewModel: TicTacToeViewModel = hiltViewModel(),
 ) {
+    // Podesavanje runde se ViewModel-u predaje jednom, pri ulasku u kompoziciju.
+    LaunchedEffect(Unit) { viewModel.startRound(boardSizeOption, startingPlayer) }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val board = uiState.board ?: return // jedan kadar, dok se runda ne postavi
     val winner = uiState.winner
 
     LaunchedEffect(winner) {
@@ -65,7 +74,7 @@ fun TicTacToeGame(
         bottomPanel = { TurnPanel(Player.ONE, uiState) },
         centerContent = {
             Board(
-                board = uiState.board,
+                board = board,
                 onCellClick = viewModel::onCellClick,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,21 +117,26 @@ private fun Board(
     modifier: Modifier = Modifier,
 ) {
     val winningLine = board.winningLine
+    // Na vecoj tabli su polja manja, pa i znak mora da bude manji.
+    val markStyle = markStyleFor(board.size)
+    val spacing = if (board.size >= LARGE_BOARD_SIZE) SMALL_CELL_SPACING else PmuSpacing.small
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(PmuSpacing.small),
+        verticalArrangement = Arrangement.spacedBy(spacing),
     ) {
-        // chunked deli listu od devet polja na tri reda po tri.
-        board.cells.chunked(TicTacToeBoard.SIZE).forEachIndexed { rowIndex, row ->
+        // chunked deli listu polja na redove duzine board.size, pa isti kod
+        // iscrtava i 3x3 i 5x5.
+        board.cells.chunked(board.size).forEachIndexed { rowIndex, row ->
             Row(
                 modifier = Modifier.fillMaxWidth().weight(1f),
-                horizontalArrangement = Arrangement.spacedBy(PmuSpacing.small),
+                horizontalArrangement = Arrangement.spacedBy(spacing),
             ) {
                 row.forEachIndexed { columnIndex, mark ->
-                    val index = rowIndex * TicTacToeBoard.SIZE + columnIndex
+                    val index = rowIndex * board.size + columnIndex
                     Cell(
                         mark = mark,
+                        markStyle = markStyle,
                         isWinning = winningLine?.contains(index) == true,
                         onClick = { onCellClick(index) },
                         modifier = Modifier.weight(1f).fillMaxHeight(),
@@ -134,8 +148,16 @@ private fun Board(
 }
 
 @Composable
+private fun markStyleFor(size: Int): TextStyle = when (size) {
+    3 -> MaterialTheme.typography.displayMedium
+    4 -> MaterialTheme.typography.displaySmall
+    else -> MaterialTheme.typography.headlineSmall
+}
+
+@Composable
 private fun Cell(
     mark: Mark?,
+    markStyle: TextStyle,
     isWinning: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -151,7 +173,7 @@ private fun Cell(
         // ali ugaseno dugme je jasnije igracu.
         enabled = mark == null,
         color = containerColor,
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.small,
         modifier = modifier,
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -165,7 +187,7 @@ private fun Cell(
             ) { value ->
                 Text(
                     text = value?.name.orEmpty(),
-                    style = MaterialTheme.typography.displayMedium,
+                    style = markStyle,
                     color = when (value) {
                         Mark.X -> Player.ONE.accentColor
                         Mark.O -> Player.TWO.accentColor
@@ -178,3 +200,5 @@ private fun Cell(
 }
 
 private const val WINNER_DELAY_MILLIS = 900L
+private const val LARGE_BOARD_SIZE = 5
+private val SMALL_CELL_SPACING = 4.dp

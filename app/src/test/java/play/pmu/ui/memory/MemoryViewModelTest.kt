@@ -33,6 +33,8 @@ class MemoryViewModelTest {
     fun setUp() {
         Dispatchers.setMain(dispatcher)
         viewModel = MemoryViewModel()
+        // Pocetnog igraca u pravoj igri postavlja raspored partije.
+        viewModel.startRound(Player.ONE)
     }
 
     @After
@@ -48,6 +50,28 @@ class MemoryViewModelTest {
         // Svaki simbol se pojavljuje tacno dva puta.
         assertTrue(state.cards.groupBy { it.symbol }.values.all { it.size == 2 })
         assertEquals(Player.ONE, state.currentPlayer)
+    }
+
+    @Test
+    fun `runda pocinje zadatim igracem`() {
+        val model = MemoryViewModel()
+        model.startRound(Player.TWO)
+        assertEquals(Player.TWO, model.uiState.value.currentPlayer)
+    }
+
+    @Test
+    fun `poen dobija igrac koji je zaista poceo`() = runTest(dispatcher) {
+        val model = MemoryViewModel()
+        model.startRound(Player.TWO)
+
+        val pair = model.uiState.value.cards
+            .groupBy { it.symbol }.values.first { it.size == 2 }
+        model.onCardClick(pair[0].id)
+        model.onCardClick(pair[1].id)
+        advanceUntilIdle()
+
+        assertEquals(0, model.uiState.value.scoreOne)
+        assertEquals(1, model.uiState.value.scoreTwo)
     }
 
     @Test

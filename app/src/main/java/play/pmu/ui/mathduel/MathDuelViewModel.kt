@@ -6,56 +6,49 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import play.pmu.domain.game.AnswerDuel
 import play.pmu.domain.game.MathQuestion
 import play.pmu.domain.game.randomMathQuestion
+import play.pmu.domain.model.MathOperation
 import play.pmu.domain.model.Player
-import play.pmu.domain.model.Winner
 import javax.inject.Inject
 
 data class MathDuelUiState(
-    val question: MathQuestion,
-    /** Igraci koji su promasili, pa vise ne mogu da odgovaraju u ovoj rundi. */
-    val lockedOut: Set<Player> = emptySet(),
-    val winner: Winner? = null,
-) {
-    fun canAnswer(player: Player): Boolean = winner == null && player !in lockedOut
-}
+    /** null dok runda ne dobije podesavanja (vidi [MathDuelViewModel.startRound]). */
+    val question: MathQuestion? = null,
+    val duel: AnswerDuel = AnswerDuel(),
+)
 
 /**
  * Racunski duel: oba igraca vide ISTO pitanje, svaki na svojoj polovini ekrana i
- * u svom smeru. Prvi tacan odgovor osvaja rundu, a pogresan odgovor iskljucuje
- * igraca do kraja runde - pa nagadjanje nije isplativo.
+ * u svom smeru. Prvi tacan odgovor osvaja rundu.
  *
- * Samo generisanje pitanja je cista funkcija [randomMathQuestion] van
- * ViewModel-a, pa se moze testirati bez Android okruzenja.
+ * Pitanje se pravi u [startRound], a ne u `init`, jer zavisi od podesavanja
+ * (koje su operacije ukljucene) koja ekran prosledjuje. Posto je svaka runda
+ * svoja destinacija sa svojim ViewModel-om, poziv se desava tacno jednom po
+ * rundi - a straza na `question != null` pokriva i ponovni ulazak u kompoziciju.
+ *
+ * Pravila duela su u [AnswerDuel], zajednicka sa igrom binarno-u-decimalno.
  */
 @HiltViewModel
 class MathDuelViewModel @Inject constructor() : ViewModel() {
 
-    private val _uiState = MutableStateFlow(MathDuelUiState(question = randomMathQuestion()))
+    private val _uiState = MutableStateFlow(MathDuelUiState())
     val uiState: StateFlow<MathDuelUiState> = _uiState.asStateFlow()
 
-    /**
-     * Kao i u duelu refleksa, dva "istovremena" odgovora se izvrsavaju jedan za
-     * drugim na glavnoj niti: prvi tacan postavi pobednika, a drugi odmah ispada
-     * iz provere `canAnswer`. Zato ne postoji nacin da runda ima dva pobednika.
-     */
-    fun onAnswer(player: Player, answer: Int) {
+    fun startRound(operations: Set<MathOperation>) {
+        if (_uiState.value.question != null) return
+        _uiState.update { it.copy(question = randomMathQuestion(operations = operations)) }
+    }
+
+    /** [answerIndex] je mesto tapnutog odgovora u [MathQuestion.answers]. */
+    fun onAnswer(player: Player, answerIndex: Int) {
         val state = _uiState.value
-        if (!state.canAnswer(player)) return
+        val question = state.question ?: return
+        val answer = question.answers.getOrNull(answerIndex) ?: return
 
-        if (answer == state.question.correctAnswer) {
-            _uiState.update { it.copy(winner = player.asWinner) }
-            return
-        }
-
-        val lockedOut = state.lockedOut + player
         _uiState.update {
-            it.copy(
-                lockedOut = lockedOut,
-                // Ako su oba igraca promasila, runda je neresena.
-                winner = if (lockedOut.size == Player.entries.size) Winner.DRAW else null,
-            )
+            it.copy(duel = it.duel.answer(player, isCorrect = answer == question.correctAnswer))
         }
     }
 }

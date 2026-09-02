@@ -3,6 +3,7 @@ package play.pmu.navigation
 import kotlinx.serialization.Serializable
 import play.pmu.domain.model.GameType
 import play.pmu.domain.model.MiniGame
+import kotlin.random.Random
 
 /**
  * Destinacije u aplikaciji.
@@ -54,6 +55,8 @@ data class SoloGameRoute(
     val attempt: Int = 1,
     val winsOne: Int = 0,
     val winsTwo: Int = 0,
+    /** Ko igra prvi potez, za igre sa naizmenicnim potezima. */
+    val startsWithPlayerOne: Boolean = true,
 )
 
 @Serializable
@@ -86,5 +89,13 @@ fun GameType.startRoute(): Any = when (this) {
     GameType.QUIZ -> QuizCategoriesRoute
 }
 
-/** Kroz navigaciju ide samo ime enum konstante, ne cela vrednost. */
-fun MiniGame.soloRoute(): SoloGameRoute = SoloGameRoute(game = name)
+/**
+ * Kroz navigaciju ide samo ime enum konstante, ne cela vrednost.
+ *
+ * Pocetni igrac se izvlaci slucajno, pa ni u pojedinacnoj igri prvi potez ne
+ * pripada uvek istom igracu. Pri svakoj sledecoj rundi ekran ga obrce.
+ */
+fun MiniGame.soloRoute(random: Random = Random.Default): SoloGameRoute = SoloGameRoute(
+    game = name,
+    startsWithPlayerOne = random.nextBoolean(),
+)

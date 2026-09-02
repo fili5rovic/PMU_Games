@@ -10,6 +10,7 @@ import dagger.hilt.components.SingletonComponent
 import play.pmu.data.local.GameDatabase
 import play.pmu.data.local.GameResultDao
 import play.pmu.data.local.MatchDao
+import play.pmu.data.local.RoundResultDao
 import play.pmu.data.local.TriviaQuestionDao
 import javax.inject.Singleton
 
@@ -26,11 +27,15 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): GameDatabase =
         Room.databaseBuilder(context, GameDatabase::class.java, "pmu_games.db")
-            // Prelaz na v2 je destruktivan: stara baza je sadrzala rezultate
-            // Brzine reakcije i Memorije kao igara za JEDNOG igraca (prosecno
-            // vreme, broj poteza). Te igre su sada dueli i ti brojevi vise nemaju
-            // znacenje, pa nema sta da se migrira. Zapisi su lokalna istorija
-            // igranja, a ne podaci koje bi bilo steta izgubiti.
+            // Migracije su destruktivne: pri svakom podizanju verzije stara
+            // baza se odbacuje i pravi se nova, prazna.
+            //
+            // To je ovde ispravan izbor, a ne lenjost. Sadrzaj tabela se u toku
+            // razvoja vise puta promenio u znacenju: Brzina reakcije i Memorija
+            // su bile igre za jednog igraca (prosecno vreme, broj poteza), a
+            // sada su dueli, pa ti stari brojevi ne znace nista. Zapisi su
+            // lokalna istorija igranja, a ne podaci koje bi bilo steta izgubiti,
+            // pa pisanje prave migracije za njih ne bi imalo svrhu.
             .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
 
@@ -39,6 +44,10 @@ object DatabaseModule {
 
     @Provides
     fun provideMatchDao(database: GameDatabase): MatchDao = database.matchDao()
+
+    @Provides
+    fun provideRoundResultDao(database: GameDatabase): RoundResultDao =
+        database.roundResultDao()
 
     @Provides
     fun provideTriviaQuestionDao(database: GameDatabase): TriviaQuestionDao =

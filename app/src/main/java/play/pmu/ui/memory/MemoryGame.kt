@@ -40,9 +40,13 @@ import play.pmu.ui.theme.accentColor
  */
 @Composable
 fun MemoryGame(
+    startingPlayer: Player,
     onFinished: (RoundOutcome) -> Unit,
     viewModel: MemoryViewModel = hiltViewModel(),
 ) {
+    // Ko pocinje dolazi iz rasporeda partije, pa se ViewModel-u predaje jednom.
+    LaunchedEffect(Unit) { viewModel.startRound(startingPlayer) }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val winner = uiState.winner
 

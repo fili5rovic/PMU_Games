@@ -1,5 +1,6 @@
 package play.pmu.domain.game
 
+import play.pmu.domain.model.MathOperation
 import kotlin.random.Random
 
 /**
@@ -13,59 +14,73 @@ data class MathQuestion(
 )
 
 /**
- * Pravi slucajno pitanje: sabiranje, oduzimanje ili mnozenje malih brojeva.
+ * Pravi slucajno pitanje iz jedne od UKLJUCENIH operacija.
  *
- * Kao i buildPartySequence, funkcija je cista i prima [random] kao parametar,
- * pa je u testu ponasanje ponovljivo.
+ * Funkcija je cista i prima [random] kao parametar, pa je u testu ponasanje
+ * ponovljivo. [operations] dolazi iz podesavanja; ako je prazan, koriste se sve
+ * operacije, jer pitanje mora da se napravi.
  *
- * Netacni odgovori se biraju blizu tacnog (do +-6), da izbor ne bi bio ocigledan.
- * `while` petlja garantuje [ANSWER_COUNT] razlicitih vrednosti.
+ * Deljenje se generise NAOPAKO - prvo se izvuce rezultat i delilac, a deljenik
+ * se izracuna kao njihov proizvod. Zato je odgovor uvek ceo broj i nikada nema
+ * deljenja nulom (delilac pocinje od 2).
  */
-fun randomMathQuestion(random: Random = Random.Default): MathQuestion {
-    val operation = Operation.entries.random(random)
+fun randomMathQuestion(
+    operations: Set<MathOperation> = MathOperation.DEFAULT,
+    random: Random = Random.Default,
+): MathQuestion {
+    val operation = operations.ifEmpty { MathOperation.DEFAULT }.random(random)
+
     val left: Int
     val right: Int
+    val correct: Int
     when (operation) {
-        Operation.PLUS -> {
+        MathOperation.PLUS -> {
             left = random.nextInt(2, 40)
             right = random.nextInt(2, 40)
+            correct = left + right
         }
-        Operation.MINUS -> {
+
+        MathOperation.MINUS -> {
             // Veci broj je levo, pa rezultat nikada nije negativan.
             left = random.nextInt(10, 60)
             right = random.nextInt(2, left)
+            correct = left - right
         }
-        Operation.TIMES -> {
+
+        MathOperation.TIMES -> {
             left = random.nextInt(2, 10)
             right = random.nextInt(2, 10)
+            correct = left * right
+        }
+
+        MathOperation.DIVIDE -> {
+            correct = random.nextInt(2, 13)
+            right = random.nextInt(2, 10)
+            left = correct * right
         }
     }
 
-    val correct = operation.apply(left, right)
+    return MathQuestion(
+        text = "$left ${operation.symbol} $right = ?",
+        correctAnswer = correct,
+        answers = plausibleAnswers(correct, random),
+    )
+}
+
+/**
+ * Tacan odgovor i tri netacna, izmesani.
+ *
+ * Netacni se biraju blizu tacnog (do +-6), da izbor ne bi bio ocigledan.
+ * `while` petlja preko Set-a garantuje [ANSWER_COUNT] razlicitih vrednosti.
+ */
+private fun plausibleAnswers(correct: Int, random: Random): List<Int> {
     val answers = mutableSetOf(correct)
     while (answers.size < ANSWER_COUNT) {
         val offset = random.nextInt(-6, 7)
         val candidate = correct + offset
         if (offset != 0 && candidate >= 0) answers += candidate
     }
-
-    return MathQuestion(
-        text = "$left ${operation.symbol} $right = ?",
-        correctAnswer = correct,
-        answers = answers.shuffled(random),
-    )
+    return answers.shuffled(random)
 }
 
-private enum class Operation(val symbol: String) {
-    PLUS("+"),
-    MINUS("-"),
-    TIMES("x");
-
-    fun apply(left: Int, right: Int): Int = when (this) {
-        PLUS -> left + right
-        MINUS -> left - right
-        TIMES -> left * right
-    }
-}
-
-private const val ANSWER_COUNT = 4
+const val ANSWER_COUNT = 4
