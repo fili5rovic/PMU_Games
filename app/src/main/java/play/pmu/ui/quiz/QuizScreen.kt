@@ -56,7 +56,6 @@ fun QuizScreen(
             )
         },
     ) { padding ->
-        // Tri jasna stanja mreznog poziva: ucitavanje, greska, uspeh.
         when (val state = uiState) {
             QuizUiState.Loading -> LoadingView(
                 message = stringResource(R.string.quiz_loading),
@@ -109,7 +108,6 @@ private fun QuizContent(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
 
-        // Kada pitanja ne dolaze sa mreze, korisnik dobija diskretno objasnjenje zasto.
         if (state.source != QuestionSource.NETWORK) {
             ScoreBadge(
                 text = stringResource(
@@ -122,7 +120,6 @@ private fun QuizContent(
             )
         }
 
-        // Prelaz izmedju pitanja je blago pretapanje, da promena ne bude nagla.
         AnimatedContent(
             targetState = state.questionIndex,
             transitionSpec = {
@@ -159,10 +156,6 @@ private fun QuizContent(
     }
 }
 
-/**
- * Kartica jednog odgovora. Dok nije odgovoreno, sve su neutralne; posle izbora
- * tacan odgovor postaje zelen, a pogresan izbor crven.
- */
 @Composable
 private fun AnswerCard(
     answer: String,
@@ -177,8 +170,6 @@ private fun AnswerCard(
         answer == selectedAnswer -> WrongRedLight
         else -> MaterialTheme.colorScheme.surfaceVariant
     }
-    // Bela je namerna samo preko zelene/crvene kartice (tacno/netacno); sve
-    // ostalo uzima boju iz teme.
     val contentColor = when {
         !isAnswered -> MaterialTheme.colorScheme.onSurfaceVariant
         answer == correctAnswer || answer == selectedAnswer -> Color.White

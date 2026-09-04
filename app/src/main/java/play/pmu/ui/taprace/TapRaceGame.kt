@@ -28,16 +28,6 @@ import play.pmu.ui.theme.PmuSpacing
 import play.pmu.ui.theme.accentColor
 import play.pmu.ui.theme.areaColor
 
-/**
- * Trka tapkanja. Svaka polovina ekrana je jedno veliko dugme - najveca moguca
- * meta, jer se u ovoj igri tapka brzo i bez gledanja.
- *
- * Igraci tapkaju ISTOVREMENO, pa nema "aktivnog igraca": obe polovine su stalno
- * obojene bojom svog igraca, sto je samo oznaka identiteta.
- *
- * Na ekranu su samo dva broja - broj tapkanja (krupno) i preostale sekunde
- * (sitno, bez jedinice). Sve ostalo bi u ovoj igri bilo smetnja.
- */
 @Composable
 fun TapRaceGame(
     onFinished: (RoundOutcome) -> Unit,
@@ -67,11 +57,6 @@ fun TapRaceGame(
     )
 }
 
-/**
- * Bez `indication`-a i bez ripple efekta: pri brzom tapkanju desetine ripple
- * animacija bi nepotrebno trosile vreme na iscrtavanje, a igracu ne znace nista
- * jer broj tapkanja i tako raste na ekranu.
- */
 @Composable
 private fun tapHalfModifier(player: Player, onTap: (Player) -> Unit): Modifier {
     val interactionSource = remember { MutableInteractionSource() }

@@ -6,14 +6,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-/**
- * Tipografija aplikacije. Definisani su samo stilovi koje igre stvarno koriste;
- * ostale Material 3 podrazumevane vrednosti ostaju kakve su.
- *
- * Krupni stilovi (`display*`) su namerno debeli i zbijeni (`lineHeight` blizu
- * `fontSize`): u party igrama se citaju sa udaljenosti od pola metra i preko
- * cele polovine ekrana, pa je citljivost vaznija od klasicnog proreda.
- */
 val Typography = Typography(
     displayLarge = TextStyle(
         fontFamily = FontFamily.Default,

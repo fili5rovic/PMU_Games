@@ -15,23 +15,11 @@ import play.pmu.domain.util.GameClock
 import javax.inject.Inject
 import kotlin.random.Random
 
-/**
- * Faze jedne runde duela refleksa. Sealed interface je bolji od nekoliko
- * boolean polja jer su faze medjusobno isklucive - kompajler u `when` proverava
- * da nijedna nije zaboravljena.
- */
 sealed interface ReactionPhase {
 
-    /** Oba dela ekrana su crvena, ceka se slucajno vreme do zelenog. */
     data object Waiting : ReactionPhase
 
-    /** Ekran je zelen - prvi tap pobedjuje. */
     data object Ready : ReactionPhase
-
-    /**
-     * Runda je odigrana. [isFalseStart] znaci da je protivnik tapnuo pre
-     * zelenog, pa je [winner] dobio rundu bez tapkanja; tada je [timeMs] null.
-     */
     data class Done(
         val winner: Player,
         val isFalseStart: Boolean,
@@ -43,13 +31,6 @@ data class ReactionUiState(
     val phase: ReactionPhase = ReactionPhase.Waiting,
 )
 
-/**
- * Duel refleksa za dva igraca na podeljenom ekranu.
- *
- * Cekanje do zelenog je `delay` u [viewModelScope], a ne blokiranje niti: UI za
- * to vreme normalno reaguje, a kada se ekran zatvori scope se otkazuje i
- * coroutine prestaje sama.
- */
 @HiltViewModel
 class ReactionViewModel @Inject constructor(
     private val random: Random,
@@ -59,10 +40,8 @@ class ReactionViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ReactionUiState())
     val uiState: StateFlow<ReactionUiState> = _uiState.asStateFlow()
 
-    /** Coroutine koja ceka do zelenog; pamti se da bi mogla da se prekine na rani tap. */
     private var waitJob: Job? = null
 
-    /** Trenutak kada je ekran postao zelen, po monotonom satu. */
     private var greenAtMillis = 0L
 
     init {
@@ -80,17 +59,6 @@ class ReactionViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Jedini ulaz iz UI-a. Sta ce se desiti zavisi isklucivo od trenutne faze:
-     * tap pre zelenog je pogresan start i rundu dobija protivnik, a tap na
-     * zelenom pobedjuje.
-     *
-     * ZASTO NE MOZE DA SE UPISU DVA POBEDNIKA: Compose poziva `onClick` na glavnoj
-     * niti, pa se dva "istovremena" tapa i dalje izvrsavaju jedan za drugim.
-     * Prvi postavlja fazu na [ReactionPhase.Done], a drugi tada ulazi u granu
-     * koja ne radi nista. Nema, dakle, prozora u kome bi oba tapa videla
-     * [ReactionPhase.Ready].
-     */
     fun onTap(player: Player) {
         when (val phase = _uiState.value.phase) {
             ReactionPhase.Waiting -> finish(
@@ -105,7 +73,6 @@ class ReactionViewModel @Inject constructor(
                 timeMs = (clock.elapsedRealtimeMillis() - greenAtMillis).toInt(),
             )
 
-            // Runda je vec resena - drugi tap se ignorise.
             is ReactionPhase.Done -> Unit
         }
     }

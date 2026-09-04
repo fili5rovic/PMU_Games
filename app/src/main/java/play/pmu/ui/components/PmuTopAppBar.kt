@@ -11,10 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import play.pmu.R
 
-/**
- * Zajednicki top bar sa opcionim dugmetom za nazad, da svi ekrani izgledaju isto.
- * [actions] omogucava da pocetni ekran doda svoje ikonice (statistika, podesavanja).
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PmuTopAppBar(

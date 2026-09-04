@@ -39,17 +39,12 @@ import play.pmu.ui.theme.PmuSpacing
 import play.pmu.ui.theme.accentColor
 import play.pmu.ui.theme.areaColor
 
-/**
- * Duel memorije. Kartice su zajednicke i leze u sredini (kao na stolu), a skor i
- * red poteza stoje na krajevima, okrenuti svaki svom igracu.
- */
 @Composable
 fun MemoryGame(
     startingPlayer: Player,
     onFinished: (RoundOutcome) -> Unit,
     viewModel: MemoryViewModel = hiltViewModel(),
 ) {
-    // Ko pocinje dolazi iz rasporeda partije, pa se ViewModel-u predaje jednom.
     LaunchedEffect(Unit) { viewModel.startRound(startingPlayer) }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -86,7 +81,6 @@ fun MemoryGame(
     )
 }
 
-/** Podloga polovine igraca koji je na potezu - isti postupak kao u iks-oksu. */
 @Composable
 private fun playerAreaModifier(player: Player, isActive: Boolean): Modifier {
     val background by animateColorAsState(
@@ -100,7 +94,6 @@ private fun playerAreaModifier(player: Player, isActive: Boolean): Modifier {
         .testTag(PmuTestTags.playerArea(player.name))
 }
 
-/** Ime igraca, oznaka da je na redu i njegov broj parova. */
 @Composable
 private fun ScorePanel(player: Player, uiState: MemoryUiState, isActive: Boolean) {
     Column(
@@ -117,11 +110,6 @@ private fun ScorePanel(player: Player, uiState: MemoryUiState, isActive: Boolean
     }
 }
 
-/**
- * Mreza 4x3. Za dvanaest kartica nije potreban LazyVerticalGrid: `chunked`
- * podeli listu na redove, a `weight` unutar reda deli sirinu na cetiri jednaka
- * dela. Tako je sigurno da cela tabla stane na ekran bez skrolovanja.
- */
 @Composable
 private fun CardGrid(
     cards: List<MemoryCard>,
@@ -153,10 +141,6 @@ private fun CardGrid(
     }
 }
 
-/**
- * Kartica se "obrce" animacijom rotacije oko Y ose. Simbol se prikazuje samo
- * kada je kartica presla pola obrtaja, pa se sadrzaj ne vidi kroz "zadnju stranu".
- */
 @Composable
 private fun MemoryCardItem(
     card: MemoryCard,

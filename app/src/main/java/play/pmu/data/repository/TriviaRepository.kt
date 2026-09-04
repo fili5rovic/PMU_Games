@@ -11,7 +11,6 @@ import play.pmu.domain.model.TriviaQuestion
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/** Odakle su pitanja stigla - UI na osnovu ovoga prikazuje obavestenje. */
 enum class QuestionSource { NETWORK, CACHE, BUNDLED }
 
 data class TriviaQuestions(
@@ -19,15 +18,6 @@ data class TriviaQuestions(
     val source: QuestionSource,
 )
 
-/**
- * Pitanja za kviz, sa tri nivoa rezerve:
- *
- *  1. REST poziv na Open Trivia DB (i upis u Room cache),
- *  2. Room cache, ako mreza ne radi,
- *  3. pitanja ugradjena u resurse, ako je cache prazan (npr. prvo pokretanje bez interneta).
- *
- * Zbog toga kviz nikada ne ostane bez sadrzaja.
- */
 @Singleton
 class TriviaRepository @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -49,18 +39,9 @@ class TriviaRepository @Inject constructor(
         return TriviaQuestions(bundledQuestions(category, count), QuestionSource.BUNDLED)
     }
 
-    /**
-     * Osvezavanje cache-a bez prikazivanja pitanja - koristi ga WorkManager.
-     * Vraca true ako je cache uspesno napunjen.
-     */
     suspend fun refreshCache(category: TriviaCategory, count: Int): Boolean =
         fetchFromNetwork(category, count).isNotEmpty()
 
-    /**
-     * Vraca pitanja sa mreze i usput puni cache. Mrezne greske se ovde hvataju i
-     * pretvaraju u praznu listu, jer pozivaocu treba samo "ima ili nema" -
-     * odluku o rezervi donosi loadQuestions.
-     */
     private suspend fun fetchFromNetwork(
         category: TriviaCategory,
         count: Int,
@@ -85,11 +66,9 @@ class TriviaRepository @Inject constructor(
             entities
         }
     } catch (e: Exception) {
-        // Nema interneta, timeout, neispravan JSON... - u svakom slucaju idemo na rezervu.
         emptyList()
     }
 
-    /** Rezervna pitanja iz resursa. Format reda: pitanje | tacan | netacan | netacan | netacan */
     private fun bundledQuestions(category: TriviaCategory, count: Int): List<TriviaQuestion> =
         context.resources.getStringArray(category.fallbackRes)
             .mapNotNull { line ->
@@ -110,7 +89,6 @@ class TriviaRepository @Inject constructor(
         answers = answers,
     )
 
-    /** Open Trivia DB vraca HTML entitete, npr. &quot; umesto navodnika. */
     private fun String.unescapeHtml(): String =
         HtmlCompat.fromHtml(this, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
 

@@ -11,20 +11,11 @@ import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Prevodi akcelerometar u Flow pokreta.
- *
- * Zasto callbackFlow: registrovanje i odjavljivanje listener-a su vezani za
- * zivot samog Flow-a. `awaitClose` se izvrsava kada se collect prekine - a to
- * se dogadja automatski kada ViewModel bude unisten ili kada ekran napusti
- * kompoziciju. Time nema nacina da listener "ostane" registrovan i prazni bateriju.
- */
 @Singleton
 class TiltDetector @Inject constructor(
     private val sensorManager: SensorManager,
 ) {
 
-    /** Emulatori bez akcelerometra: UI na osnovu ovoga prikazuje rucnu dugmad. */
     val isAvailable: Boolean
         get() = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null
 
@@ -47,8 +38,6 @@ class TiltDetector @Inject constructor(
             override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit
         }
 
-        // SENSOR_DELAY_GAME je dovoljno cest za pokrete rukom, a ne trosi bateriju
-        // kao najbrzi rezim.
         sensorManager.registerListener(listener, sensor, SensorManager.SENSOR_DELAY_GAME)
 
         awaitClose { sensorManager.unregisterListener(listener) }

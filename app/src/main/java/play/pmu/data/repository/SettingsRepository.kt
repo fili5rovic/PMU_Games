@@ -17,12 +17,6 @@ import play.pmu.domain.model.ThemeMode
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Podesavanja aplikacije, citana kao jedan objekat.
- *
- * Podesavanja pojedinih igara su izdvojena u [GameSettings], pa se vidi sta je
- * opsti izgled/tok aplikacije, a sta pravila jedne igre.
- */
 data class AppSettings(
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val dynamicColor: Boolean = true,
@@ -33,20 +27,12 @@ data class AppSettings(
     val manualCharadesControls: Boolean = false,
 ) {
     companion object {
-        /** Sedam rundi je dovoljno da se vise razlicitih igara pojavi, a partija ne oduzi. */
         const val DEFAULT_PARTY_ROUNDS = 7
         const val DEFAULT_ROUND_DURATION = 60
         const val DEFAULT_QUESTION_COUNT = 10
     }
 }
 
-/**
- * Podesavanja se cuvaju u DataStore Preferences - lagana perzistencija za
- * nekoliko vrednosti, za koju bi Room bio preterano tesko resenje.
- *
- * Citanje je Flow, pa se svaka promena odmah propagira do UI-a (npr. tema ili
- * dozvoljene racunske operacije).
- */
 @Singleton
 class SettingsRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>,
@@ -54,7 +40,6 @@ class SettingsRepository @Inject constructor(
 
     val settings: Flow<AppSettings> = dataStore.data.map { prefs ->
         AppSettings(
-            // valueOf bi pukao na nepoznatom tekstu, zato ide preko entries.find
             themeMode = ThemeMode.entries.find { it.name == prefs[KeyThemeMode] }
                 ?: ThemeMode.SYSTEM,
             dynamicColor = prefs[KeyDynamicColor] ?: true,
@@ -63,8 +48,6 @@ class SettingsRepository @Inject constructor(
                 ticTacToeBoardSize = BoardSizeOption.entries
                     .find { it.name == prefs[KeyBoardSize] }
                     ?: BoardSizeOption.RANDOM,
-                // fromNames se sam vraca na sve operacije ako je sacuvani skup
-                // prazan ili nepoznat - igra uvek mora da ima sta da postavi.
                 mathOperations = MathOperation.fromNames(prefs[KeyMathOperations].orEmpty()),
             ),
             roundDurationSeconds = prefs[KeyRoundDuration] ?: AppSettings.DEFAULT_ROUND_DURATION,
@@ -82,11 +65,6 @@ class SettingsRepository @Inject constructor(
     suspend fun setTicTacToeBoardSize(option: BoardSizeOption) =
         edit { it[KeyBoardSize] = option.name }
 
-    /**
-     * Prazan skup se ne upisuje: racunski duel bez ijedne operacije ne bi mogao
-     * da napravi pitanje. UI i sam ne dozvoljava da se ugasi zadnja operacija,
-     * pa je ovo druga brana.
-     */
     suspend fun setMathOperations(operations: Set<MathOperation>) {
         if (operations.isEmpty()) return
         edit { prefs -> prefs[KeyMathOperations] = operations.map { it.name }.toSet() }

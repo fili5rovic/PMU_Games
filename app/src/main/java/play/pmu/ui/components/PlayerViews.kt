@@ -18,13 +18,6 @@ import play.pmu.domain.model.Player
 import play.pmu.domain.model.Winner
 import play.pmu.ui.theme.accentColor
 
-/**
- * Ime igraca i, kada je na potezu, kratka potvrda "Tvoj potez".
- *
- * Ime je krupno i u boji igraca dok je na potezu, a priguseno kada nije. Uz
- * obojenu podlogu cele njegove polovine ekrana (vidi `Player.areaColor`) red
- * poteza se vidi odmah, bez citanja - a ne preko male tackice u uglu.
- */
 @Composable
 fun PlayerAreaLabel(
     player: Player,
@@ -57,10 +50,6 @@ fun PlayerAreaLabel(
     }
 }
 
-/**
- * Trenutni rezultat, u obliku "2 : 1". Svaki broj je u boji svog igraca, pa se
- * sa oba kraja telefona odmah vidi koji je broj ciji.
- */
 @Composable
 fun PartyScore(
     scoreOne: Int,
@@ -90,16 +79,13 @@ fun PartyScore(
     }
 }
 
-/** Ime pobednika runde ili partije, za tekstove tipa "Igrac 1 osvaja rundu". */
 @Composable
 fun winnerName(winner: Winner): String = when (winner) {
     Winner.PLAYER_ONE -> stringResource(R.string.player_one)
     Winner.PLAYER_TWO -> stringResource(R.string.player_two)
-    // Nereseno nema ime; pozivalac za DRAW koristi svoj tekst.
     Winner.DRAW -> ""
 }
 
-/** Boja kojom se prikazuje ishod: boja pobednika, neutralna kod neresenog. */
 @Composable
 fun winnerColor(winner: Winner): Color = when (winner) {
     Winner.PLAYER_ONE -> Player.ONE.accentColor

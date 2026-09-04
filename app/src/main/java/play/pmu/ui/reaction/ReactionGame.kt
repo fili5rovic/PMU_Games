@@ -28,13 +28,6 @@ import play.pmu.ui.theme.GoGreen
 import play.pmu.ui.theme.WaitingRed
 import play.pmu.ui.theme.WrongRed
 
-/**
- * Duel refleksa: telefon lezi izmedju igraca, svaki ima svoju polovinu ekrana.
- *
- * Igra ne zna nista o partiji - kada je runda resena, prijavi [RoundOutcome] i
- * time je njen posao zavrsen. O prikazu rezultata i o skoru brine onaj ko je
- * pokrenuo igru (partija ili pojedinacna igra).
- */
 @Composable
 fun ReactionGame(
     onFinished: (RoundOutcome) -> Unit,
@@ -43,8 +36,6 @@ fun ReactionGame(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val phase = uiState.phase
 
-    // Kratak zastoj pre prijave: igraci vide da je tap registrovan (polovina
-    // pobednika postane zelena) pre nego sto se pojavi ekran rezultata runde.
     LaunchedEffect(phase) {
         if (phase is ReactionPhase.Done) {
             delay(WINNER_FLASH_MILLIS)
@@ -70,11 +61,6 @@ fun ReactionGame(
     )
 }
 
-/**
- * Podloga i dodir jedne polovine. Boja je jasan signal i bez citanja teksta:
- * crveno = cekaj, zeleno = tapni, a posle runde zeleno kod pobednika i crveno
- * kod poraženog.
- */
 @Composable
 private fun reactionHalfModifier(
     player: Player,
@@ -113,9 +99,6 @@ private fun ReactionHalf(player: Player, phase: ReactionPhase) {
         } else {
             MaterialTheme.typography.headlineSmall
         },
-        // Namerno bela, a ne boja iz teme: podloga je crvena ili zelena (pravilo
-        // igre, ne stil), i obe su dovoljno tamne da beli tekst na njima ostane
-        // citljiv i u svetloj i u tamnoj temi.
         color = Color.White,
         textAlign = TextAlign.Center,
     )

@@ -26,10 +26,6 @@ private val LightColorScheme = lightColorScheme(
     tertiary = Pink40,
 )
 
-/**
- * Dosledni radijusi za celu aplikaciju: kartice, cipovi, polja table i dugmad
- * uzimaju oblik odavde, pa se ne razlikuju od ekrana do ekrana.
- */
 private val PmuShapes = Shapes(
     extraSmall = RoundedCornerShape(8.dp),
     small = RoundedCornerShape(12.dp),
@@ -38,10 +34,6 @@ private val PmuShapes = Shapes(
     extraLarge = RoundedCornerShape(32.dp),
 )
 
-/**
- * Tema aplikacije. [themeMode] i [dynamicColor] dolaze iz podesavanja (DataStore),
- * pa promena u Settings ekranu odmah prefarba celu aplikaciju.
- */
 @Composable
 fun PmuGamesTheme(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
@@ -55,7 +47,6 @@ fun PmuGamesTheme(
     }
 
     val colorScheme = when {
-        // Dinamicke boje (boje sa pozadine telefona) postoje od Androida 12.
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)

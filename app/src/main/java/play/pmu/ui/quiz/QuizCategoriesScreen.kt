@@ -6,7 +6,6 @@ import play.pmu.R
 import play.pmu.domain.model.TriviaCategory
 import play.pmu.ui.components.CategoryPickerScreen
 
-/** Izbor kategorije kviza. Nema state, pa nema ni ViewModel. */
 @Composable
 fun QuizCategoriesScreen(
     onCategorySelected: (TriviaCategory) -> Unit,

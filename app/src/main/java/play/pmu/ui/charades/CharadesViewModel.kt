@@ -23,7 +23,6 @@ import play.pmu.sensor.TiltGesture
 import play.pmu.service.RoundTimer
 import javax.inject.Inject
 
-/** Kratka povratna informacija koja se prikazuje preko ekrana posle pokreta. */
 enum class CharadesFeedback { NONE, CORRECT, SKIPPED }
 
 data class CharadesUiState(
@@ -33,9 +32,7 @@ data class CharadesUiState(
     val correctWords: List<String> = emptyList(),
     val skippedWords: List<String> = emptyList(),
     val feedback: CharadesFeedback = CharadesFeedback.NONE,
-    /** true kada treba prikazati dugmad Pogodak/Preskoci umesto (ili uz) senzor. */
     val showManualControls: Boolean = false,
-    /** false dok se prikazuje uputstvo; tada se pokreti i odbrojavanje ignorisu. */
     val isRoundStarted: Boolean = false,
     val isRoundOver: Boolean = false,
     val finishedResultId: Long? = null,
@@ -59,11 +56,9 @@ class CharadesViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CharadesUiState())
     val uiState: StateFlow<CharadesUiState> = _uiState.asStateFlow()
 
-    /** Pojmovi runde i pozicija u njima. */
     private var words: List<String> = emptyList()
     private var wordIndex = 0
 
-    /** Trajanje runde iz podesavanja; ekran ga koristi da pokrene servis. */
     var roundDurationSeconds: Int = 0
         private set
 
@@ -78,8 +73,6 @@ class CharadesViewModel @Inject constructor(
                     currentWord = words.firstOrNull().orEmpty(),
                     roundDurationSeconds = settings.roundDurationSeconds,
                     secondsLeft = settings.roundDurationSeconds,
-                    // Rucne kontrole se prikazuju kada ih korisnik izabere u podesavanjima
-                    // ili kada telefon/emulator uopste nema akcelerometar.
                     showManualControls = settings.manualCharadesControls ||
                         !tiltDetector.isAvailable,
                 )
@@ -87,15 +80,6 @@ class CharadesViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Poziva ekran kada se uputstvo i odbrojavanje zavrse.
-     *
-     * Runda NE pocinje u `init` iz dva razloga. Prvi je senzor: dok igrac
-     * podize telefon do cela, akcelerometar bi lako prijavio pokret koji bi se
-     * racunao kao pogodak. Drugi je odbrojavanje: [RoundTimer] je @Singleton i
-     * moze da nosi `isFinished = true` iz prethodne runde, pa se ovde prvo
-     * resetuje - inace bi nova runda mogla da se zavrsi u trenutku otvaranja.
-     */
     fun startRound() {
         if (_uiState.value.isRoundStarted) return
         roundTimer.reset(roundDurationSeconds)
@@ -104,10 +88,6 @@ class CharadesViewModel @Inject constructor(
         observeGestures()
     }
 
-    /**
-     * Odbrojavanje dolazi iz foreground servisa preko [RoundTimer]-a, pa runda
-     * tece i kada ekran nije u prvom planu.
-     */
     private fun observeTimer() {
         viewModelScope.launch {
             roundTimer.secondsLeft.collect { seconds ->
@@ -121,11 +101,6 @@ class CharadesViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Pokreti se prate samo dok je ovaj ViewModel ziv. Kada se ekran zatvori,
-     * viewModelScope se otkazuje, callbackFlow se zatvara i listener senzora se
-     * odjavljuje sam - nema rucnog unregister-a koji bi mogao da se zaboravi.
-     */
     private fun observeGestures() {
         viewModelScope.launch {
             tiltDetector.gestures().collect { gesture ->
@@ -158,7 +133,6 @@ class CharadesViewModel @Inject constructor(
         advanceToNextWord()
     }
 
-    /** Povratna informacija se sama sklanja, pa UI ne mora da je gasi. */
     fun clearFeedback() {
         _uiState.update { it.copy(feedback = CharadesFeedback.NONE) }
     }
@@ -166,7 +140,6 @@ class CharadesViewModel @Inject constructor(
     private fun advanceToNextWord() {
         wordIndex++
         if (wordIndex >= words.size) {
-            // Potroseni su svi pojmovi kategorije - runda se zavrsava ranije.
             finishRound()
         } else {
             _uiState.update { it.copy(currentWord = words[wordIndex]) }

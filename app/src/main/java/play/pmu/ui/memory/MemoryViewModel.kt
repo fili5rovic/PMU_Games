@@ -14,10 +14,6 @@ import play.pmu.domain.model.Winner
 import javax.inject.Inject
 import kotlin.random.Random
 
-/**
- * Jedna kartica. Immutable je, pa se "otvaranje" radi pravljenjem kopije
- * (`copy`) unutar nove liste - Compose tako pouzdano vidi da se state promenio.
- */
 data class MemoryCard(
     val id: Int,
     val symbol: String,
@@ -40,17 +36,6 @@ data class MemoryUiState(
         if (player == Player.ONE) scoreOne else scoreTwo
 }
 
-/**
- * Duel memorije: ista tabla, naizmenicni potezi.
- *
- * Pravila: igrac otvara dve kartice. Ako su par, dobija poen i IGRA PONOVO; ako
- * nisu, kartice se zatvaraju i red prelazi na protivnika. Kada se nadju svi
- * parovi, pobedjuje igrac sa vise parova (moguce je i nereseno).
- *
- * Kao i u iks-oksu, tabla je zajednicka pa aplikacija ne vidi ciji je prst
- * tapnuo karticu; ko je na redu pise na oba kraja ekrana, a poen uvek pripada
- * igracu koji je trenutno na redu.
- */
 @HiltViewModel
 class MemoryViewModel @Inject constructor(
     private val random: Random,
@@ -59,24 +44,18 @@ class MemoryViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(MemoryUiState())
     val uiState: StateFlow<MemoryUiState> = _uiState.asStateFlow()
 
-    /** Sprecava da se treca kartica otvori dok se neuparene dve jos vracaju. */
     private var isCheckingPair = false
 
-    /** Runda se postavlja tacno jednom - vidi [startRound]. */
     private var isConfigured = false
 
     init {
         val cards = SYMBOLS
-            .flatMap { symbol -> listOf(symbol, symbol) } // svaki simbol dva puta
+            .flatMap { symbol -> listOf(symbol, symbol) }
             .shuffled(random)
             .mapIndexed { index, symbol -> MemoryCard(id = index, symbol = symbol) }
         _uiState.value = MemoryUiState(cards = cards)
     }
 
-    /**
-     * Postavlja igraca koji pocinje. Odredjuje ga raspored partije (prvo
-     * pojavljivanje slucajno, svako sledece obrnuto), pa ga ova klasa samo prima.
-     */
     fun startRound(startingPlayer: Player) {
         if (isConfigured) return
         isConfigured = true
@@ -99,8 +78,6 @@ class MemoryViewModel @Inject constructor(
 
     private fun evaluatePair(first: MemoryCard, second: MemoryCard) {
         val isMatch = first.symbol == second.symbol
-        // Zastava se postavlja odmah, a spusta na kraju coroutine - tako treci
-        // klik ne moze da se ubaci izmedju.
         isCheckingPair = true
 
         viewModelScope.launch {
@@ -119,7 +96,6 @@ class MemoryViewModel @Inject constructor(
                         },
                         scoreOne = state.scoreOne + if (scoringPlayer == Player.ONE) 1 else 0,
                         scoreTwo = state.scoreTwo + if (scoringPlayer == Player.TWO) 1 else 0,
-                        // Par znaci pravo na novi potez, pa igrac ostaje isti.
                     )
                 } else {
                     state.copy(
@@ -135,7 +111,6 @@ class MemoryViewModel @Inject constructor(
                 }
             }
 
-            // Kraj partije se racuna posle upisa poena, iz novog stanja.
             _uiState.update { state ->
                 if (state.foundPairs == state.totalPairs) {
                     state.copy(winner = winnerFor(state.scoreOne, state.scoreTwo))
@@ -155,10 +130,6 @@ class MemoryViewModel @Inject constructor(
     }
 
     private companion object {
-        /**
-         * Sest parova daje mrezu 4x3, sto je dovoljno kratko da runda stane u
-         * partiju. Emoji se ne prevode, pa nisu u resursima.
-         */
         val SYMBOLS = listOf("🍎", "🚀", "🐬", "⚽", "🎵", "🌵")
         const val MATCH_DELAY_MILLIS = 400L
         const val MISMATCH_DELAY_MILLIS = 900L

@@ -12,10 +12,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-/** DataStore mora da postoji tacno jednom po procesu, otuda property na Context-u. */
 private val Context.settingsDataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-/** Android sistemske zavisnosti koje ne mozemo dobiti preko @Inject constructor-a. */
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {

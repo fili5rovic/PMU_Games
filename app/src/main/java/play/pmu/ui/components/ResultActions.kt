@@ -15,15 +15,6 @@ import play.pmu.ui.PmuTestTags
 import play.pmu.ui.theme.ActionButtonHeight
 import play.pmu.ui.theme.PmuSpacing
 
-/**
- * Dugmad na ekranima rezultata: "Pocetna" i glavna akcija (nova runda / nova
- * partija / igraj ponovo).
- *
- * Jedna komponenta za sve ekrane rezultata, pa su dugmad svuda iste sirine
- * (`weight(1f)`), iste visine ([ActionButtonHeight]) i sa istim rastojanjem.
- * Ranije je svaki ekran slagao svoj Row ili Column, pa su se velicine
- * razlikovale od ekrana do ekrana.
- */
 @Composable
 fun ResultActions(
     primaryLabel: String,

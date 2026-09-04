@@ -26,13 +26,6 @@ import play.pmu.fake.FakeRoundResultDao
 import play.pmu.fake.FakePreferencesDataStore
 import kotlin.random.Random
 
-/**
- * Testovi toka partije: raspored igara, napredovanje po rundama, skor i upis u
- * istoriju.
- *
- * Koristi se PRAVI SettingsRepository nad fake DataStore-om, pa se testira
- * tacno onaj kod koji radi i u aplikaciji.
- */
 @OptIn(ExperimentalCoroutinesApi::class)
 class PartyViewModelTest {
 
@@ -54,12 +47,6 @@ class PartyViewModelTest {
         Dispatchers.resetMain()
     }
 
-    /**
-     * Partija sa zadatim brojem rundi, spremna za igru.
-     *
-     * `scheduler.advanceUntilIdle` izvrsava coroutine iz `init` (citanje
-     * podesavanja i pravljenje rasporeda igara) bez stvarnog cekanja.
-     */
     private suspend fun startedParty(rounds: Int): PartyViewModel {
         settingsRepository.setPartyRounds(rounds)
         val viewModel = PartyViewModel(
@@ -72,7 +59,6 @@ class PartyViewModelTest {
         return viewModel
     }
 
-    /** Odigra jednu rundu u korist zadatog pobednika. */
     private fun PartyViewModel.playRound(round: Int, winner: Winner) {
         onRoundFinished(round, RoundOutcome(winner = winner))
     }
@@ -126,7 +112,6 @@ class PartyViewModelTest {
         val viewModel = startedParty(rounds = 5)
 
         viewModel.playRound(round = 0, winner = Winner.PLAYER_ONE)
-        // Isti poziv jos dva puta - poen sme da se doda tacno jednom.
         viewModel.playRound(round = 0, winner = Winner.PLAYER_ONE)
         viewModel.playRound(round = 0, winner = Winner.PLAYER_TWO)
 
@@ -167,7 +152,6 @@ class PartyViewModelTest {
         viewModel.playRound(0, Winner.PLAYER_ONE)
         viewModel.playRound(1, Winner.PLAYER_ONE)
 
-        // Ekran rezultata moze da se iscrta vise puta.
         viewModel.saveMatch()
         viewModel.saveMatch()
         advanceUntilIdle()
@@ -211,8 +195,6 @@ class PartyViewModelTest {
 
     @Test
     fun `partija cita pravila igara iz podesavanja`() = runTest(dispatcher) {
-        // Pravila se od sada menjaju u Podesavanjima; partija ih samo cita i
-        // prosledjuje rundama.
         settingsRepository.setTicTacToeBoardSize(BoardSizeOption.FIVE)
         settingsRepository.setMathOperations(setOf(MathOperation.PLUS))
 

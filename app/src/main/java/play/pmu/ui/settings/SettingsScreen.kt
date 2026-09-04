@@ -58,17 +58,6 @@ fun SettingsScreen(
     )
 }
 
-/**
- * Podesavanja: izgled i PRAVILA IGRE.
- *
- * Sva pravila koja igrac moze da menja su na ovom jednom ekranu, grupisana po
- * igri. Ranije su neka pravila bila ovde, a neka na ekranu pripreme partije, pa
- * se nije znalo gde se sta menja. Sada "Pokreni partiju" odmah pocinje igru, a
- * pravila se menjaju samo ovde - i to retko.
- *
- * Ekran je jedan, obican skrolujuci Column sa naslovima sekcija; ugnjezdena
- * navigacija po podesavanjima bila bi preterana za ovoliko opcija.
- */
 @Composable
 private fun SettingsContent(
     settings: AppSettings,
@@ -117,7 +106,6 @@ private fun SettingsContent(
                 }
             }
 
-            // Dinamicke boje postoje samo od Androida 12, pa se prekidac ispod toga ne prikazuje.
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 SwitchRow(
                     title = stringResource(R.string.settings_dynamic_color),
@@ -164,7 +152,6 @@ private fun SettingsContent(
                 MultiChoiceChips(
                     options = MathOperation.entries,
                     selected = settings.games.mathOperations,
-                    // Znak operacije je i oznaka na cipu - matematika se ne prevodi.
                     label = { it.symbol },
                     onSelectionChange = onMathOperationsChange,
                 )
@@ -203,12 +190,6 @@ private fun SettingsContent(
     }
 }
 
-/**
- * Pravilo jedne igre: naziv igre, naziv opcije i kontrola.
- *
- * Igre koje nemaju sta da podese se ovde uopste ne pojavljuju - nema praznih
- * sekcija samo da bi svaka igra imala svoju.
- */
 @Composable
 private fun GameRule(
     @StringRes gameRes: Int,

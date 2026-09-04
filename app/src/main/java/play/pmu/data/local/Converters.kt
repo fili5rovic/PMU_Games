@@ -6,20 +6,7 @@ import play.pmu.domain.model.MiniGame
 import play.pmu.domain.model.TriviaCategory
 import play.pmu.domain.model.Winner
 
-/**
- * Room ume da cuva samo primitivne tipove, pa mu ovde objasnjavamo kako da
- * upise enum-e i liste stringova.
- *
- * Liste se cuvaju kao jedan tekst sa razdvojnikom. To je dovoljno jer su elementi
- * pojmovi i odgovori bez znaka '\n'; alternativa (posebna tabela) bila bi
- * nesrazmerno komplikovana za ovu potrebu.
- *
- * Enum-i se cuvaju po IMENU konstante. `valueOf` puca na nepoznato ime, pa
- * uklanjanje ili preimenovanje konstante zahteva i podizanje verzije baze -
- * time stari redovi nestanu i ne moze se procitati ime koje vise ne postoji.
- * (Tako je i uradjeno kada su Brzina reakcije i Memorija prestale da budu igre
- * za jednog igraca.)
- */
+
 class Converters {
 
     @TypeConverter

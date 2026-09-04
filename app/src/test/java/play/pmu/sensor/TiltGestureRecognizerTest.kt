@@ -4,10 +4,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-/**
- * Testovi prepoznavanja pokreta. Moguci su bez emulatora jer
- * [TiltGestureRecognizer] ne zavisi ni od jedne Android klase.
- */
 class TiltGestureRecognizerTest {
 
     private val recognizer = TiltGestureRecognizer()

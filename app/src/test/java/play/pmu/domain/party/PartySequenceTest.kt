@@ -9,12 +9,6 @@ import play.pmu.domain.model.MiniGame
 import play.pmu.domain.model.Player
 import kotlin.random.Random
 
-/**
- * Testovi rasporeda partije: koje se igre pojavljuju i ko u njima pocinje.
- *
- * Random se prosledjuje kao parametar, pa se sa istim seed-om dobija uvek isti
- * raspored - test ne zavisi od slucajnosti.
- */
 class PartySequenceTest {
 
     @Test

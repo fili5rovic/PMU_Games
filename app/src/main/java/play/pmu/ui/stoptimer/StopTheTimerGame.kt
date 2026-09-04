@@ -38,14 +38,6 @@ import play.pmu.ui.theme.accentColor
 import play.pmu.ui.theme.areaColor
 import java.util.Locale
 
-/**
- * "Stani na vreme". Svaki igrac ima svoje STOP dugme na svojoj polovini ekrana.
- *
- * Ekran je namerno gotovo prazan: prvo samo BROJ sekundi (bez jedinice, bez
- * reci "cilj"), pa samo dugme STOP. U toku merenja se ne prikazuje nista sto bi
- * odalo proteklo vreme - ni brojac, ni traka, ni animacija - pa ovaj ekran u
- * toku merenja nema sta ni da rekomponuje.
- */
 @Composable
 fun StopTheTimerGame(
     onFinished: (RoundOutcome) -> Unit,
@@ -56,8 +48,6 @@ fun StopTheTimerGame(
 
     LaunchedEffect(result) {
         if (result != null) {
-            // Prvo se otkriju izmerena vremena i odstupanja, pa se tek onda
-            // prijavljuje ishod partiji.
             delay(REVEAL_MILLIS)
             onFinished(
                 RoundOutcome(
@@ -83,7 +73,6 @@ private fun StopTimerHalf(
     uiState: StopTheTimerUiState,
     onStop: (Player) -> Unit,
 ) {
-    // AnimatedContent pretapa faze, pa je nestajanje cilja jasno vidljivo.
     AnimatedContent(
         targetState = uiState.phase,
         transitionSpec = { fadeIn(tween(200)) togetherWith fadeOut(tween(200)) },
@@ -91,14 +80,10 @@ private fun StopTimerHalf(
         modifier = Modifier.padding(PmuSpacing.large),
     ) { phase ->
         when (phase) {
-            // Samo broj. Kontekst (igra se zove "Stani na vreme", uputstvo je
-            // upravo procitano) cini jedinicu suvisnom.
             StopTheTimerPhase.SHOWING_TARGET -> Text(
                 text = uiState.targetSeconds.toString(),
                 style = MaterialTheme.typography.displayLarge,
                 color = player.accentColor,
-                // Test procita ciljno vreme sa ekrana, pa ne mora da pogadja
-                // koju je vrednost izvukao Random.
                 modifier = Modifier.testTag(PmuTestTags.stopTarget(player.name)),
             )
 
@@ -145,10 +130,6 @@ private fun RunningHalf(
     }
 }
 
-/**
- * Otkriva izmereno vreme i odstupanje. Dva broja bez jedinica: krupno je vreme
- * zaustavljanja, a ispod njega odstupanje sa znakom "+-".
- */
 @Composable
 private fun FinishedHalf(player: Player, result: StopTheTimerResult) {
     val stopped = if (player == Player.ONE) result.playerOneMillis else result.playerTwoMillis
@@ -175,7 +156,6 @@ private fun FinishedHalf(player: Player, result: StopTheTimerResult) {
     }
 }
 
-/** Milisekunde u citljive sekunde, npr. 4720 -> "4.72". */
 private fun formatSeconds(millis: Int): String =
     String.format(Locale.getDefault(), "%.2f", millis / 1_000f)
 

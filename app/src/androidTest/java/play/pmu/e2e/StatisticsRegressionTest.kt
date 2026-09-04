@@ -26,18 +26,6 @@ import play.pmu.domain.model.Winner
 import play.pmu.ui.PmuTestTags
 import javax.inject.Inject
 
-/**
- * Regresioni testovi za pad ekrana statistike.
- *
- * STARI PAD: statistika prikazuje vise tabela u JEDNOM LazyColumn-u, a kljucevi
- * redova su bili sami id-jevi. Svaka tabela ima svoj autoincrement, pa su prva
- * partija i prvi rezultat pantomime oba dobili id = 1 - i Compose je pukao sa
- * "Key 1 was already used". Ekran je zato radio dok je bila popunjena samo jedna
- * tabela, a padao kada su bile dve.
- *
- * Zato prvi test namerno popuni SVE tri tabele istim id-jevima, i to bez UI-a,
- * pa tacno reprodukuje stari uslov. Drugi test prolazi kroz pravi tok igre.
- */
 @HiltAndroidTest
 class StatisticsRegressionTest {
 
@@ -68,8 +56,6 @@ class StatisticsRegressionTest {
 
     @Test
     fun statistika_radi_kada_su_popunjene_sve_tabele() = runBlocking<Unit> {
-        // Po jedan red u svakoj tabeli - svi sa id = 1, jer svaka tabela broji
-        // od pocetka. Tacno to je ranije obaralo ekran.
         gameResultsRepository.save(
             GameResultEntity(
                 gameType = GameType.CHARADES,
@@ -112,13 +98,6 @@ class StatisticsRegressionTest {
         openStatistics()
     }
 
-    /**
-     * Pantomima se NE vodi kroz UI: ona zaklucava landscape, sto rekreira
-     * Activity, a `createAndroidComposeRule` ne prezivljava rekreiranje. Njen
-     * rezultat je zato upisan direktno u bazu (prvi test), sto i jeste ono sto
-     * je obaralo statistiku. Prepoznavanje pokreta senzorom pokriva
-     * TiltGestureRecognizerTest, obican JUnit test bez uredjaja.
-     */
     private fun openStatistics() {
         composeRule.awaitTag(PmuTestTags.STATISTICS)
         composeRule.onNodeWithTag(PmuTestTags.STATISTICS).performClick()

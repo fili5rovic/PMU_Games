@@ -6,13 +6,6 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import play.pmu.domain.model.Winner
 
-/**
- * Upiti nad odigranim rundama mini igara.
- *
- * Statistika po igri se racuna U BAZI (GROUP BY), a ne u Kotlinu: tako se ne
- * cita cela istorija samo da bi se prebrojala. Rezultat Room sklapa u
- * [MiniGameStats].
- */
 @Dao
 interface RoundResultDao {
 
@@ -22,16 +15,6 @@ interface RoundResultDao {
     @Query("SELECT * FROM round_results ORDER BY playedAt DESC LIMIT :limit")
     fun observeRecent(limit: Int): Flow<List<RoundResultEntity>>
 
-    /**
-     * Broj odigranih rundi i pobeda po igri.
-     *
-     * [playerOne] i [playerTwo] se prosledjuju kao parametri (Room ih pretvara
-     * preko [Converters]) da imena konstanti ne bi bila upisana u SQL kao
-     * tekst - preimenovanje enum-a bi tada tiho pokvarilo brojanje.
-     *
-     * Upit se NE poziva sa listom poznatih igara, pa nova mini igra ulazi u
-     * statistiku sama, bez izmene ovog koda.
-     */
     @Query(
         """
         SELECT game AS game,

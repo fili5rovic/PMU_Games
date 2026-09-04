@@ -6,13 +6,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Deljeno stanje odbrojavanja izmedju [CharadesTimerService] i ViewModel-a.
- *
- * Zahvaljujuci ovom @Singleton-u nije potreban `ServiceConnection` ni Binder:
- * servis upisuje preostale sekunde, a ViewModel ih samo posmatra. Hilt garantuje
- * da su to isti objekat, jer oba dobijaju istu instancu.
- */
 @Singleton
 class RoundTimer @Inject constructor() {
 
@@ -22,7 +15,6 @@ class RoundTimer @Inject constructor() {
     private val _isFinished = MutableStateFlow(false)
     val isFinished: StateFlow<Boolean> = _isFinished.asStateFlow()
 
-    /** Poziva servis na svakom otkucaju. */
     fun update(seconds: Int) {
         _secondsLeft.value = seconds
     }
@@ -32,7 +24,6 @@ class RoundTimer @Inject constructor() {
         _isFinished.value = true
     }
 
-    /** Poziva se na pocetku nove runde. */
     fun reset(seconds: Int) {
         _secondsLeft.value = seconds
         _isFinished.value = false

@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-/** Mala oznaka za trenutni skor ili broj poteza. */
+
 @Composable
 fun ScoreBadge(
     text: String,

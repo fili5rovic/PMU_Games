@@ -23,17 +23,6 @@ import androidx.compose.ui.unit.dp
 import play.pmu.R
 import play.pmu.ui.theme.PmuSpacing
 
-/**
- * Kartica jedne igre na pocetnom ekranu.
- *
- * Komponenta je "stateless": ne zna nista o navigaciji ni o tome koja je igra u
- * pitanju - dobija gotov tekst i ikonicu, a klik prijavljuje kroz [onClick]
- * (state hoisting). Zato je ista kartica dobra i za mini igre ([MiniGame]) i za
- * pantomimu/kviz ([GameType]).
- *
- * [isPrimary] izdvaja glavnu akciju aplikacije (pokretanje partije) jacom bojom
- * i vecim naslovom, bez pisanja druge komponente.
- */
 @Composable
 fun GameCard(
     title: String,

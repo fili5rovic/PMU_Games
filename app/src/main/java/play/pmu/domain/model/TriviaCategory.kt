@@ -4,13 +4,7 @@ import androidx.annotation.ArrayRes
 import androidx.annotation.StringRes
 import play.pmu.R
 
-/**
- * Kategorije kviza. [apiId] je id kategorije na Open Trivia DB (opentdb.com),
- * a [fallbackRes] su lokalna pitanja koja se koriste kad nema ni mreze ni cache-a.
- *
- * Kategorije su nabrojane u kodu (a ne dovucene sa /api_category.php) da bi
- * mrezni sloj ostao jednostavan - jedan endpoint umesto dva.
- */
+
 enum class TriviaCategory(
     val apiId: Int,
     @StringRes val titleRes: Int,

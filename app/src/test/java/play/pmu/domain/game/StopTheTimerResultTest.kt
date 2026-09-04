@@ -4,13 +4,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import play.pmu.domain.model.Winner
 
-/**
- * Testovi poredjenja u igri "stani na vreme".
- *
- * Poredjenje je izvuceno iz ViewModel-a u [StopTheTimerResult], pa se testira
- * zadatim brojevima - bez ijednog stvarnog cekanja i bez `Thread.sleep`, koji bi
- * test ucinio nepouzdanim.
- */
 class StopTheTimerResultTest {
 
     private fun result(one: Int, two: Int, target: Int = 5_000) =
@@ -25,7 +18,6 @@ class StopTheTimerResultTest {
 
     @Test
     fun `pobedjuje igrac sa manjim odstupanjem - prvi igrac`() {
-        // Primer iz zadatka: 4.72 s prema 5.31 s uz cilj 5.0 s.
         assertEquals(Winner.PLAYER_ONE, result(one = 4_720, two = 5_310).winner)
     }
 
@@ -36,7 +28,6 @@ class StopTheTimerResultTest {
 
     @Test
     fun `rano i pozno odstupanje vrede isto`() {
-        // Isto odstupanje sa obe strane cilja - nereseno.
         assertEquals(Winner.DRAW, result(one = 4_500, two = 5_500).winner)
     }
 

@@ -15,22 +15,10 @@ import javax.inject.Inject
 import kotlin.random.Random
 
 data class MathDuelUiState(
-    /** null dok runda ne dobije podesavanja (vidi [MathDuelViewModel.startRound]). */
     val question: MathQuestion? = null,
     val duel: AnswerDuel = AnswerDuel(),
 )
 
-/**
- * Racunski duel: oba igraca vide ISTO pitanje, svaki na svojoj polovini ekrana i
- * u svom smeru. Prvi tacan odgovor osvaja rundu.
- *
- * Pitanje se pravi u [startRound], a ne u `init`, jer zavisi od podesavanja
- * (koje su operacije ukljucene) koja ekran prosledjuje. Posto je svaka runda
- * svoja destinacija sa svojim ViewModel-om, poziv se desava tacno jednom po
- * rundi - a straza na `question != null` pokriva i ponovni ulazak u kompoziciju.
- *
- * Pravila duela su u [AnswerDuel], zajednicka sa igrom binarno-u-decimalno.
- */
 @HiltViewModel
 class MathDuelViewModel @Inject constructor(
     private val random: Random,
@@ -46,7 +34,6 @@ class MathDuelViewModel @Inject constructor(
         }
     }
 
-    /** [answerIndex] je mesto tapnutog odgovora u [MathQuestion.answers]. */
     fun onAnswer(player: Player, answerIndex: Int) {
         val state = _uiState.value
         val question = state.question ?: return

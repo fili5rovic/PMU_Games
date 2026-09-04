@@ -63,13 +63,8 @@ fun CharadesScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    // Orijentacija se cita iz metapodataka igre (GameType.orientation), pa je
-    // pravilo "pantomima je landscape" zapisano na jednom mestu. Po izlasku sa
-    // ekrana LockScreenOrientation sam vraca portret.
     LockScreenOrientation(GameType.CHARADES.orientation)
 
-    // Notifikacija foreground servisa se od Androida 13 prikazuje samo sa dozvolom.
-    // Ako je korisnik odbije, runda i dalje radi - samo nema notifikacije.
     val notificationPermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { }
@@ -79,8 +74,6 @@ fun CharadesScreen(
         }
     }
 
-    // Servis se pokrece kada runda stvarno pocne (posle uputstva), a zaustavlja
-    // kada se runda zavrsi ili kada se ekran napusti.
     val duration = uiState.roundDurationSeconds
     LaunchedEffect(uiState.isRoundStarted) {
         if (uiState.isRoundStarted && duration > 0) {
@@ -95,8 +88,6 @@ fun CharadesScreen(
         uiState.finishedResultId?.let(onRoundFinished)
     }
 
-    // Pojmovi i trajanje runde se citaju iz resursa i podesavanja; do tada nema
-    // sta da se prikaze.
     if (duration == 0) {
         LoadingView(message = stringResource(R.string.game_get_ready))
         return
@@ -111,7 +102,6 @@ fun CharadesScreen(
                 R.string.charades_tilt_hint
             },
             onStart = viewModel::startRound,
-            // Telefon drzi jedan igrac na celu, pa uputstvo nije podeljeno na dva dela.
             forBothPlayers = false,
         )
         return
@@ -139,14 +129,10 @@ private fun CharadesContent(
 ) {
     val hasFeedback = uiState.feedback != CharadesFeedback.NONE
 
-    // Poslednji ishod se pamti da bi overlay zadrzao svoju boju i tekst i dok se
-    // gasi: u tom trenutku je uiState.feedback vec NONE.
     var lastFeedback by remember { mutableStateOf(CharadesFeedback.CORRECT) }
     LaunchedEffect(uiState.feedback) {
         if (uiState.feedback == CharadesFeedback.NONE) return@LaunchedEffect
         lastFeedback = uiState.feedback
-        // Bez ovog zadrzavanja bi se overlay ugasio u istom kadru u kome se
-        // pojavio, pa igrac ne bi ni video da li je pokret primljen.
         delay(FEEDBACK_HOLD_MILLIS)
         onFeedbackShown()
     }
@@ -172,7 +158,6 @@ private fun CharadesContent(
                 ScoreBadge(text = uiState.score.toString())
 
                 Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    // Novi pojam se pojavljuje pretapanjem, pa je promena jasno vidljiva.
                     AnimatedContent(
                         targetState = uiState.currentWord,
                         transitionSpec = {
@@ -189,10 +174,6 @@ private fun CharadesContent(
                     }
                 }
 
-                // Uputstvo se NE ponavlja u toku runde - procitano je pre nje, a
-                // igrac u ovoj igri gleda samo pojam.
-
-                // Rezervne kontrole: bez njih se igra ne bi mogla demonstrirati na emulatoru.
                 if (uiState.showManualControls) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -214,15 +195,6 @@ private fun CharadesContent(
                 }
             }
 
-            /*
-             * Povratna informacija o pokretu: preko CELOG ekrana, zeleno za
-             * pogodak i crveno za preskakanje, sa krupnom recju u sredini.
-             * Telefon je na celu i igrac ga u tom trenutku samo krajem oka vidi,
-             * pa mora da bude nemoguce promasiti.
-             *
-             * Jedan fizicki pokret se broji tacno jednom: za to se brine
-             * TiltGestureRecognizer (histereza + debounce), a ne ovaj ekran.
-             */
             AnimatedVisibility(
                 visible = hasFeedback,
                 enter = fadeIn(tween(FEEDBACK_FADE_IN_MILLIS)),
@@ -245,9 +217,6 @@ private fun CharadesContent(
                             }
                         ),
                         style = MaterialTheme.typography.displayLarge,
-                        // Namerno bela: preko zelene/crvene potvrde pokreta, koje
-                        // su znacenje a ne stil. Obe su tamne, pa je citljivo u
-                        // obe teme.
                         color = Color.White,
                     )
                 }

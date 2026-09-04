@@ -6,12 +6,6 @@ import org.junit.Test
 import play.pmu.domain.model.MathOperation
 import kotlin.random.Random
 
-/**
- * Testovi generisanja racunskih pitanja.
- *
- * Svaka provera se ponavlja mnogo puta sa razlicitim seed-om, jer je generisanje
- * slucajno - jedan prolaz ne bi nista dokazao.
- */
 class MathQuestionTest {
 
     private fun questions(operations: Set<MathOperation>, count: Int = 200) =
@@ -19,7 +13,6 @@ class MathQuestionTest {
             randomMathQuestion(operations = operations, random = Random(seed))
         }
 
-    /** Rastavlja "12 ÷ 3 = ?" na levi operand, znak i desni operand. */
     private fun parse(text: String): Triple<Int, String, Int> {
         val parts = text.removeSuffix(" = ?").split(" ")
         return Triple(parts[0].toInt(), parts[1], parts[2].toInt())
@@ -42,7 +35,6 @@ class MathQuestionTest {
 
     @Test
     fun `prazan skup operacija se vraca na podrazumevane`() {
-        // Pitanje mora da se napravi, pa se prazan izbor tretira kao "sve".
         val symbols = questions(emptySet(), count = 400).map { parse(it.text).second }.toSet()
         assertEquals(MathOperation.entries.map { it.symbol }.toSet(), symbols)
     }

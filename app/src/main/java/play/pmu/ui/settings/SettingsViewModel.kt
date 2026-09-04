@@ -14,10 +14,6 @@ import play.pmu.domain.model.MathOperation
 import play.pmu.domain.model.ThemeMode
 import javax.inject.Inject
 
-/**
- * Podesavanja. Flow iz DataStore-a se pretvara u StateFlow preko stateIn, da bi
- * UI uvek imao trenutnu vrednost (a ne cekao prvu emisiju).
- */
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,

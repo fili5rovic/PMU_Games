@@ -6,17 +6,10 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import play.pmu.domain.model.GameType
 
-/**
- * Upiti nad istorijom partija.
- *
- * Metode koje citaju vracaju Flow, pa se statistika sama osvezava kad se upise
- * nova partija - nema rucnog refresh-a. Metode koje pisu su suspend, jer se
- * izvrsavaju na Room-ovom pozadinskom dispatcher-u.
- */
+
 @Dao
 interface GameResultDao {
 
-    /** Vraca id upisane partije, koji se koristi kao navigacioni argument za ekran rezultata. */
     @Insert
     suspend fun insert(result: GameResultEntity): Long
 

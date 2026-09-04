@@ -15,7 +15,6 @@ import play.pmu.domain.util.GameClock
 import javax.inject.Inject
 import kotlin.random.Random
 
-/** Faze runde. Cilj se vidi samo u prvoj, a brojac se ne vidi nikada. */
 enum class StopTheTimerPhase { SHOWING_TARGET, RUNNING, FINISHED }
 
 data class StopTheTimerUiState(
@@ -35,19 +34,6 @@ data class StopTheTimerUiState(
     }
 }
 
-/**
- * "Stani na vreme": prikaze se ciljno trajanje, pa se sakrije, i svaki igrac
- * pritisne STOP kada misli da je toliko proslo. Blize ciljnom vremenu pobedjuje.
- *
- * ZASTO NEMA OTKUCAVANJA: proteklo vreme se namerno ne prikazuje, pa nema ni
- * potrebe da se state osvezava svakih par milisekundi. Pamti se samo
- * [startedAtMillis], a proteklo vreme se izracuna U TRENUTKU pritiska. Tako je
- * merenje i tacnije (ne zavisi od takta osvezavanja) i jednostavnije - jedna
- * coroutine i jedno oduzimanje, bez ijedne rekompozicije u toku merenja.
- *
- * `SystemClock.elapsedRealtime` je monoton, pa promena sistemskog vremena u toku
- * runde ne moze da pokvari merenje.
- */
 @HiltViewModel
 class StopTheTimerViewModel @Inject constructor(
     random: Random,
@@ -59,7 +45,6 @@ class StopTheTimerViewModel @Inject constructor(
     )
     val uiState: StateFlow<StopTheTimerUiState> = _uiState.asStateFlow()
 
-    /** Trenutak od kog se meri, po monotonom satu. */
     private var startedAtMillis = 0L
 
     init {
@@ -68,8 +53,6 @@ class StopTheTimerViewModel @Inject constructor(
             startedAtMillis = clock.elapsedRealtimeMillis()
             _uiState.update { it.copy(phase = StopTheTimerPhase.RUNNING) }
 
-            // Sigurnosna granica: ako neko uopste ne pritisne STOP, runda se
-            // ipak zavrsi i partija ne ostane zaglavljena.
             delay(_uiState.value.targetMillis * TIMEOUT_FACTOR + TIMEOUT_MARGIN_MILLIS)
             finishRound()
         }
@@ -78,7 +61,6 @@ class StopTheTimerViewModel @Inject constructor(
     fun onStop(player: Player) {
         val state = _uiState.value
         if (state.phase != StopTheTimerPhase.RUNNING) return
-        // Drugi pritisak istog igraca se ignorise - vazi prvo vreme.
         if (state.stoppedMillis(player) != null) return
 
         val elapsed = elapsedMillis()
@@ -95,10 +77,6 @@ class StopTheTimerViewModel @Inject constructor(
 
     private fun elapsedMillis(): Int = (clock.elapsedRealtimeMillis() - startedAtMillis).toInt()
 
-    /**
-     * Sklapa ishod runde. Igracu koji nije pritisnuo STOP racuna se vreme u
-     * trenutku zavrsetka, pa mu je odstupanje veliko i rundu gubi.
-     */
     private fun finishRound() {
         val state = _uiState.value
         if (state.phase == StopTheTimerPhase.FINISHED) return
@@ -117,7 +95,6 @@ class StopTheTimerViewModel @Inject constructor(
     }
 
     private companion object {
-        /** Koliko dugo se cilj vidi pre pocetka merenja. */
         const val TARGET_PREVIEW_MILLIS = 2_000L
         const val TIMEOUT_FACTOR = 2L
         const val TIMEOUT_MARGIN_MILLIS = 5_000L

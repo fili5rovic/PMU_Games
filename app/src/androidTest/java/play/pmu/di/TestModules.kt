@@ -23,15 +23,6 @@ import java.io.File
 import javax.inject.Singleton
 import kotlin.random.Random
 
-/**
- * Zamene Hilt modula za instrumentacione testove.
- *
- * Cilj je da E2E test bude PONOVLJIV: baza pocinje prazna, podesavanja pocinju
- * podrazumevana, slucajnost ima zadati seed, a vreme kontrolise test. Sve cetiri
- * stvari su vanjske i nedeterministicke - i zato jedine koje se zamenjuju.
- */
-
-/** Baza u memoriji: svaki test pocinje sa praznom istorijom. */
 @Module
 @TestInstallIn(components = [SingletonComponent::class], replaces = [DatabaseModule::class])
 object TestDatabaseModule {
@@ -57,10 +48,6 @@ object TestDatabaseModule {
         database.triviaQuestionDao()
 }
 
-/**
- * Podesavanja u privremenom fajlu. Ime nosi vreme nastanka, pa jedan test ne
- * nasledjuje podesavanja koja je promenio prethodni.
- */
 @Module
 @TestInstallIn(components = [SingletonComponent::class], replaces = [AppModule::class])
 object TestAppModule {
@@ -80,7 +67,6 @@ object TestAppModule {
         )
 }
 
-/** Zadati seed: raspored partije i sadrzaj svake igre su isti u svakom prolazu. */
 @Module
 @TestInstallIn(components = [SingletonComponent::class], replaces = [GameModule::class])
 object TestGameModule {
@@ -92,7 +78,6 @@ object TestGameModule {
     fun provideRandom(): Random = Random(SEED)
 }
 
-/** Sat kojim test upravlja - nema stvarnog cekanja u igri "Stani na vreme". */
 @Module
 @TestInstallIn(components = [SingletonComponent::class], replaces = [ClockModule::class])
 abstract class TestClockModule {

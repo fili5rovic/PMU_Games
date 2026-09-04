@@ -9,12 +9,6 @@ import play.pmu.domain.model.Winner
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * Jedini put do istorije odigranih rundi mini igara.
- *
- * Runde upisuju i partija i pojedinacna igra, pa se u statistici vidi svaka
- * odigrana runda - bez obzira na to kako je pokrenuta.
- */
 @Singleton
 class RoundResultsRepository @Inject constructor(
     private val dao: RoundResultDao,

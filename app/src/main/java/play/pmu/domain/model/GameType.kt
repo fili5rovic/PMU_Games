@@ -4,15 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import play.pmu.R
 
-/**
- * Igre koje se ne igraju jedan na jedan na podeljenom ekranu, pa ne mogu da
- * budu deo partije: pantomima je igra za celo drustvo (i jedina koja radi u
- * landscape orijentaciji), a kviz je niz pitanja sa mreze.
- *
- * Za razliku od [MiniGame], ove igre daju SKOR (broj pogodjenih pojmova ili
- * tacnih odgovora), a ne pobednika, pa se njihove partije cuvaju u tabeli
- * game_results i prikazuju na ekranu statistike.
- */
 enum class GameType(
     @StringRes val titleRes: Int,
     @StringRes val descriptionRes: Int,

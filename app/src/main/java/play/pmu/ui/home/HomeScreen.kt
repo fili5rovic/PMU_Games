@@ -27,15 +27,6 @@ import play.pmu.ui.components.GameCard
 import play.pmu.ui.components.PmuTopAppBar
 import play.pmu.ui.theme.PmuSpacing
 
-/**
- * Pocetni ekran - launcher igara.
- *
- * Nema ViewModel jer nema state-a ni logike: liste igara su [MiniGame.entries] i
- * [GameType.entries], a klik samo poziva lambdu koju je dao NavHost. Pravljenje
- * ViewModel-a ovde bilo bi prazan sloj.
- *
- * Glavna akcija aplikacije je partija, pa je njena kartica prva i istaknuta.
- */
 @Composable
 fun HomeScreen(
     onPartyClick: () -> Unit,

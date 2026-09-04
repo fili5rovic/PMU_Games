@@ -7,12 +7,6 @@ import play.pmu.data.local.GameResultDao
 import play.pmu.data.local.GameResultEntity
 import play.pmu.domain.model.GameType
 
-/**
- * Baza u memoriji za testove.
- *
- * Nije bila potrebna nikakva dodatna apstrakcija: Room DAO je vec interface,
- * pa se u testu prosto zameni ovom implementacijom.
- */
 class FakeGameResultDao : GameResultDao {
 
     private val results = MutableStateFlow<List<GameResultEntity>>(emptyList())

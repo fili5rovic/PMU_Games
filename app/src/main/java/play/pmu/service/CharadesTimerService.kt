@@ -23,29 +23,12 @@ import kotlinx.coroutines.launch
 import play.pmu.R
 import javax.inject.Inject
 
-/**
- * Odbrojavanje runde pantomime, kao foreground servis.
- *
- * ZASTO SERVIS, a ne coroutine u ViewModel-u:
- * telefon se u ovoj igri drzi na celu i naglo pomera, pa Activity lako izgubi
- * fokus - dodje notifikacija, ekran se zakljuca, igrac slucajno prevuce nagore.
- * Odbrojavanje u `viewModelScope` u tim trenucima nije zasticeno od toga da
- * sistem uspava ili ubije proces, a runda bi morala da tece dalje. Foreground
- * servis daje procesu prioritet i vidljivu notifikaciju sa preostalim vremenom.
- *
- * Tip servisa je `shortService`: kratak zadatak koji je pokrenuo korisnik i koji
- * mora da se dovrsi. Runda traje najduze 90 sekundi, pa se uklapa u ta pravila.
- */
 @AndroidEntryPoint
 class CharadesTimerService : Service() {
 
     @Inject
     lateinit var roundTimer: RoundTimer
 
-    /**
-     * Sopstveni scope, vezan za zivotni ciklus servisa. Nije GlobalScope - kada
-     * servis nestane, u onDestroy se scope otkazuje i coroutine se zaustavlja.
-     */
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var countdownJob: Job? = null
 
@@ -61,9 +44,6 @@ class CharadesTimerService : Service() {
             return START_NOT_STICKY
         }
 
-        // Runda koja vec tece se NE restartuje. Bez ove provere bi ponovni
-        // start (npr. posle promene konfiguracije, kada se ekran ponovo
-        // sastavi) vratio odbrojavanje na pocetak.
         if (countdownJob?.isActive == true) {
             startForegroundWithNotification(roundTimer.secondsLeft.value)
             return START_NOT_STICKY
@@ -98,7 +78,6 @@ class CharadesTimerService : Service() {
             .build()
 
     private fun startForegroundWithNotification(secondsLeft: Int) {
-        // Od API 34 svaki foreground servis mora da prijavi svoj tip.
         val serviceType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE
         } else {
@@ -114,7 +93,6 @@ class CharadesTimerService : Service() {
 
     private fun updateNotification(secondsLeft: Int) {
         val manager = NotificationManagerCompat.from(this)
-        // Bez dozvole za notifikacije poziv se tiho ignorise, a runda i dalje tece.
         if (manager.areNotificationsEnabled()) {
             manager.notify(NOTIFICATION_ID, buildNotification(secondsLeft))
         }
@@ -131,7 +109,6 @@ class CharadesTimerService : Service() {
         NotificationManagerCompat.from(this).createNotificationChannel(channel)
     }
 
-    /** Servis se ne vezuje (nema Binder) - komunikacija ide preko [RoundTimer]. */
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
@@ -148,7 +125,6 @@ class CharadesTimerService : Service() {
         fun start(context: Context, durationSeconds: Int) {
             val intent = Intent(context, CharadesTimerService::class.java)
                 .putExtra(EXTRA_DURATION_SECONDS, durationSeconds)
-            // ContextCompat pokriva i Android 7 (minSdk 24), gde startForegroundService ne postoji.
             ContextCompat.startForegroundService(context, intent)
         }
 

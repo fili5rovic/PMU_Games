@@ -80,11 +80,6 @@ fun StatisticsScreen(
             return@Scaffold
         }
 
-        // JEDAN LazyColumn prikazuje vise razlicitih tabela, pa kljucevi moraju da
-        // budu jedinstveni u celoj listi - a ne samo unutar svoje sekcije.
-        // Svaka tabela ima svoj autoincrement, tako da partija i rezultat
-        // pantomime lako dobiju isti id (oba pocinju od 1). Bez prefiksa
-        // Compose tada baca "Key 1 was already used" i ekran pukne.
         LazyColumn(
             modifier = Modifier.fillMaxSize().testTag(PmuTestTags.STATISTICS_SCREEN),
             contentPadding = PaddingValues(
@@ -93,7 +88,6 @@ fun StatisticsScreen(
             ),
             verticalArrangement = Arrangement.spacedBy(PmuSpacing.small),
         ) {
-            // Istorija partija je glavni deo aplikacije, pa stoji prva.
             if (uiState.matches.isNotEmpty()) {
                 item { SectionTitle(stringResource(R.string.party_history)) }
                 items(uiState.matches, key = { "match-${it.id}" }) { match ->
@@ -123,7 +117,6 @@ fun StatisticsScreen(
             }
 
             if (uiState.history.isNotEmpty()) {
-                // LazyRow: kartice po igri se skroluju vodoravno, pa ne zauzimaju ceo ekran.
                 item {
                     LazyRow(
                         contentPadding = PaddingValues(horizontal = PmuSpacing.medium),
@@ -151,7 +144,6 @@ private fun SectionTitle(text: String) {
     )
 }
 
-/** Jedna odigrana partija: datum, rezultat i pobednik. */
 @Composable
 private fun MatchRow(match: MatchEntity) {
     Row(
@@ -185,12 +177,6 @@ private fun MatchRow(match: MatchEntity) {
     }
 }
 
-/**
- * Sazetak jedne mini igre: koliko je rundi odigrano i kako su podeljene pobede.
- *
- * Prikazuje sve sto je u bazi, pa nova mini igra ovde osvane sama - nema
- * `when` po tipu igre koji bi morao da se dopunjava.
- */
 @Composable
 private fun MiniGameStatsCard(stats: MiniGameStats) {
     Card(modifier = Modifier.width(160.dp)) {
@@ -212,7 +198,6 @@ private fun MiniGameStatsCard(stats: MiniGameStats) {
     }
 }
 
-/** Jedna odigrana runda mini igre: naziv igre, pobednik i vreme. */
 @Composable
 private fun RoundRow(round: RoundResultEntity) {
     Row(
@@ -262,7 +247,6 @@ private fun GameStatsCard(stats: GameStats) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                // Rekord je u obe igre obican broj (pojmovi, odnosno tacni odgovori).
                 text = stringResource(R.string.statistics_best) + ": " +
                     (stats.bestScore?.toString() ?: "-"),
                 style = MaterialTheme.typography.bodyMedium,
@@ -294,9 +278,5 @@ private fun HistoryRow(result: GameResultEntity) {
     }
 }
 
-/**
- * DateFormat sa podrazumevanim lokalom, pa se datum prikazuje u formatu jezika
- * telefona.
- */
 private fun formatDateTime(millis: Long): String =
     DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(Date(millis))

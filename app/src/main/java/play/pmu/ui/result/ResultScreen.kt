@@ -107,7 +107,6 @@ private fun ResultContent(
             )
         }
         item {
-            // Rekord se pojavljuje uz kratku animaciju uvecavanja.
             AnimatedVisibility(
                 visible = isPersonalBest,
                 enter = scaleIn(animationSpec = tween(durationMillis = 400)),
@@ -116,7 +115,6 @@ private fun ResultContent(
             }
         }
 
-        // Liste pojmova popunjava samo pantomima; za ostale igre su prazne.
         if (result.correctItems.isNotEmpty()) {
             item { SectionHeader(stringResource(R.string.result_guessed), result.correctItems.size) }
             items(result.correctItems) { word ->

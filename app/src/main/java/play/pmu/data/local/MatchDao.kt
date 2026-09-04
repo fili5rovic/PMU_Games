@@ -5,11 +5,6 @@ import androidx.room.Insert
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
-/**
- * Upiti nad istorijom partija. Kao i u [GameResultDao], citanje vraca Flow (pa
- * se ekran statistike sam osvezi kada se upise nova partija), a pisanje je
- * suspend jer se izvrsava na Room-ovom pozadinskom dispatcher-u.
- */
 @Dao
 interface MatchDao {
 

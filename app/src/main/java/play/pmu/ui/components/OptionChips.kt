@@ -8,13 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import play.pmu.ui.theme.PmuSpacing
 
-/**
- * Red cipova za izbor JEDNE vrednosti (broj rundi, velicina table...).
- *
- * Komponenta je genericka po tipu opcije, pa istu koriste i podesavanja i ekran
- * pripreme partije - bez obzira na to da li se bira Int ili enum. `FlowRow`
- * prelama cipove u novi red kada ih ima previse za sirinu ekrana.
- */
 @Composable
 fun <T> SingleChoiceChips(
     options: List<T>,
@@ -38,13 +31,6 @@ fun <T> SingleChoiceChips(
     }
 }
 
-/**
- * Red cipova za izbor VISE vrednosti (dozvoljene racunske operacije).
- *
- * Poslednja ukljucena opcija se ne moze ugasiti: racunski duel bez ijedne
- * operacije ne bi mogao da napravi pitanje. To pravilo je ovde, u komponenti,
- * pa se ne mora ponavljati na svakom ekranu koji je koristi.
- */
 @Composable
 fun <T> MultiChoiceChips(
     options: List<T>,

@@ -22,10 +22,6 @@ import play.pmu.domain.model.TriviaQuestion
 import play.pmu.navigation.QuizGameRoute
 import javax.inject.Inject
 
-/**
- * Stanja ekrana kviza. Sealed interface cini nemogucim da UI istovremeno bude
- * "loading" i "playing" - sto bi se sa nekoliko boolean polja lako desilo.
- */
 sealed interface QuizUiState {
     data object Loading : QuizUiState
 
@@ -36,7 +32,6 @@ sealed interface QuizUiState {
         val source: QuestionSource,
         val questionIndex: Int = 0,
         val correctCount: Int = 0,
-        /** Odgovor koji je igrac izabrao; null dok razmislja. */
         val selectedAnswer: String? = null,
     ) : QuizUiState {
         val currentQuestion: TriviaQuestion get() = questions[questionIndex]
@@ -78,14 +73,12 @@ class QuizViewModel @Inject constructor(
         }
     }
 
-    /** Igrac je izabrao odgovor: samo ga pamtimo, da UI moze da oboji tacno/netacno. */
     fun selectAnswer(answer: String) {
         val state = _uiState.value
         if (state !is QuizUiState.Playing || state.selectedAnswer != null) return
         _uiState.value = state.copy(selectedAnswer = answer)
     }
 
-    /** Prelaz na sledece pitanje ili upis rezultata na kraju. */
     fun nextQuestion() {
         val state = _uiState.value
         if (state !is QuizUiState.Playing) return

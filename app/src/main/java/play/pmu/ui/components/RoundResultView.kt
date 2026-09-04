@@ -18,20 +18,6 @@ import play.pmu.domain.model.Winner
 import play.pmu.ui.PmuTestTags
 import play.pmu.ui.theme.PmuSpacing
 
-/**
- * Ishod jedne runde, prikazan na obe polovine ekrana.
- *
- * Koriste ga i partija i pojedinacna igra, pa nijedna mini igra ne mora sama da
- * crta svoj rezultat - igra samo prijavi [RoundOutcome] i tu joj se posao
- * zavrsava.
- *
- * Pozadina je [WinnerReveal]: boja pobednika prelazi preko ekrana sa njegove
- * strane, pa je pobednik jasan i pre citanja teksta.
- *
- * [panelExtras] je ono sto pozivalac dodaje ispod ishoda (trenutni rezultat
- * partije ili dugmad). Prikazuje se na obe polovine, pa dugme moze da pritisne
- * bilo koji igrac.
- */
 @Composable
 fun RoundResultView(
     outcome: RoundOutcome,

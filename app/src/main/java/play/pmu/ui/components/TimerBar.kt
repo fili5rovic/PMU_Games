@@ -15,13 +15,6 @@ import androidx.compose.ui.Modifier
 import play.pmu.ui.theme.PmuSpacing
 import play.pmu.ui.theme.WrongRedLight
 
-/**
- * Preostalo vreme runde. Traka se animirano skracuje, a boja prelazi u crvenu
- * u zadnjih pet sekundi - vizualna povratna informacija bez dodatnog teksta.
- *
- * Prikazuje se samo BROJ, bez "s": traka koja se prazni vec govori da je rec o
- * vremenu, pa je jedinica bila suvisna.
- */
 @Composable
 fun TimerBar(
     secondsLeft: Int,

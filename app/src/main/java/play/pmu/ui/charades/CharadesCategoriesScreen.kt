@@ -6,7 +6,6 @@ import play.pmu.R
 import play.pmu.domain.model.CharadesCategory
 import play.pmu.ui.components.CategoryPickerScreen
 
-/** Izbor kategorije pojmova za pantomimu. */
 @Composable
 fun CharadesCategoriesScreen(
     onCategorySelected: (CharadesCategory) -> Unit,

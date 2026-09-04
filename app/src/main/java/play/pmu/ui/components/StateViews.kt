@@ -16,7 +16,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import play.pmu.R
 
-/** Zajednicki prikaz za "ucitava se" stanje. */
 @Composable
 fun LoadingView(message: String, modifier: Modifier = Modifier) {
     Column(
@@ -29,7 +28,6 @@ fun LoadingView(message: String, modifier: Modifier = Modifier) {
     }
 }
 
-/** Zajednicki prikaz greske sa opcionim dugmetom za ponovni pokusaj. */
 @Composable
 fun ErrorView(
     message: String,
@@ -52,7 +50,6 @@ fun ErrorView(
     }
 }
 
-/** Zajednicki prikaz za praznu listu. */
 @Composable
 fun EmptyView(message: String, modifier: Modifier = Modifier) {
     Column(

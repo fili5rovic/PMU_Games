@@ -6,12 +6,6 @@ import kotlinx.coroutines.flow.map
 import play.pmu.data.local.MatchDao
 import play.pmu.data.local.MatchEntity
 
-/**
- * Istorija partija u memoriji, za testove.
- *
- * Kao i [FakeGameResultDao]: Room DAO je vec interface, pa u testu nije potrebna
- * nikakva dodatna apstrakcija - dovoljno je napisati drugu implementaciju.
- */
 class FakeMatchDao : MatchDao {
 
     private val matches = MutableStateFlow<List<MatchEntity>>(emptyList())

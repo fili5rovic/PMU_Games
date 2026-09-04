@@ -10,18 +10,16 @@ import play.pmu.domain.model.MathOperation
 import play.pmu.domain.model.RoundOutcome
 import play.pmu.ui.components.AnswerDuelContent
 
-/** Racunski duel: isto pitanje na obe polovine ekrana, svakom igracu uspravno. */
 @Composable
 fun MathDuelGame(
     operations: Set<MathOperation>,
     onFinished: (RoundOutcome) -> Unit,
     viewModel: MathDuelViewModel = hiltViewModel(),
 ) {
-    // Podesavanja se ViewModel-u predaju jednom, pri ulasku u kompoziciju.
     LaunchedEffect(Unit) { viewModel.startRound(operations) }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val question = uiState.question ?: return // jedan kadar, dok se runda ne postavi
+    val question = uiState.question ?: return
     val winner = uiState.duel.winner
 
     LaunchedEffect(winner) {

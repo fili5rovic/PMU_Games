@@ -22,20 +22,9 @@ import javax.inject.Inject
 
 data class SoloGameUiState(
     val gameSettings: GameSettings = GameSettings(),
-    /** null dok runda traje. */
     val outcome: RoundOutcome? = null,
 )
 
-/**
- * Jedna mini igra izabrana sa pocetnog ekrana, van partije.
- *
- * Runda se sklapa iz navigacionih argumenata (koja igra i ko pocinje), pa se
- * dobija isti [PartyRound] koji koristi i partija - zahvaljujuci tome se za
- * pojedinacnu igru ne pise nikakav poseban tok, koristi se MiniGameRound.
- *
- * Ishod runde stoji u ViewModel-u, a ne u `remember`-u ekrana, pa se ne izgubi
- * ni pri promeni konfiguracije, i tu se upisuje u statistiku.
- */
 @HiltViewModel
 class SoloGameViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -47,8 +36,6 @@ class SoloGameViewModel @Inject constructor(
 
     val round: PartyRound = PartyRound(
         game = MiniGame.valueOf(route.game),
-        // Ko pocinje putuje kroz navigaciju: pri svakoj novoj rundi se obrce, pa
-        // ni ovde prvi potez ne pripada uvek istom igracu.
         startingPlayer = if (route.startsWithPlayerOne) Player.ONE else Player.TWO,
     )
 
@@ -63,7 +50,6 @@ class SoloGameViewModel @Inject constructor(
         }
     }
 
-    /** Ishod se prima tacno jednom, pa se runda ne moze dva puta upisati. */
     fun onRoundFinished(outcome: RoundOutcome) {
         if (_uiState.value.outcome != null) return
         _uiState.update { it.copy(outcome = outcome) }

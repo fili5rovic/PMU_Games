@@ -5,12 +5,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.random.Random
 
-/**
- * Testovi generisanja pitanja "binarno u decimalno".
- *
- * Pretvaranje se proverava obrnutim putem: `String.toInt(2)` mora da vrati istu
- * vrednost koju je generator upisao kao tacan odgovor.
- */
 class BinaryQuestionTest {
 
     private val questions = (0 until 300).map { seed -> randomBinaryQuestion(Random(seed)) }
@@ -35,7 +29,6 @@ class BinaryQuestionTest {
     fun `trivijalni brojevi se ne postavljaju`() {
         questions.forEach { question ->
             val ones = question.binary.count { it == '1' }
-            // Ni stepen dvojke (100000), ni sve jedinice (11111).
             assertTrue(question.binary, ones >= 2)
             assertTrue(question.binary, ones < question.binary.length)
         }
@@ -61,7 +54,6 @@ class BinaryQuestionTest {
         questions.forEach { question ->
             val wrong = question.answers.filter { it != question.correctAnswer }
             assertTrue(wrong.all { it > 0 })
-            // Okretanje jednog bita najdalje pomeri za najvisi bit broja.
             val maxDistance = 1 shl question.binary.length
             assertTrue(wrong.all { kotlin.math.abs(it - question.correctAnswer) <= maxDistance })
         }

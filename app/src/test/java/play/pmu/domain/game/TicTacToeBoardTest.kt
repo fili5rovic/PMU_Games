@@ -6,16 +6,8 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * Testovi pravila iks-oksa. Moguci su bez emulatora jer [TicTacToeBoard] ne
- * zavisi ni od jedne Android klase.
- *
- * Provera se radi za sve tri velicine table, jer je pobednicki niz uvek dug
- * koliko i strana table (tri na 3x3, cetiri na 4x4, pet na 5x5).
- */
 class TicTacToeBoardTest {
 
-    /** Upisuje znak direktno u polja, da test ne mora da glumi naizmenicne poteze. */
     private fun boardWith(size: Int, marks: Map<Int, Mark>): TicTacToeBoard =
         TicTacToeBoard(size = size, cells = List(size * size) { marks[it] })
 
@@ -37,8 +29,6 @@ class TicTacToeBoardTest {
         assertEquals(16, TicTacToeBoard(size = 4).cells.size)
         assertEquals(25, TicTacToeBoard(size = 5).cells.size)
     }
-
-    // --- 3x3 ---
 
     @Test
     fun `tri u vrsti pobedjuje na tabli 3x3`() {
@@ -64,8 +54,6 @@ class TicTacToeBoardTest {
     fun `dva u nizu ne pobedjuju na tabli 3x3`() {
         assertNull(lineOf(3, listOf(0, 1)).winner)
     }
-
-    // --- 4x4 ---
 
     @Test
     fun `cetiri u vrsti pobedjuju na tabli 4x4`() {
@@ -125,13 +113,8 @@ class TicTacToeBoardTest {
         }
     }
 
-    // --- nereseno i potezi ---
-
     @Test
     fun `puna tabla bez niza je nereseno`() {
-        // X O X
-        // X O O
-        // O X X
         val board = boardWith(
             3,
             mapOf(
@@ -170,7 +153,6 @@ class TicTacToeBoardTest {
         val board = TicTacToeBoard(size = 4)
         assertNull(board.place(-1, Mark.X))
         assertNull(board.place(16, Mark.X))
-        // Poslednje polje jos jeste na tabli.
         assertTrue(board.place(15, Mark.X) != null)
     }
 
@@ -178,7 +160,6 @@ class TicTacToeBoardTest {
     fun `potez ne menja postojecu tablu`() {
         val original = TicTacToeBoard()
         original.place(0, Mark.X)
-        // Tabla je immutable: place vraca novu, a stara ostaje prazna.
         assertTrue(original.cells.all { it == null })
     }
 }

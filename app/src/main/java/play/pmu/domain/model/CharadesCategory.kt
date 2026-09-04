@@ -4,10 +4,6 @@ import androidx.annotation.ArrayRes
 import androidx.annotation.StringRes
 import play.pmu.R
 
-/**
- * Kategorije pojmova za pantomimu. Svaka pokazuje na string-array u resursima,
- * pa se sadrzaj igre prevodi kroz values-sr/arrays.xml bez ikakve izmene koda.
- */
 enum class CharadesCategory(
     @StringRes val titleRes: Int,
     @ArrayRes val wordsRes: Int,

@@ -12,10 +12,6 @@ import play.pmu.R
 import play.pmu.domain.model.RoundOutcome
 import play.pmu.ui.components.AnswerDuelContent
 
-/**
- * Binarno u decimalno. Ceo izgled dolazi iz [AnswerDuelContent], zajednickog sa
- * racunskim duelom - ovde ostaje samo pitanje i prijava ishoda.
- */
 @Composable
 fun BinaryDuelGame(
     onFinished: (RoundOutcome) -> Unit,
@@ -37,7 +33,6 @@ fun BinaryDuelGame(
         duel = uiState.duel,
         onAnswer = viewModel::onAnswer,
         promptStyle = MaterialTheme.typography.displayMedium,
-        // Posle runde se prikazuje tacna decimalna vrednost.
         footer = if (winner != null) {
             stringResource(R.string.binary_correct_value, uiState.question.correctAnswer)
         } else {
@@ -46,5 +41,4 @@ fun BinaryDuelGame(
     )
 }
 
-// Duze od ostalih igara, da igraci stignu da procitaju tacnu decimalnu vrednost.
 private const val WINNER_DELAY_MILLIS = 1_500L

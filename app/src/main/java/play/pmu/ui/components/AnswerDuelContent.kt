@@ -26,22 +26,6 @@ import play.pmu.ui.theme.GameTouchTargetSize
 import play.pmu.ui.theme.PmuSpacing
 import play.pmu.ui.theme.areaColor
 
-/**
- * Zajednicki izgled duela u kome oba igraca odgovaraju na ISTO pitanje.
- *
- * Koriste ga racunski duel i binarno-u-decimalno: obe igre prikazuju pitanje na
- * svojoj polovini ekrana (gornja je rotirana, pa je oba igraca citaju uspravno) i
- * po cetiri dugmeta sa odgovorima. Zato je taj izgled napisan jednom, a igre se
- * razlikuju samo po tome kako prave pitanje.
- *
- * Igraci odgovaraju ISTOVREMENO, pa nema "aktivnog igraca": obe polovine su
- * obojene bojom svog igraca (samo identitet), a igrac koji je promasio dobija
- * neutralnu podlogu i kratku oznaku.
- *
- * Pravila (ko sme da odgovara, kazna za promasaj) su u [AnswerDuel], pa ova
- * komponenta ne odlucuje nista - samo prikazuje stanje i prijavljuje INDEKS
- * tapnutog odgovora.
- */
 @Composable
 fun AnswerDuelContent(
     prompt: String,

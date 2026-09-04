@@ -27,24 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import kotlinx.coroutines.delay
 import play.pmu.ui.theme.PmuSpacing
 
-/**
- * Uputstvo i odbrojavanje pre svake mini igre - na jednom mestu, da se ne
- * ponavlja u svakoj igri.
- *
- * Tok je pisan kao JEDNA coroutine u `LaunchedEffect`: kratko se prikaze
- * uputstvo, pa odbrojavanje 3-2-1, pa se pozove [onStart]. Kada composable
- * napusti kompoziciju (igrac izadje iz igre), `LaunchedEffect` se otkazuje i
- * odbrojavanje prestaje samo - nema timer-a koji bi ostao da radi.
- *
- * `rememberUpdatedState` je tu jer se [onStart] cita iz coroutine koja je
- * pokrenuta samo jednom: bez njega bi se, ako pozivalac prosledi novu lambdu,
- * pozvala stara (zastarela) verzija.
- *
- * Uputstvo se podrazumevano prikazuje DVA puta, kroz [TwoPlayerLayout], pa ga
- * oba igraca citaju uspravno sa svoje strane telefona. Pantomima je izuzetak
- * ([forBothPlayers] = false): telefon se drzi na celu jednog igraca, pa se
- * uputstvo prikazuje samo jednom, u sredini ekrana.
- */
 @Composable
 fun GameIntro(
     titleRes: Int,

@@ -20,12 +20,9 @@ import play.pmu.domain.model.GameType
 import javax.inject.Inject
 
 data class StatisticsUiState(
-    /** Rekordi pantomime i kviza (igre koje daju skor). */
     val perGame: List<GameStats> = emptyList(),
     val history: List<GameResultEntity> = emptyList(),
-    /** Odigrane partije za dva igraca. */
     val matches: List<MatchEntity> = emptyList(),
-    /** Sazetak po mini igri: koliko je rundi odigrano i ko ih je dobijao. */
     val miniGames: List<MiniGameStats> = emptyList(),
     val rounds: List<RoundResultEntity> = emptyList(),
 ) {
@@ -33,17 +30,6 @@ data class StatisticsUiState(
         get() = history.isEmpty() && matches.isEmpty() && rounds.isEmpty()
 }
 
-/**
- * Statistika se cita iz Room-a kao Flow, pa se ekran sam osvezava kada se
- * upise nova partija - nema rucnog ucitavanja ni "pull to refresh".
- *
- * Spajaju se tri izvora: partije za dva igraca, pojedinacne runde mini igara i
- * rezultati pantomime/kviza.
- *
- * Sazetak po mini igri dolazi iz GROUP BY upita nad tabelom rundi, pa se NE
- * navodi lista poznatih igara: nova mini igra ulazi u statistiku sama, samim tim
- * da je odigrana. Zato dodavanje igre ne moze da "zaboravi" statistiku.
- */
 @HiltViewModel
 class StatisticsViewModel @Inject constructor(
     private val resultsRepository: GameResultsRepository,
@@ -51,7 +37,6 @@ class StatisticsViewModel @Inject constructor(
     private val roundResultsRepository: RoundResultsRepository,
 ) : ViewModel() {
 
-    /** Po jedan Flow za broj partija i rekord svake igre, spojeni u jednu listu. */
     private val perGameFlow = combine(
         GameType.entries.map { gameType ->
             combine(
@@ -81,7 +66,6 @@ class StatisticsViewModel @Inject constructor(
         initialValue = StatisticsUiState(),
     )
 
-    /** Brise celu istoriju - i partije, i runde, i rezultate pantomime/kviza. */
     fun clearHistory() = viewModelScope.launch {
         matchRepository.clearHistory()
         roundResultsRepository.clearHistory()

@@ -18,11 +18,6 @@ interface TriviaQuestionDao {
     @Insert
     suspend fun insertAll(questions: List<TriviaQuestionEntity>)
 
-    /**
-     * Zamenjuje cache jedne kategorije. @Transaction garantuje da brisanje i
-     * upis idu kao jedna operacija, pa cache nikada ne ostane prazan ako
-     * upis pukne u sredini.
-     */
     @Transaction
     suspend fun replaceCategory(category: TriviaCategory, questions: List<TriviaQuestionEntity>) {
         deleteByCategory(category)

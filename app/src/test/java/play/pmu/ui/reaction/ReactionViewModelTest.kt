@@ -17,15 +17,6 @@ import play.pmu.domain.model.Player
 import play.pmu.fake.FakeGameClock
 import kotlin.random.Random
 
-/**
- * Testovi duela refleksa.
- *
- * viewModelScope radi na Dispatchers.Main, koji u unit testu ne postoji - zato
- * se preko Dispatchers.setMain podmece test dispatcher. Posto je
- * StandardTestDispatcher "lenj", coroutine koja ceka do zelenog se NE izvrsava
- * dok se ne pozove `advanceUntilIdle`. Zahvaljujuci tome test moze da bira da
- * li tapka pre zelenog (pogresan start) ili posle njega.
- */
 @OptIn(ExperimentalCoroutinesApi::class)
 class ReactionViewModelTest {
 
@@ -70,7 +61,6 @@ class ReactionViewModelTest {
     @Test
     fun `izmereno vreme je razlika po satu igre`() = runTest(dispatcher) {
         advanceUntilIdle()
-        // Sat je pod kontrolom testa, pa nema cekanja ni priblizne provere.
         clock.nowMillis += 142
 
         viewModel.onTap(Player.ONE)
@@ -80,7 +70,6 @@ class ReactionViewModelTest {
 
     @Test
     fun `tap pre zelenog je pogresan start i rundu dobija protivnik`() = runTest(dispatcher) {
-        // Bez advanceUntilIdle faza je jos Waiting.
         viewModel.onTap(Player.ONE)
 
         val phase = viewModel.uiState.value.phase as ReactionPhase.Done
@@ -91,7 +80,6 @@ class ReactionViewModelTest {
     @Test
     fun `posle pogresnog starta ekran vise ne postaje zelen`() = runTest(dispatcher) {
         viewModel.onTap(Player.ONE)
-        // Coroutine koja ceka do zelenog je otkazana, pa je faza i dalje Done.
         advanceUntilIdle()
 
         assertTrue(viewModel.uiState.value.phase is ReactionPhase.Done)
@@ -101,8 +89,6 @@ class ReactionViewModelTest {
     fun `drugi tap ne moze da preuzme pobedu`() = runTest(dispatcher) {
         advanceUntilIdle()
 
-        // Dva "istovremena" tapa: Compose ih poziva jedan za drugim na glavnoj
-        // niti, pa drugi vidi da je runda vec resena.
         viewModel.onTap(Player.ONE)
         viewModel.onTap(Player.TWO)
         viewModel.onTap(Player.TWO)

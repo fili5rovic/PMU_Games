@@ -44,13 +44,6 @@ import play.pmu.ui.theme.PmuSpacing
 import play.pmu.ui.theme.accentColor
 import play.pmu.ui.theme.areaColor
 
-/**
- * Iks-oks. Tabla je zajednicka i stoji u sredini, a igracu koji je na potezu se
- * OBOJI cela njegova polovina ekrana - zato se koristi [SharedBoardLayout], gde
- * paneli iznad i ispod table dobijaju sav preostali prostor.
- *
- * Red poteza se tako vidi u delicu sekunde, sa oba kraja telefona, bez citanja.
- */
 @Composable
 fun TicTacToeGame(
     boardSizeOption: BoardSizeOption,
@@ -58,16 +51,14 @@ fun TicTacToeGame(
     onFinished: (RoundOutcome) -> Unit,
     viewModel: TicTacToeViewModel = hiltViewModel(),
 ) {
-    // Podesavanje runde se ViewModel-u predaje jednom, pri ulasku u kompoziciju.
     LaunchedEffect(Unit) { viewModel.startRound(boardSizeOption, startingPlayer) }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val board = uiState.board ?: return // jedan kadar, dok se runda ne postavi
+    val board = uiState.board ?: return
     val winner = uiState.winner
 
     LaunchedEffect(winner) {
         if (winner != null) {
-            // Kratka pauza da igraci vide pobednicku liniju na tabli.
             delay(WINNER_DELAY_MILLIS)
             onFinished(RoundOutcome(winner = winner))
         }
@@ -94,10 +85,6 @@ fun TicTacToeGame(
     )
 }
 
-/**
- * Podloga polovine jednog igraca. Prelaz je animiran, pa se promena poteza vidi
- * i kao pokret, ne samo kao druga boja.
- */
 @Composable
 private fun playerAreaModifier(player: Player, isActive: Boolean): Modifier {
     val background by animateColorAsState(
@@ -118,7 +105,6 @@ private fun Board(
     modifier: Modifier = Modifier,
 ) {
     val winningLine = board.winningLine
-    // Na vecoj tabli su polja manja, pa i znak mora da bude manji.
     val markStyle = markStyleFor(board.size)
     val spacing = if (board.size >= LARGE_BOARD_SIZE) SMALL_CELL_SPACING else PmuSpacing.small
 
@@ -126,8 +112,6 @@ private fun Board(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(spacing),
     ) {
-        // chunked deli listu polja na redove duzine board.size, pa isti kod
-        // iscrtava i 3x3 i 5x5.
         board.cells.chunked(board.size).forEachIndexed { rowIndex, row ->
             Row(
                 modifier = Modifier.fillMaxWidth().weight(1f),
@@ -167,23 +151,18 @@ private fun Cell(
     modifier: Modifier = Modifier,
 ) {
     val containerColor by animateColorAsState(
-        // Zelena pobednicke linije je namerno eksplicitna: znaci "ovo je dobilo
-        // partiju", isto u svetloj i u tamnoj temi.
         targetValue = if (isWinning) CorrectGreenLight else MaterialTheme.colorScheme.surfaceVariant,
         label = "cellColor",
     )
 
     Surface(
         onClick = onClick,
-        // Zauzeto polje se ne moze ponovo tapnuti; ViewModel to i sam odbija,
-        // ali ugaseno dugme je jasnije igracu.
         enabled = mark == null,
         color = containerColor,
         shape = MaterialTheme.shapes.small,
         modifier = modifier,
     ) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            // Novi znak "uskace" - AnimatedContent animira prelaz sa praznog polja.
             AnimatedContent(
                 targetState = mark,
                 transitionSpec = {

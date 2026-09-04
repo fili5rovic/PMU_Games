@@ -16,19 +16,12 @@ import play.pmu.navigation.PmuNavHost
 import play.pmu.ui.settings.SettingsViewModel
 import play.pmu.ui.theme.PmuGamesTheme
 
-/**
- * Jedina Activity u aplikaciji - sva navigacija ide kroz Navigation Compose.
- *
- * @AndroidEntryPoint omogucava da composable-i unutar nje dobiju @HiltViewModel-e.
- */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            // Tema se cita iz podesavanja, pa promena u Settings ekranu
-            // odmah prefarba celu aplikaciju.
             val settingsViewModel: SettingsViewModel = hiltViewModel()
             val settings by settingsViewModel.settings.collectAsStateWithLifecycle()
 
@@ -36,10 +29,6 @@ class MainActivity : ComponentActivity() {
                 themeMode = settings.themeMode,
                 dynamicColor = settings.dynamicColor,
             ) {
-                // Jedna Surface preko celog sadrzaja daje pozadinu SVIM ekranima.
-                // Bez nje ekrani bez Scaffold-a (mini igre, uputstva, rezultat
-                // runde) puste da se vidi pozadina prozora, koja ne zna nista o
-                // temi izabranoj u aplikaciji - pa su u tamnoj temi ostajali beli.
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,

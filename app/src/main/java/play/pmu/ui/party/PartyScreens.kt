@@ -26,19 +26,6 @@ import play.pmu.ui.components.TwoPlayerLayout
 import play.pmu.ui.components.winnerName
 import play.pmu.ui.theme.PmuSpacing
 
-/**
- * Ekrani partije. Sve tri funkcije su bez state-a: primaju [PartyUiState] i
- * lambde, pa ne znaju ni za ViewModel ni za navigaciju (state hoisting). To je
- * ista konvencija koju koristi i ostatak projekta.
- */
-
-/**
- * Jedna runda partije.
- *
- * Da li je runda odigrana NE cuva se lokalno, nego se cita iz [PartyUiState]
- * (`isRoundOver`). Zato stanje ekrana ne moze da se raziđe sa stanjem partije, i
- * ne treba nikakav `remember`.
- */
 @Composable
 fun PartyRoundScreen(
     round: Int,
@@ -65,8 +52,6 @@ fun PartyRoundScreen(
         return
     }
 
-    // Runda je odigrana: kratko se prikaze ishod sa obe strane telefona, pa se
-    // automatski prelazi na sledecu igru - igraci nista ne moraju da tapnu.
     RoundResultView(outcome = lastOutcome) {
         PartyScore(scoreOne = uiState.scoreOne, scoreTwo = uiState.scoreTwo)
     }
@@ -77,13 +62,6 @@ fun PartyRoundScreen(
     }
 }
 
-/**
- * Konacan rezultat partije, citljiv sa oba kraja telefona.
- *
- * Pozadina je [WinnerReveal]: boja pobednika prelazi preko ekrana sa njegove
- * strane, isto kao na kraju svake runde - pa je i konacan pobednik jasan pre
- * citanja teksta.
- */
 @Composable
 fun PartyResultScreen(
     uiState: PartyUiState,
@@ -91,8 +69,6 @@ fun PartyResultScreen(
     onNewParty: () -> Unit,
     onHome: () -> Unit,
 ) {
-    // Upis u istoriju je propratni efekat prikaza ekrana, pa ide u LaunchedEffect.
-    // Sam ViewModel dodatno pazi da se partija ne upise dva puta.
     LaunchedEffect(Unit) { onSaveMatch() }
 
     val panel: @Composable () -> Unit = {

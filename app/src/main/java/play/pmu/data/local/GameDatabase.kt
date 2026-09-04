@@ -11,8 +11,6 @@ import androidx.room.TypeConverters
         RoundResultEntity::class,
         TriviaQuestionEntity::class,
     ],
-    // v2: dodata tabela `matches` (istorija partija za dva igraca).
-    // v3: dodata tabela `round_results` (pojedinacne runde mini igara).
     version = 3,
     exportSchema = false,
 )

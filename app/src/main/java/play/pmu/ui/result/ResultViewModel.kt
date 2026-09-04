@@ -21,13 +21,6 @@ data class ResultUiState(
     val isLoading: Boolean = true,
 )
 
-/**
- * Ekran rezultata je zajednicki za sve cetiri igre.
- *
- * Iz navigacije dobija samo id partije, a sve ostalo procita iz baze. Zato kroz
- * navigaciju ne mora da se prosledjuje ni skor ni liste pojmova.
- * SavedStateHandle.toRoute() vraca type-safe rutu, bez rucnog citanja stringova.
- */
 @HiltViewModel
 class ResultViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,

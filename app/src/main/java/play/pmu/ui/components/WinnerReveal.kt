@@ -22,25 +22,6 @@ import play.pmu.domain.model.Player
 import play.pmu.domain.model.Winner
 import play.pmu.ui.theme.areaColor
 
-/**
- * Prelaz na kraju runde: boja pobednika "prelazi" preko ekrana sa NJEGOVE
- * strane telefona ka protivnickoj.
- *
- * Igrac 1 sedi kod donje ivice, pa njegova pobeda ide odozdo nagore; pobeda
- * igraca 2 obrnuto. Smer je zato jasan sa oba kraja telefona: boja "gura" ka
- * gubitniku.
- *
- * Izvedeno je najprostije sto moze: jedan Box kome se animira visina
- * ([animateFloatAsState] + [fillMaxHeight]), poravnat na pobednikovu ivicu.
- * Nema Canvas-a, cestica ni sopstvenog crtanja.
- *
- * Boja je blag ton igraceve boje ([areaColor]), pa tamna tema ostaje tamna, a
- * tekst preko njega ostaje citljiv. Nereseno ne koristi ni jednu igracevu boju
- * nego neutralnu podlogu, i ne animira se.
- *
- * Komponenta je jedna za celu aplikaciju - koriste je i rezultat runde i
- * rezultat partije, pa se animacija ne pise u svakoj igri.
- */
 @Composable
 fun WinnerReveal(
     winner: Winner,
@@ -53,9 +34,6 @@ fun WinnerReveal(
         Winner.DRAW -> null
     }
 
-    // Prvi kadar se iscrta sa 0f, pa LaunchedEffect ukljuci ciljnu vrednost i
-    // animateFloatAsState odradi prelaz. Bez ovog koraka bi pokrivenost odmah
-    // bila 1f i animacije ne bi bilo.
     var isRevealed by remember(winner) { mutableStateOf(false) }
     LaunchedEffect(winner) { isRevealed = true }
 
@@ -71,7 +49,6 @@ fun WinnerReveal(
             .background(MaterialTheme.colorScheme.background),
     ) {
         if (winningPlayer == null) {
-            // Nereseno: neutralna podloga, bez prelaza i bez igracevih boja.
             Box(
                 modifier = Modifier
                     .fillMaxSize()

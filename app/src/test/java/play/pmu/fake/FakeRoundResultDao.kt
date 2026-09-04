@@ -8,12 +8,6 @@ import play.pmu.data.local.RoundResultDao
 import play.pmu.data.local.RoundResultEntity
 import play.pmu.domain.model.Winner
 
-/**
- * Istorija odigranih rundi u memoriji, za testove.
- *
- * GROUP BY upit iz prave baze je ovde napisan kao obicno grupisanje po
- * kolekcijama - dovoljno da se proveri sta ViewModel radi sa rezultatom.
- */
 class FakeRoundResultDao : RoundResultDao {
 
     private val rounds = MutableStateFlow<List<RoundResultEntity>>(emptyList())

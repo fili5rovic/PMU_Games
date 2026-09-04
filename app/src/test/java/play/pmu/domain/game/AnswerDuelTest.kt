@@ -8,10 +8,6 @@ import org.junit.Test
 import play.pmu.domain.model.Player
 import play.pmu.domain.model.Winner
 
-/**
- * Testovi pravila duela sa odgovorima - zajednickih za racunski duel i
- * binarno-u-decimalno.
- */
 class AnswerDuelTest {
 
     @Test

@@ -17,12 +17,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import play.pmu.ui.PmuTestTags
 
-/**
- * Izbor kategorije, zajednicki za pantomimu i kviz.
- *
- * Komponenta ne zna nista o enum-ima igara - dobija gotove nazive i vraca
- * izabrani indeks. Zato je jedna implementacija dovoljna za oba ekrana.
- */
 @Composable
 fun CategoryPickerScreen(
     title: String,

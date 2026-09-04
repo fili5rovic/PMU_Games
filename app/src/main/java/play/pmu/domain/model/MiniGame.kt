@@ -4,21 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import play.pmu.R
 
-/**
- * Mini igre za dva igraca - one koje se igraju na podeljenom ekranu, sa
- * telefonom izmedju igraca.
- *
- * Enum nosi svoje resurse (naziv, uputstvo, ikonicu) i ono malo osobina po
- * kojima se igre razlikuju, pa se i pocetni ekran i uputstvo pre runde iscrtavaju
- * prolaskom kroz [MiniGame.entries] - nema odvojene liste koja bi mogla da se
- * raziđe sa enum-om.
- *
- * ZASTO SAMO OVE DVE OSOBINE: [needsStartingPlayer] i [orientation] su jedino
- * po cemu se tok runde stvarno razlikuje od igre do igre, pa se time izbegavaju
- * `if (game == TIC_TAC_TOE)` uslovi rasuti po kodu. Sve ostalo (velicina table,
- * dozvoljene operacije) je korisnicko PODESAVANJE i zivi u GameSettings, a ne
- * ovde - igre koje nemaju sta da podese ne dobijaju nijedno prazno polje.
- */
 enum class MiniGame(
     @StringRes val titleRes: Int,
     @StringRes val instructionRes: Int,

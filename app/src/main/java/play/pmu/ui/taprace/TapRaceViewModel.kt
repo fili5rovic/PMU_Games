@@ -17,7 +17,6 @@ data class TapRaceUiState(
     val secondsLeft: Int = DURATION_SECONDS,
     val tapsOne: Int = 0,
     val tapsTwo: Int = 0,
-    /** null dok vreme ne istekne. */
     val winner: Winner? = null,
 ) {
     val isRunning: Boolean get() = winner == null
@@ -31,15 +30,6 @@ data class TapRaceUiState(
     }
 }
 
-/**
- * Trka tapkanja: oba igraca istovremeno tapkaju svoju polovinu ekrana, a posle
- * pet sekundi pobedjuje onaj sa vise tapkanja.
- *
- * Odbrojavanje je jedna `delay` petlja u [viewModelScope] - dovoljno za pet
- * sekundi u prvom planu. (Pantomima koristi foreground servis jer njena runda
- * mora da tece i kada aplikacija izgubi fokus; ovde toga nema, pa bi servis bio
- * suvisan.)
- */
 @HiltViewModel
 class TapRaceViewModel @Inject constructor() : ViewModel() {
 
@@ -56,7 +46,6 @@ class TapRaceViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    /** Tapkanje posle isteka vremena se ne broji. */
     fun onTap(player: Player) {
         if (!_uiState.value.isRunning) return
         _uiState.update {

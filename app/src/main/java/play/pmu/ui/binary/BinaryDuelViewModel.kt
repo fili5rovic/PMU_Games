@@ -18,15 +18,6 @@ data class BinaryDuelUiState(
     val duel: AnswerDuel = AnswerDuel(),
 )
 
-/**
- * Binarno u decimalno: oba igraca vide isti binarni broj i po cetiri decimalna
- * odgovora. Prvi tacan odgovor osvaja rundu, a promasaj iskljucuje igraca do
- * kraja runde - isto pravilo kao u racunskom duelu, jer im je zajednicko u
- * [AnswerDuel].
- *
- * Igra nema podesavanja, pa se pitanje pravi odmah u `init`; kako je svaka runda
- * svoja destinacija sa svojim ViewModel-om, svaka runda dobija novo pitanje.
- */
 @HiltViewModel
 class BinaryDuelViewModel @Inject constructor(
     random: Random,
@@ -35,7 +26,6 @@ class BinaryDuelViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(BinaryDuelUiState(question = randomBinaryQuestion(random)))
     val uiState: StateFlow<BinaryDuelUiState> = _uiState.asStateFlow()
 
-    /** [answerIndex] je mesto tapnutog odgovora u [BinaryQuestion.answers]. */
     fun onAnswer(player: Player, answerIndex: Int) {
         val state = _uiState.value
         val answer = state.question.answers.getOrNull(answerIndex) ?: return

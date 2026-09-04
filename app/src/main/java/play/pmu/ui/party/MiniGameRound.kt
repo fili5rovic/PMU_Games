@@ -20,23 +20,6 @@ import play.pmu.ui.stoptimer.StopTheTimerGame
 import play.pmu.ui.taprace.TapRaceGame
 import play.pmu.ui.tictactoe.TicTacToeGame
 
-/**
- * Jedna runda: uputstvo, odbrojavanje, pa sama igra.
- *
- * Ovo je JEDINO mesto na kome se zna koja se igra crta za koju [MiniGame]
- * vrednost, i jedino mesto na kome se ceka uputstvo. Zato ni partija ni
- * pojedinacna igra ne ponavljaju taj tok - oba hosta pozivaju ovu funkciju i
- * samo drugacije obrade [onFinished].
- *
- * Ovde se sastaju tri stvari, i svaka dolazi sa svog mesta:
- *
- *  - [PartyRound.game] i [PartyRound.startingPlayer] iz rasporeda partije,
- *  - [gameSettings] iz korisnickih podesavanja,
- *  - a "Slucajno" u podesavanjima razresava sama igra kada runda pocne.
- *
- * Orijentacija se ne postavlja rucno nego se cita iz [MiniGame.orientation], pa
- * ovaj kod ne zna koja je igra portret a koja landscape.
- */
 @Composable
 fun MiniGameRound(
     round: PartyRound,
@@ -47,10 +30,6 @@ fun MiniGameRound(
 ) {
     LockScreenOrientation(round.game.orientation)
 
-    // rememberSaveable, a ne remember: da promena konfiguracije ne bi ponovo
-    // prikazala uputstvo preko igre koja je vec u toku (ViewModel igre bi
-    // promenu konfiguracije prezivio, pa bi se stanja razisla).
-    // Kljuc je ime igre, pa nova igra uvek pocinje od uputstva.
     var isIntroDone by rememberSaveable(round.game.name) { mutableStateOf(false) }
 
     if (!isIntroDone) {
@@ -64,8 +43,6 @@ fun MiniGameRound(
         return
     }
 
-    // `when` nad enum-om je exhaustive: dodavanje nove mini igre nece se moci
-    // prevesti dok se i ovde ne doda njen ekran.
     when (round.game) {
         MiniGame.REACTION -> ReactionGame(onFinished = onFinished)
 

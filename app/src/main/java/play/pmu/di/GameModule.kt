@@ -10,14 +10,6 @@ import play.pmu.domain.util.SystemGameClock
 import javax.inject.Singleton
 import kotlin.random.Random
 
-/**
- * Slucajnost i vreme - dve stvari koje igre koriste, a koje test mora da moze da
- * zameni.
- *
- * Zato se [Random] ne uzima kao `Random.Default` po klasama, nego se ubacuje:
- * instrumentacioni test istu ovu vezu zameni sa `Random(seed)` i tada su i
- * raspored partije i sadrzaj svake igre ponovljivi.
- */
 @Module
 @InstallIn(SingletonComponent::class)
 object GameModule {
