@@ -24,6 +24,7 @@ import play.pmu.ui.result.ResultScreen
 import play.pmu.ui.settings.SettingsScreen
 import play.pmu.ui.solo.SoloGameScreen
 import play.pmu.ui.statistics.StatisticsScreen
+import play.pmu.ui.stepbystep.StepByStepScreen
 
 @Composable
 fun PmuNavHost(navController: NavHostController = rememberNavController()) {
@@ -136,6 +137,13 @@ fun PmuNavHost(navController: NavHostController = rememberNavController()) {
             QuizScreen(
                 onNavigateBack = navController::popBackStack,
                 onQuizFinished = { resultId -> navController.toResult(resultId) },
+            )
+        }
+
+        composable<StepByStepGameRoute> {
+            StepByStepScreen(
+                onNavigateBack = navController::popBackStack,
+                onGameFinished = { resultId -> navController.toResult(resultId) },
             )
         }
 

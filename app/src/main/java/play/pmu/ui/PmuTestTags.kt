@@ -15,6 +15,11 @@ object PmuTestTags {
 
     const val HOME_LIST = "home_list"
 
+    const val STEP_BY_STEP_INPUT = "step_by_step_input"
+    const val STEP_BY_STEP_GUESS_BUTTON = "step_by_step_guess_button"
+    const val STEP_BY_STEP_NEXT_BUTTON = "step_by_step_next_button"
+    const val STEP_BY_STEP_FINISH_BUTTON = "step_by_step_finish_button"
+
     fun miniGame(name: String) = "game_$name"
 
     fun gameType(name: String) = "game_type_$name"

@@ -18,4 +18,9 @@ enum class GameType(
         orientation = GameOrientation.LANDSCAPE,
     ),
     QUIZ(R.string.game_quiz_title, R.string.game_quiz_desc, R.drawable.ic_quiz),
+    STEP_BY_STEP(
+        titleRes = R.string.game_step_by_step_title,
+        descriptionRes = R.string.game_step_by_step_desc,
+        iconRes = R.drawable.ic_step_by_step,
+    ),
 }

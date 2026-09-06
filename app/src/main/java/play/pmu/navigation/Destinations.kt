@@ -42,6 +42,9 @@ object QuizCategoriesRoute
 data class QuizGameRoute(val categoryApiId: Int)
 
 @Serializable
+object StepByStepGameRoute
+
+@Serializable
 data class ResultRoute(val resultId: Long)
 
 @Serializable
@@ -54,6 +57,7 @@ object SettingsRoute
 fun GameType.startRoute(): Any = when (this) {
     GameType.CHARADES -> CharadesCategoriesRoute
     GameType.QUIZ -> QuizCategoriesRoute
+    GameType.STEP_BY_STEP -> StepByStepGameRoute
 }
 
 fun MiniGame.soloRoute(random: Random = Random.Default): SoloGameRoute = SoloGameRoute(

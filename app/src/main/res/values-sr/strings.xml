@@ -93,6 +93,23 @@
     <string name="result_home">Početna</string>
     <string name="result_missing">Rezultat nije pronađen.</string>
 
+    <!-- Korak po korak -->
+    <string name="game_step_by_step_title">Korak po korak</string>
+    <string name="game_step_by_step_desc">Pogodi skriveni pojam na osnovu 7 postepeno otkrivenih tragova. Što ranije pogodiš, to više poena osvajaš!</string>
+    <string name="step_by_step_step_of">Korak %1$d od %2$d</string>
+    <string name="step_by_step_points_available">%1$d poena</string>
+    <string name="step_by_step_input_placeholder">Unesi rešenje...</string>
+    <string name="step_by_step_action_guess">Pogodi</string>
+    <string name="step_by_step_action_next_clue">Sledeći korak</string>
+    <string name="step_by_step_action_reveal">Otkrij rešenje</string>
+    <string name="step_by_step_action_finish">Završi</string>
+    <string name="step_by_step_correct_title">Tačno!</string>
+    <string name="step_by_step_correct_msg">%1$s (+%2$d poena)</string>
+    <string name="step_by_step_wrong_msg">Netačan odgovor! Probaj ponovo ili otvori sledeći korak.</string>
+    <string name="step_by_step_game_over_title">Runda je završena</string>
+    <string name="step_by_step_solution_was">Konačno rešenje: %1$s</string>
+    <string name="score_points_total">%1$d od %2$d poena</string>
+
     <!-- Format skora, razlikuje se po igri -->
     <string name="score_words">%1$d od %2$d pojmova</string>
     <string name="score_answers">%1$d od %2$d tačnih</string>

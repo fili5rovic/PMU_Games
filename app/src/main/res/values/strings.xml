@@ -93,6 +93,23 @@
     <string name="result_home">Home</string>
     <string name="result_missing">Result not found.</string>
 
+    <!-- Step by Step ("Korak po korak") -->
+    <string name="game_step_by_step_title">Step by Step</string>
+    <string name="game_step_by_step_desc">Guess the hidden solution from 7 clues revealed step by step. Guess earlier for more points!</string>
+    <string name="step_by_step_step_of">Step %1$d of %2$d</string>
+    <string name="step_by_step_points_available">%1$d pts</string>
+    <string name="step_by_step_input_placeholder">Enter solution...</string>
+    <string name="step_by_step_action_guess">Guess</string>
+    <string name="step_by_step_action_next_clue">Next clue</string>
+    <string name="step_by_step_action_reveal">Reveal solution</string>
+    <string name="step_by_step_action_finish">Finish</string>
+    <string name="step_by_step_correct_title">Correct!</string>
+    <string name="step_by_step_correct_msg">%1$s (+%2$d points)</string>
+    <string name="step_by_step_wrong_msg">Incorrect guess! Try again or reveal the next clue.</string>
+    <string name="step_by_step_game_over_title">Round over</string>
+    <string name="step_by_step_solution_was">Solution: %1$s</string>
+    <string name="score_points_total">%1$d of %2$d points</string>
+
     <!-- Score formatting, differs per game -->
     <string name="score_words">%1$d of %2$d words</string>
     <string name="score_answers">%1$d of %2$d correct</string>
