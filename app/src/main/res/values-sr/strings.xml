@@ -1,79 +1,79 @@
 <resources>
     <string name="app_name">PMU Games</string>
 
-    <!-- Pocetni ekran -->
-    <string name="home_subtitle">Dva igraca, jedan telefon</string>
+    <!-- Početni ekran -->
+    <string name="home_subtitle">Dva igrača, jedan telefon</string>
     <string name="home_party_title">Pokreni partiju</string>
-    <string name="home_party_desc">Telefon lezi na stolu izmedju vas. Igrac 1 sedi kod donje ivice, Igrac 2 kod gornje.</string>
-    <string name="home_section_duels">Pojedinacna mini igra</string>
-    <string name="home_section_others">Igre za celo drustvo</string>
+    <string name="home_party_desc">Telefon leži na stolu između vas. Igrač 1 sedi kod donje ivice, Igrač 2 kod gornje.</string>
+    <string name="home_section_duels">Pojedinačna mini igra</string>
+    <string name="home_section_others">Igre za celo društvo</string>
     <string name="action_statistics">Statistika</string>
-    <string name="action_settings">Podesavanja</string>
+    <string name="action_settings">Podešavanja</string>
     <string name="action_back">Nazad</string>
     <string name="action_play">Igraj</string>
     <string name="action_retry">Probaj ponovo</string>
 
-    <!-- Igraci -->
-    <string name="player_one">Igrac 1</string>
-    <string name="player_two">Igrac 2</string>
+    <!-- Igrači -->
+    <string name="player_one">Igrač 1</string>
+    <string name="player_two">Igrač 2</string>
 
     <!-- Nazivi i opisi igara -->
     <string name="game_charades_title">Pantomima</string>
-    <string name="game_charades_desc">Drzi telefon na celu i pogodi pojam na osnovu opisa koje ti daju prijatelji.</string>
+    <string name="game_charades_desc">Drži telefon na čelu i pogodi pojam na osnovu opisa koje ti daju prijatelji.</string>
     <string name="game_quiz_title">Kviz znanja</string>
-    <string name="game_quiz_desc">Deset pitanja sa cetiri ponudjena odgovora iz kategorije koju izaberes.</string>
+    <string name="game_quiz_desc">Deset pitanja sa četiri ponuđena odgovora iz kategorije koju izabereš.</string>
     <string name="game_reaction_title">Duel refleksa</string>
     <string name="game_tictactoe_title">Iks-oks</string>
     <string name="game_memory_title">Duel memorije</string>
     <string name="game_tap_race_title">Trka tapkanja</string>
-    <string name="game_math_duel_title">Racunski duel</string>
+    <string name="game_math_duel_title">Računski duel</string>
 
-    <!-- Uputstva za mini igre, prikazuju se oba igraca pre runde -->
-    <string name="instruction_reaction">Cekaj zeleno, pa prvi tapni svoju polovinu. Ako tapnes prerano, runda je izgubljena.</string>
-    <string name="instruction_tictactoe">Igrajte naizmenicno na zajednickoj tabli. Pobedjuje ceo niz - vrsta, kolona ili dijagonala.</string>
-    <string name="instruction_memory">Naizmenicno otvarajte po dve kartice. Par vredi poen i pravo na novi potez.</string>
-    <string name="instruction_tap_race">Tapkaj svoju polovinu sto vise puta pre nego sto vreme istekne.</string>
-    <string name="instruction_math_duel">Resi prvi. Pogresan odgovor te iskljucuje iz ove runde.</string>
+    <!-- Uputstva za mini igre, prikazuju se oba igrača pre runde -->
+    <string name="instruction_reaction">Čekaj zeleno, pa prvi tapni svoju polovinu. Ako tapneš prerano, runda je izgubljena.</string>
+    <string name="instruction_tictactoe">Igrajte naizmenično na zajedničkoj tabli. Pobeđuje ceo niz - vrsta, kolona ili dijagonala.</string>
+    <string name="instruction_memory">Naizmenično otvarajte po dve kartice. Par vredi poen i pravo na novi potez.</string>
+    <string name="instruction_tap_race">Tapkaj svoju polovinu što više puta pre nego što vreme istekne.</string>
+    <string name="instruction_math_duel">Reši prvi. Pogrešan odgovor te isključuje iz ove runde.</string>
 
-    <!-- Zajednicki tok igre -->
+    <!-- Zajednički tok igre -->
     <string name="game_get_ready">Spremi se</string>
     <string name="round_of">Runda %1$d od %2$d</string>
     <string name="round_winner">%1$s osvaja rundu</string>
-    <string name="round_draw">Runda je neresena</string>
+    <string name="round_draw">Runda je nerešena</string>
     <string name="outcome_time_ms">%1$d ms</string>
-    <string name="outcome_false_start">Pogresan start protivnika</string>
+    <string name="outcome_false_start">Pogrešan start protivnika</string>
     <string name="outcome_taps">%1$d tapkanja</string>
-    <string name="outcome_pairs">%1$d pronadjenih parova</string>
+    <string name="outcome_pairs">%1$d pronađenih parova</string>
 
-    <!-- Rezim partije -->
+    <!-- Režim partije -->
     <string name="party_title">Partija</string>
-    <string name="party_winner">%1$s pobedjuje!</string>
-    <string name="party_draw">Nema pobednika, nereseno je</string>
+    <string name="party_winner">%1$s pobeđuje!</string>
+    <string name="party_draw">Nema pobednika, nerešeno je</string>
     <string name="party_new">Nova partija</string>
     <string name="party_score">%1$d : %2$d</string>
     <string name="party_history">Poslednje partije</string>
     <string name="party_history_rounds">%1$d rundi</string>
 
-    <!-- Pojedinacna mini igra -->
-    <string name="solo_play_again">Jos jedna runda</string>
+    <!-- Pojedinačna mini igra -->
+    <string name="solo_play_again">Još jedna runda</string>
 
     <!-- Pantomima -->
     <string name="charades_pick_category">Izaberi kategoriju</string>
     <string name="charades_correct">Pogodak</string>
-    <string name="charades_skip">Preskoci</string>
-    <string name="charades_tilt_hint">Nagni napred za pogodak, nagni nazad da preskocis</string>
-    <string name="charades_manual_hint">Senzor pokreta nije pronadjen, koristi dugmad ispod</string>
+    <string name="charades_skip">Preskoči</string>
+    <string name="charades_tilt_hint">Nagni napred za pogodak, nagni nazad da preskočiš</string>
+    <string name="charades_manual_hint">Senzor pokreta nije pronađen, koristi dugmad ispod</string>
 
     <!-- Kviz -->
     <string name="quiz_pick_category">Izaberi kategoriju</string>
     <string name="quiz_progress">Pitanje %1$d od %2$d</string>
-    <string name="quiz_loading">Ucitavanje pitanja</string>
-    <string name="quiz_error_offline">Nema veze sa internetom. Igra se sa sacuvanim pitanjima.</string>
-    <string name="quiz_error_generic">Pitanja nije moguce ucitati.</string>
-    <string name="quiz_source_cache">Sacuvana pitanja</string>
+    <string name="quiz_loading">Učitavanje pitanja</string>
+    <string name="quiz_error_offline">Nema veze sa internetom. Igra se sa sačuvanim pitanjima.</string>
+    <string name="quiz_error_generic">Pitanja nije moguće učitati.</string>
+    <string name="quiz_source_cache">Sačuvana pitanja</string>
 
     <!-- Duel refleksa -->
-    <string name="reaction_wait">Cekaj zeleno</string>
+    <string name="reaction_wait">Čekaj zeleno</string>
     <string name="reaction_tap_now">TAPNI</string>
 
     <!-- Iks-oks -->
@@ -81,45 +81,45 @@
 
     <!-- Duel memorije -->
 
-    <!-- Racunski duel -->
-    <string name="math_duel_locked">Iskljucen si iz ove runde</string>
+    <!-- Računski duel -->
+    <string name="math_duel_locked">Isključen si iz ove runde</string>
 
     <!-- Rezultat (pantomima i kviz) -->
-    <string name="result_title">Runda je zavrsena</string>
-    <string name="result_new_best">Novi licni rekord</string>
-    <string name="result_guessed">Pogodjeno</string>
-    <string name="result_skipped">Preskoceno</string>
+    <string name="result_title">Runda je završena</string>
+    <string name="result_new_best">Novi lični rekord</string>
+    <string name="result_guessed">Pogođeno</string>
+    <string name="result_skipped">Preskočeno</string>
     <string name="result_play_again">Igraj ponovo</string>
-    <string name="result_home">Pocetna</string>
-    <string name="result_missing">Rezultat nije pronadjen.</string>
+    <string name="result_home">Početna</string>
+    <string name="result_missing">Rezultat nije pronađen.</string>
 
     <!-- Format skora, razlikuje se po igri -->
     <string name="score_words">%1$d od %2$d pojmova</string>
-    <string name="score_answers">%1$d od %2$d tacnih</string>
+    <string name="score_answers">%1$d od %2$d tačnih</string>
 
     <!-- Statistika -->
     <string name="statistics_title">Statistika</string>
-    <string name="statistics_empty">Jos nista nije odigrano. Zavrsi partiju ili rundu i pojavice se ovde.</string>
+    <string name="statistics_empty">Još ništa nije odigrano. Završi partiju ili rundu i pojaviće se ovde.</string>
     <string name="statistics_played">Odigrano</string>
     <string name="statistics_best">Najbolje</string>
     <string name="statistics_history">Poslednje igre</string>
-    <string name="statistics_clear">Obrisi istoriju</string>
+    <string name="statistics_clear">Obriši istoriju</string>
 
-    <!-- Podesavanja -->
-    <string name="settings_title">Podesavanja</string>
+    <!-- Podešavanja -->
+    <string name="settings_title">Podešavanja</string>
     <string name="settings_appearance">Izgled</string>
     <string name="settings_theme_system">Kao sistem</string>
     <string name="settings_theme_light">Svetla</string>
     <string name="settings_theme_dark">Tamna</string>
-    <string name="settings_dynamic_color">Dinamicke boje</string>
+    <string name="settings_dynamic_color">Dinamičke boje</string>
     <string name="settings_dynamic_color_desc">Koristi boje sa pozadine telefona</string>
     <string name="settings_game_rules">Pravila igre</string>
     <string name="settings_party_rounds">Broj rundi u partiji</string>
     <string name="settings_round_duration">Trajanje runde pantomime</string>
     <string name="settings_seconds">%1$d s</string>
     <string name="settings_question_count">Broj pitanja u kvizu</string>
-    <string name="settings_manual_controls">Rucne kontrole za pantomimu</string>
-    <string name="settings_manual_controls_desc">Uvek prikazi dugmad Pogodak i Preskoci, korisno na emulatoru</string>
+    <string name="settings_manual_controls">Ručne kontrole za pantomimu</string>
+    <string name="settings_manual_controls_desc">Uvek prikaži dugmad Pogodak i Preskoči, korisno na emulatoru</string>
 
     <!-- Notifikacija foreground servisa -->
     <string name="notification_channel_name">Runda u toku</string>
@@ -127,19 +127,19 @@
     <string name="notification_round_title">Runda pantomime</string>
     <string name="notification_round_text">Ostalo %1$d s</string>
 
-    <!-- Opisi za citace ekrana -->
+    <!-- Opisi za čitače ekrana -->
     <string name="cd_game_icon">Ikonica igre</string>
     <string name="cd_card_hidden">Zatvorena kartica</string>
 
     <!-- Kategorije za pantomimu -->
-    <string name="category_animals">Zivotinje</string>
+    <string name="category_animals">Životinje</string>
     <string name="category_movies">Filmovi</string>
     <string name="category_sports">Sport</string>
     <string name="category_professions">Profesije</string>
     <string name="category_food">Hrana</string>
 
     <!-- Kategorije za kviz -->
-    <string name="trivia_general">Opste znanje</string>
+    <string name="trivia_general">Opšte znanje</string>
     <string name="trivia_film">Film</string>
     <string name="trivia_science">Nauka i priroda</string>
     <string name="trivia_sports">Sport</string>
@@ -147,24 +147,24 @@
 
     <!-- Stani na vreme -->
     <string name="game_stop_timer_title">Stani na vreme</string>
-    <string name="instruction_stop_timer">Zapamti ciljno vreme, pa pritisni STOP kada mislis da je proslo. Nema vidljivog brojaca.</string>
+    <string name="instruction_stop_timer">Zapamti ciljno vreme, pa pritisni STOP kada misliš da je prošlo. Nema vidljivog brojača.</string>
     <string name="stop_timer_stop">STOP</string>
-    <string name="stop_timer_stopped">Stao si, ceka se protivnik</string>
+    <string name="stop_timer_stopped">Stao si, čeka se protivnik</string>
     <string name="outcome_error_ms">%1$d ms od cilja</string>
 
     <!-- Binarno u decimalno -->
     <string name="game_binary_title">Binarno u decimalno</string>
-    <string name="instruction_binary">Pretvori binarni broj i prvi tapni tacnu decimalnu vrednost. Pogresan tap te iskljucuje.</string>
+    <string name="instruction_binary">Pretvori binarni broj i prvi tapni tačnu decimalnu vrednost. Pogrešan tap te isključuje.</string>
     <string name="binary_prompt">%1$s₂</string>
-    <string name="binary_correct_value">Tacan odgovor: %1$d</string>
+    <string name="binary_correct_value">Tačan odgovor: %1$d</string>
 
-    <!-- Podesavanja igara -->
+    <!-- Podešavanja igara -->
     <string name="settings_board_size">Tabla za iks-oks</string>
-    <string name="settings_math_operations">Racunske operacije</string>
+    <string name="settings_math_operations">Računske operacije</string>
     <string name="board_size_3">3x3</string>
     <string name="board_size_4">4x4</string>
     <string name="board_size_5">5x5</string>
-    <string name="board_size_random">Slucajno</string>
+    <string name="board_size_random">Slučajno</string>
 
     <!-- Statistika -->
     <string name="statistics_mini_games">Mini igre</string>
