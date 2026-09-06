@@ -169,4 +169,7 @@
     <!-- Statistics -->
     <string name="statistics_mini_games">Mini games</string>
     <string name="statistics_recent_rounds">Recent rounds</string>
+    <string name="settings_language">Language</string>
+    <string name="language_serbian">Serbian</string>
+    <string name="language_english">English</string>
 </resources>

@@ -36,6 +36,8 @@ import play.pmu.ui.components.MultiChoiceChips
 import play.pmu.ui.components.PmuTopAppBar
 import play.pmu.ui.components.SingleChoiceChips
 import play.pmu.ui.theme.PmuSpacing
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 
 @Composable
 fun SettingsScreen(
@@ -114,6 +116,22 @@ private fun SettingsContent(
                     onCheckedChange = onDynamicColorChange,
                 )
             }
+
+            HorizontalDivider(Modifier.padding(vertical = PmuSpacing.small))
+            SectionTitle(stringResource(R.string.settings_language))
+
+            SingleChoiceChips(
+                options = listOf("en", "sr"),
+                selected = AppCompatDelegate.getApplicationLocales()
+                    .get(0)?.language ?: "en",
+                label = { language ->
+                    when (language) {
+                        "sr" -> stringResource(R.string.language_serbian)
+                        else -> stringResource(R.string.language_english)
+                    }
+                },
+                onSelect = ::setLanguage,
+            )
 
             HorizontalDivider(Modifier.padding(vertical = PmuSpacing.small))
             SectionTitle(
@@ -247,6 +265,16 @@ private fun SwitchRow(
         }
         Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
+}
+
+private fun setLanguage(language: String) {
+    val locales = if (language == "sr") {
+        LocaleListCompat.forLanguageTags("sr")
+    } else {
+        LocaleListCompat.forLanguageTags("en")
+    }
+
+    AppCompatDelegate.setApplicationLocales(locales)
 }
 
 private val PARTY_ROUNDS = listOf(5, 7, 9)

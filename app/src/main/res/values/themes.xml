@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!--
-      XML tema se koristi samo za prozor pre nego sto Compose iscrta prvi kadar.
-      Zato njena jedina uloga je pozadina prozora, koja ima i nocnu varijantu
-      (values-night/colors.xml) - bez toga bi u tamnoj temi na trenutak bljesnula
-      bela pozadina. Sve ostalo dolazi iz PmuGamesTheme.
-    -->
-    <style name="Theme.PMU_Play" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.PMU_Play" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowBackground">@color/window_background</item>
     </style>
 </resources>

@@ -169,4 +169,7 @@
     <!-- Statistika -->
     <string name="statistics_mini_games">Mini igre</string>
     <string name="statistics_recent_rounds">Poslednje runde</string>
+    <string name="settings_language">Jezik</string>
+    <string name="language_serbian">Srpski</string>
+    <string name="language_english">Engleski</string>
 </resources>

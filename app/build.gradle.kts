@@ -91,6 +91,9 @@ dependencies {
     implementation(libs.retrofit.kotlinx.serialization)
     implementation(libs.kotlinx.serialization.json)
 
+    // --- Promena jezika ---
+    implementation(libs.androidx.appcompat)
+
     // --- Test ---
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
