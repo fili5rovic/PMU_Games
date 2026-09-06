@@ -69,7 +69,7 @@ private fun reactionHalfModifier(
 ): Modifier {
     val background by animateColorAsState(
         targetValue = when (phase) {
-            ReactionPhase.Waiting -> WaitingRed
+            is ReactionPhase.Waiting -> phase.color.toComposeColor()
             ReactionPhase.Ready -> GoGreen
             is ReactionPhase.Done -> if (phase.winner == player) CorrectGreen else WrongRed
         },
@@ -86,7 +86,7 @@ private fun reactionHalfModifier(
 @Composable
 private fun ReactionHalf(player: Player, phase: ReactionPhase) {
     val text = when (phase) {
-        ReactionPhase.Waiting -> stringResource(R.string.reaction_wait)
+        is ReactionPhase.Waiting -> stringResource(R.string.reaction_wait)
         ReactionPhase.Ready -> stringResource(R.string.reaction_tap_now)
         is ReactionPhase.Done ->
             if (phase.winner == player) stringResource(player.titleRes) else ""
@@ -102,6 +102,14 @@ private fun ReactionHalf(player: Player, phase: ReactionPhase) {
         color = Color.White,
         textAlign = TextAlign.Center,
     )
+}
+
+private fun ReactionColor.toComposeColor(): Color = when (this) {
+    ReactionColor.RED -> WaitingRed
+    ReactionColor.BLUE -> Color(0xFF1565C0)
+    ReactionColor.YELLOW -> Color(0xFFF57F17)
+    ReactionColor.PURPLE -> Color(0xFF6A1B9A)
+    ReactionColor.ORANGE -> Color(0xFFE65100)
 }
 
 private const val WINNER_FLASH_MILLIS = 700L

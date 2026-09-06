@@ -38,7 +38,44 @@ class ReactionViewModelTest {
 
     @Test
     fun `runda pocinje cekanjem na zeleno`() {
-        assertEquals(ReactionPhase.Waiting, viewModel.uiState.value.phase)
+        assertTrue(viewModel.uiState.value.phase is ReactionPhase.Waiting)
+    }
+
+    @Test
+    fun `tokom cekanja boje se naizmenicno smenjuju pre nego sto dodje zelena`() = runTest(dispatcher) {
+        val observedColors = mutableListOf<ReactionColor>()
+        val initialPhase = viewModel.uiState.value.phase
+        assertTrue(initialPhase is ReactionPhase.Waiting)
+        observedColors.add((initialPhase as ReactionPhase.Waiting).color)
+
+        // Pratimo faze dok ne dodje zelena (Ready)
+        while (viewModel.uiState.value.phase !is ReactionPhase.Ready) {
+            testScheduler.advanceTimeBy(700L)
+            val currentPhase = viewModel.uiState.value.phase
+            if (currentPhase is ReactionPhase.Waiting) {
+                if (observedColors.lastOrNull() != currentPhase.color) {
+                    observedColors.add(currentPhase.color)
+                }
+            }
+        }
+
+        assertEquals(ReactionPhase.Ready, viewModel.uiState.value.phase)
+        // Potvrda da se vise razlicitih boja smenjivalo
+        assertTrue(observedColors.size >= 2)
+        // Potvrda da susedne boje nisu iste (naizmenicno)
+        observedColors.zipWithNext().forEach { (prev, next) ->
+            assertTrue(prev != next)
+        }
+    }
+
+    @Test
+    fun `runda cekanja nikada ne traje duze od 10 sekundi`() = runTest(dispatcher) {
+        for (seed in 1..20) {
+            val vm = ReactionViewModel(random = Random(seed), clock = clock)
+            testScheduler.advanceTimeBy(ReactionViewModel.MAX_TOTAL_WAIT_MILLIS)
+            assertEquals(ReactionPhase.Ready, vm.uiState.value.phase)
+            assertTrue(ReactionViewModel.MAX_TOTAL_WAIT_MILLIS < 10_000L)
+        }
     }
 
     @Test

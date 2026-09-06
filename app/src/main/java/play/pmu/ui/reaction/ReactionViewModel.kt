@@ -15,9 +15,17 @@ import play.pmu.domain.util.GameClock
 import javax.inject.Inject
 import kotlin.random.Random
 
+enum class ReactionColor {
+    RED,
+    BLUE,
+    YELLOW,
+    PURPLE,
+    ORANGE,
+}
+
 sealed interface ReactionPhase {
 
-    data object Waiting : ReactionPhase
+    data class Waiting(val color: ReactionColor = ReactionColor.RED) : ReactionPhase
 
     data object Ready : ReactionPhase
     data class Done(
@@ -28,7 +36,7 @@ sealed interface ReactionPhase {
 }
 
 data class ReactionUiState(
-    val phase: ReactionPhase = ReactionPhase.Waiting,
+    val phase: ReactionPhase = ReactionPhase.Waiting(),
 )
 
 @HiltViewModel
@@ -51,7 +59,21 @@ class ReactionViewModel @Inject constructor(
     private fun startWaiting() {
         waitJob?.cancel()
         waitJob = viewModelScope.launch {
-            delay(random.nextLong(MIN_WAIT_MILLIS, MAX_WAIT_MILLIS))
+            val stepsCount = random.nextInt(MIN_COLOR_STEPS, MAX_COLOR_STEPS + 1)
+            var currentColor = (uiState.value.phase as? ReactionPhase.Waiting)?.color ?: ReactionColor.RED
+
+            for (i in 0 until stepsCount) {
+                val stepDelay = random.nextLong(MIN_STEP_DELAY_MILLIS, MAX_STEP_DELAY_MILLIS)
+                delay(stepDelay)
+
+                val availableColors = ReactionColor.entries.filter { it != currentColor }
+                currentColor = availableColors[random.nextInt(availableColors.size)]
+                _uiState.update { it.copy(phase = ReactionPhase.Waiting(currentColor)) }
+            }
+
+            val finalDelay = random.nextLong(MIN_STEP_DELAY_MILLIS, MAX_STEP_DELAY_MILLIS)
+            delay(finalDelay)
+
             // Sat je monoton, pa promena sistemskog vremena ne moze da pokvari
             // merenje. Ide kroz GameClock da bi test mogao da zada vreme.
             greenAtMillis = clock.elapsedRealtimeMillis()
@@ -61,7 +83,7 @@ class ReactionViewModel @Inject constructor(
 
     fun onTap(player: Player) {
         when (val phase = _uiState.value.phase) {
-            ReactionPhase.Waiting -> finish(
+            is ReactionPhase.Waiting -> finish(
                 winner = player.opponent,
                 isFalseStart = true,
                 timeMs = null,
@@ -84,8 +106,11 @@ class ReactionViewModel @Inject constructor(
         }
     }
 
-    private companion object {
-        const val MIN_WAIT_MILLIS = 1_500L
-        const val MAX_WAIT_MILLIS = 5_000L
+    companion object {
+        const val MIN_COLOR_STEPS = 1
+        const val MAX_COLOR_STEPS = 4
+        const val MIN_STEP_DELAY_MILLIS = 700L
+        const val MAX_STEP_DELAY_MILLIS = 1_300L
+        const val MAX_TOTAL_WAIT_MILLIS = (MAX_COLOR_STEPS + 1) * MAX_STEP_DELAY_MILLIS
     }
 }
