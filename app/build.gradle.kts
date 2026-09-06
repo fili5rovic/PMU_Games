@@ -94,6 +94,9 @@ dependencies {
     // --- Promena jezika ---
     implementation(libs.androidx.appcompat)
 
+    // --- ML Kit Translation ---
+    implementation(libs.google.mlkit.translate)
+
     // --- Test ---
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

@@ -1,5 +1,6 @@
 package play.pmu.ui.quiz
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,10 +17,12 @@ import play.pmu.data.repository.GameResultsRepository
 import play.pmu.data.repository.QuestionSource
 import play.pmu.data.repository.SettingsRepository
 import play.pmu.data.repository.TriviaRepository
+import play.pmu.data.translation.TriviaTranslator
 import play.pmu.domain.model.GameType
 import play.pmu.domain.model.TriviaCategory
 import play.pmu.domain.model.TriviaQuestion
 import play.pmu.navigation.QuizGameRoute
+import java.util.Locale
 import javax.inject.Inject
 
 sealed interface QuizUiState {
@@ -48,6 +51,7 @@ class QuizViewModel @Inject constructor(
     private val triviaRepository: TriviaRepository,
     private val settingsRepository: SettingsRepository,
     private val resultsRepository: GameResultsRepository,
+    private val triviaTranslator: TriviaTranslator,
 ) : ViewModel() {
 
     private val category: TriviaCategory =
@@ -65,12 +69,32 @@ class QuizViewModel @Inject constructor(
         viewModelScope.launch {
             val count = settingsRepository.settings.first().questionCount
             val loaded = triviaRepository.loadQuestions(category, count)
-            _uiState.value = if (loaded.questions.isEmpty()) {
-                QuizUiState.Error
-            } else {
-                QuizUiState.Playing(questions = loaded.questions, source = loaded.source)
+            if (loaded.questions.isEmpty()) {
+                _uiState.value = QuizUiState.Error
+                return@launch
             }
+
+            val questionsToDisplay = if (isSerbianLanguage()) {
+                triviaTranslator.translateQuestions(loaded.questions)
+            } else {
+                loaded.questions
+            }
+
+            _uiState.value = QuizUiState.Playing(
+                questions = questionsToDisplay,
+                source = loaded.source,
+            )
         }
+    }
+
+    private fun isSerbianLanguage(): Boolean {
+        val appLocales = AppCompatDelegate.getApplicationLocales()
+        val language = if (!appLocales.isEmpty) {
+            appLocales.get(0)?.language
+        } else {
+            Locale.getDefault().language
+        }
+        return language?.startsWith("sr", ignoreCase = true) == true
     }
 
     fun selectAnswer(answer: String) {

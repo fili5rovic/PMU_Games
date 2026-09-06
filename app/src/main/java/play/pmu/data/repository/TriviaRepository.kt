@@ -69,19 +69,25 @@ class TriviaRepository @Inject constructor(
         emptyList()
     }
 
-    private fun bundledQuestions(category: TriviaCategory, count: Int): List<TriviaQuestion> =
-        context.resources.getStringArray(category.fallbackRes)
-            .mapNotNull { line ->
-                val parts = line.split(FALLBACK_SEPARATOR)
-                if (parts.size < 2) return@mapNotNull null
-                TriviaQuestion(
-                    question = parts[0],
-                    correctAnswer = parts[1],
-                    answers = parts.drop(1).shuffled(),
-                )
-            }
-            .shuffled()
-            .take(count)
+    private fun bundledQuestions(category: TriviaCategory, count: Int): List<TriviaQuestion> {
+        val res = try {
+            context.resources?.getStringArray(category.fallbackRes)
+        } catch (e: Exception) {
+            null
+        } ?: return emptyList()
+
+        return res.mapNotNull { line ->
+            val parts = line.split(FALLBACK_SEPARATOR)
+            if (parts.size < 2) return@mapNotNull null
+            TriviaQuestion(
+                question = parts[0],
+                correctAnswer = parts[1],
+                answers = parts.drop(1).shuffled(),
+            )
+        }
+        .shuffled()
+        .take(count)
+    }
 
     private fun TriviaQuestionEntity.toDomain() = TriviaQuestion(
         question = question,
@@ -89,8 +95,11 @@ class TriviaRepository @Inject constructor(
         answers = answers,
     )
 
-    private fun String.unescapeHtml(): String =
-        HtmlCompat.fromHtml(this, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
+    private fun String.unescapeHtml(): String = try {
+        HtmlCompat.fromHtml(this, HtmlCompat.FROM_HTML_MODE_LEGACY)?.toString() ?: this
+    } catch (e: Exception) {
+        this
+    }
 
     private companion object {
         const val RESPONSE_CODE_SUCCESS = 0
